@@ -1,7 +1,15 @@
+using ListaTelefonicaIACOApp.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    return new ListaTelefonicaDbContext(configuration);
+});
 
 var app = builder.Build();
 
