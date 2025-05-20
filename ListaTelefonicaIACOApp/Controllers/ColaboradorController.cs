@@ -9,7 +9,10 @@ namespace ListaTelefonicaIACOApp.Controllers
     {
         private readonly ILogger<ColaboradorController> _logger;
         private readonly IConfiguration? _configuration;
-
+        int registrosPorPagina = 10;
+        int TotalRegistros;
+        int TotalPaginas;
+        int offset;
         public ColaboradorController(ILogger<ColaboradorController> logger, IConfiguration configuration)
         {
             _logger = logger;
@@ -17,34 +20,67 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         // GET: ColaboradorController
-        public ActionResult Index()
+        public ActionResult Index(int paginaAtual = 1)
         {
+            int registrosPorPagina = 10;
+            int offset = (paginaAtual - 1) * registrosPorPagina;
+
             var lista = new List<Colaborador>();
+            int totalRegistros = 0;
+            int totalPaginas = 0;
+
             var connectionString = _configuration?.GetConnectionString("ListaTelefonicaIACOConnectionString");
 
-            using (var conn = new OracleConnection(connectionString))
+            try
             {
-                conn.Open();
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT * FROM LISTA_FONES";
-
-                using (var reader = cmd.ExecuteReader())
+                using (var conn = new OracleConnection(connectionString))
                 {
-                    while (reader.Read())
+                    conn.Open();
+
+                    // 1. Obter total de registros
+                    using (var countadorRegistrosCmd = conn.CreateCommand())
                     {
-                        lista.Add(new Colaborador
+                        countadorRegistrosCmd.CommandText = "SELECT COUNT(*) FROM LISTA_FONES";
+                        totalRegistros = Convert.ToInt32(countadorRegistrosCmd.ExecuteScalar());
+                    }
+
+                    totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
+
+                    // 2. Buscar página atual com SQL paginado
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = $@"
+                            SELECT *
+                            FROM LISTA_FONES
+                            ORDER BY ID
+                            OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
+
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            Id = reader.GetInt32(0),
-                            Nome = reader.GetString(1),
-                            Fixo = reader.GetString(2),
-                            Celular = reader.GetString(3),
-                            Comercial = reader.GetString(4),
-                            Endereco = reader.GetString(5),
-                            Email = reader.GetString(6)
-                        });
+                            while (reader.Read())
+                            {
+                                lista.Add(new Colaborador
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Nome = reader.GetString(1),
+                                    Fixo = reader.GetString(2),
+                                    Celular = reader.GetString(3),
+                                    Comercial = reader.GetString(4),
+                                    Endereco = reader.GetString(5),
+                                    Email = reader.GetString(6)
+                                });
+                            }
+                        }
                     }
                 }
             }
+            catch (OracleException)
+            {
+                throw; // ou log e redirect para uma página de erro amigável
+            }
+
+            ViewBag.PaginaAtual = paginaAtual;
+            ViewBag.TotalPaginas = totalPaginas;
 
             return View(lista);
         }

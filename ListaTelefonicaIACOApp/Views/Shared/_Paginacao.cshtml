@@ -1,0 +1,31 @@
+﻿@model ListaTelefonicaIACOApp.ViewModels.PaginacaoViewModel
+
+<div class="">
+    <nav class="" aria-label="Paginação">
+        <ul class="pagination">
+
+            @if (Model.PaginaAtual > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action(Model.Action, Model.Controller, new { pagina = Model.PaginaAtual - 1 })">Anterior</a>
+                </li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPaginas; i++)
+            {
+                <li class="page-item @(i == Model.PaginaAtual ? "active" : "")">
+                    <a class="page-link" href="@Url.Action(Model.Action, Model.Controller, new { pagina = i })">@i</a>
+                </li>
+            }
+
+            @if (Model.PaginaAtual < Model.TotalPaginas)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action(Model.Action, Model.Controller, new { pagina = Model.PaginaAtual + 1 })">Próximo</a>
+                </li>
+            }
+
+        </ul>
+    </nav>
+
+</div>
