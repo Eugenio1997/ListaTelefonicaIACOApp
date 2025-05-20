@@ -1,4 +1,6 @@
 using ListaTelefonicaIACOApp.Infrastructure;
+using ListaTelefonicaIACOApp.Infrastructure.Seeding;
+using Oracle.ManagedDataAccess.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,13 @@ builder.Services.AddScoped(sp =>
 });
 
 var app = builder.Build();
+
+// Crie a conexão com Oracle
+using (var connection = new OracleConnection(builder.Configuration.GetConnectionString("ListaTelefonicaIACOConnectionString")))
+{
+    connection.Open();
+    DatabaseSeeder.Seed(connection);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -30,6 +39,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Colaborador}/{action=Index}/{id?}");
 
 app.Run();
