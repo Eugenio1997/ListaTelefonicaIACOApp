@@ -7,20 +7,26 @@ namespace ListaTelefonicaIACOApp.Controllers
 {
     public class ColaboradorController : Controller
     {
+        private readonly ILogger<ColaboradorController> _logger;
+        private readonly IConfiguration? _configuration;
 
-        private readonly IConfiguration _configuration;
+        public ColaboradorController(ILogger<ColaboradorController> logger, IConfiguration configuration)
+        {
+            _logger = logger;
+            _configuration = configuration;
+        }
 
         // GET: ColaboradorController
         public ActionResult Index()
         {
             var lista = new List<Colaborador>();
-            var connectionString = _configuration.GetConnectionString("ListaTelefonicaIACOConnectionString");
+            var connectionString = _configuration?.GetConnectionString("ListaTelefonicaIACOConnectionString");
 
             using (var conn = new OracleConnection(connectionString))
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT Id, Nome, Celular, Fixo, Endereco, Email FROM Colaboradores";
+                cmd.CommandText = "SELECT * FROM LISTA_FONES";
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -30,10 +36,11 @@ namespace ListaTelefonicaIACOApp.Controllers
                         {
                             Id = reader.GetInt32(0),
                             Nome = reader.GetString(1),
-                            Celular = reader.GetString(2),
-                            Fixo = reader.GetString(3),
-                            Endereco = reader.GetString(4),
-                            Email = reader.GetString(4)
+                            Fixo = reader.GetString(2),
+                            Celular = reader.GetString(3),
+                            Comercial = reader.GetString(4),
+                            Endereco = reader.GetString(5),
+                            Email = reader.GetString(6)
                         });
                     }
                 }
