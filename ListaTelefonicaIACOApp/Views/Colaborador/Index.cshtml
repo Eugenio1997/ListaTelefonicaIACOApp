@@ -5,88 +5,149 @@
     ViewData["Title"] = "Agenda Telefônica - IACO";
 }
 
-  
+
 <body>
 
-    <header>
-        <h1>Agenda Telefônica - IACO</h1>
+    <header class="d-flex gap-3 
+        justify-content-end 
+        align-items-center"
+    >
+       
 
-        <p>
-            <a asp-action="Create">Adicionar novo contato</a>
-        </p>
-        <hr />
+        <a style="height: 70px; width: 60px; justify-content: center" class="d-flex" asp-action="Create">
+            <i class="bi bi-person-plus icon-add-colaborador"> </i>
+        </a>
+
+
+
+
     </header>
+    <div style="background-color: #f9f9f9" class="p-4 rounded-3">
+        <form class="row g-3 p-3 ">
+            <div class="d-flex flex-column w-100 col-auto gap-3 m-0">
+                <h2 class="col-auto border-1 border-bottom">Filtros</h2>
+
+                <div class="row d-flex gap-5 col-auto flex-row">
+                    <div class="col-auto campos-filtros">
+                        <label for="Nome" class="">Nome</label>
+                        <input type="text" class="form-control" id="Nome" placeholder="Nome">
+                    </div>
+                    <div class="col-auto campos-filtros">
+                        <label for="Fixo" class="">Fixo</label>
+                        <input type="text" class="form-control" id="Fixo" placeholder="Fixo">
+                    </div>
+                    <div class="col-auto campos-filtros">
+                        <label for="Celular" class="">Celular</label>
+                        <input type="text" class="form-control" id="Celular" placeholder="Celular">
+                    </div>
+
+                    <div class="col-auto campos-filtros">
+                        <label for="Comercial" class="">Comercial</label>
+                        <input type="text" class="form-control" id="Comercial" placeholder="Comercial">
+                    </div>
+                    <div class="col-auto campos-filtros">
+                        <label for="Endereco" class="">Endereco</label>
+                        <input type="text" class="form-control" id="Endereco" placeholder="Endereco">
+                    </div>
+                    <div class="col-auto campos-filtros">
+                        <label for="Email" class="">Email</label>
+                        <input type="text" class="form-control" id="Email" placeholder="Email">
+
+                    </div>
+                </div>
+
+                <div style="height:50px" class="d-flex w-100 justify-content-end align-items-center col-auto">
+                    <button style="width:100px" type="submit" class="btn btn-primary h-75">Buscar</button>
+                </div>
+            </div>
+        </form>
+    </div>
     
+
+   
     @if (Model != null && Model.Any())
     {
-        <table  class="table table-hover">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().Id)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().Nome)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().Fixo)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().Celular)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().Comercial)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().Endereco)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().Email)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+        <div style="height:700px" class="table-responsive p-2">
+            <table  class="table table-hover table-bordered m-0 h-75">
+                <thead style="height:50px" class="table-light position-sticky top-0">
                     <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Nome)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Fixo)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Celular)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Comercial)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Endereco)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Email)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                        </td>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Id)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Nome)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Fixo)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Celular)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Comercial)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Endereco)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Email)
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Nome)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Fixo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Celular)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Comercial)
+                            </td>
+                            <td class="">
+                                @Html.DisplayFor(modelItem => item.Endereco)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Email)
+                            </td>
+                            
+                            <td class="acao">
+                                <a asp-action="Edit" asp-route-id="@item.Id" title="Editar ">
+                                    <i class="bi bi-pencil-square "> </i>
+                                </a>
+                            </td>
+                            <td class="acao">
+                                <a asp-action="Details" asp-route-id="@item.Id" title="Ver detalhes">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                            <td class="acao">
+                                <a asp-action="Delete" asp-route-id="@item.Id" title="Deletar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
 
     }
 
 </body>
-
-
-
 
 
 @await Html.PartialAsync("_Paginacao", new PaginacaoViewModel

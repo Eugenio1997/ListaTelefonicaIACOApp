@@ -1,21 +1,20 @@
 html {
-  font-size: 14px;
-
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
@@ -26,4 +25,30 @@ body {
 .pagination-700px-width {
     width: 900px;
     height: 50px
+}
+
+.table > tbody > tr {
+    height: 80px
+}
+
+    .table > tbody > tr > td {
+        vertical-align: middle !important;
+    }
+
+
+.icon-add-colaborador {
+    font-size: 50px;
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    height: 100%;
+}
+
+.campos-filtros {
+    min-width: 200px;
+    max-width: 300px
 }
