@@ -16,7 +16,7 @@ builder.Services.AddScoped(sp =>
 var app = builder.Build();
 
 // Crie a conexão com Oracle
-using (var connection = new OracleConnection(builder.Configuration.GetConnectionString("ListaTelefonicaIACOLocalConnectionString")))
+using (var connection = new OracleConnection(builder.Configuration.GetConnectionString("ListaTelefonicaIACOConnectionString")))
 {
     connection.Open();
     DatabaseSeeder.Seed(connection);
@@ -30,7 +30,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -39,6 +39,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Colaborador}/{action=Index}/{id?}");
+    pattern: "{controller=Contato}/{action=Index}/{id?}");
 
 app.Run();

@@ -1,0 +1,154 @@
+﻿@using ListaTelefonicaIACOApp.ViewModels
+@model ContatoViewModel
+
+@{
+    ViewData["Title"] = "Agenda Telefônica - IACO";
+}
+
+
+<body>
+
+    <header class="d-flex gap-3 
+        justify-content-end 
+        align-items-center"
+    >
+         
+        <div title="Adicionar cliente" style="height: 70px; width: 70px; justify-content: center;
+                background-color: #f9f9f9;  border-radius: 5px;">
+            <a  class="d-flex justify-content-center" asp-action="Create">
+                <i class="bi bi-person-plus text-dark icon-add-colaborador"> </i>
+            </a>
+        </div>
+       
+
+
+
+
+    </header>
+    <div style="background-color: #f9f9f9" class="p-4 rounded-3">
+        <form asp-action="FiltrarPorColaboradores" method="post" class="row g-3 p-3 ">
+            <div class="d-flex flex-column w-100 col-auto gap-3 m-0">
+                <h2 class="col-auto border-1 border-bottom">Filtros</h2>
+
+                <div class="row d-flex gap-2 gap-md-3 col-auto flex-row justify-content-sm-center 
+                        justify-content-md-between">
+                   
+
+                   
+                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
+                        <label asp-for="Nome" class="">Nome</label>
+                        <input asp-for="Nome" type="text" class="form-control" id="Nome" placeholder="Ex: Ana Clara">
+                        <div class="fs-12px">
+                            <span asp-validation-for="Nome" class="text-danger"></span>
+                        </div>
+                    </div>
+                        
+                   
+                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
+                        <label asp-for="Fixo" class="">Fixo</label>
+                        <input asp-for="Fixo" type="text" class="form-control" id="Fixo" placeholder="Ex: (11) 2345-6789  ">
+                        <div class="fs-12px">
+                            <span asp-validation-for="Fixo" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
+                        <label asp-for="Celular" class="">Celular</label>
+                        <input asp-for="Celular" type="text" class="form-control" id="Celular" placeholder="Ex: (11) 998877665">
+                        <div class="fs-12px">
+                            <span asp-validation-for="Celular" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
+                        <label asp-for="Comercial" class="">Comercial</label>
+                        <input asp-for="Comercial" type="text" class="form-control" id="Comercial" placeholder="Ex: (61) 3030-4040">
+                        <div class="fs-12px">
+                            <span asp-validation-for="Comercial" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div title="Ex: Rua das Flores, Centro, São Paulo - SP" class="d-flex gap-2 flex-column col-sm-12 col-md-6 col-xl-8 campos-filtros">
+                        <label asp-for="Endereco" class="">Endereco</label>
+                        <input asp-for="Endereco" type="text" class="form-control" id="Endereco" placeholder="Ex: Rua das Flores, Centro, São Paulo - SP">
+                        <div class="fs-12px">
+                            <span asp-validation-for="Endereco" class="text-danger"></span>
+                        </div> 
+                    </div>
+                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
+                        <label asp-for="Email" class="">Email</label>
+                        <input asp-for="Email" type="text" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">
+                        <div class="fs-12px">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>           
+                    </div>
+                </div>
+
+                <div style="height:50px" class="d-flex w-100 justify-content-end align-items-center col-auto">
+                    <button style="width:100px" type="submit" class="btn btn-primary h-75">Buscar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+
+   
+    @if (Model != null && Model.Colaboradores.Any())
+    {
+        <div class="table-responsive p-2">
+            <table class="table table-hover table-bordered m-0 h-75" style="height: 500px">
+                
+                <thead style="height:50px" class="table-light position-sticky top-0">
+                    <tr itemscope>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Id)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Nome)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Fixo)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Celular)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Comercial)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Email)</th>
+                        <th colspan="3"></th>
+                       
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Colaboradores)
+                    {
+                        <tr>
+                            <td class="text-nowrap h-100 d-flex justify-content-center align-items-center">@Html.DisplayFor(modelItem => item.Id)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Nome)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Fixo)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Celular)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Comercial)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Email)</td>
+                            <td class="text-nowrap">
+                                <a asp-action="Edit" asp-route-id="@item.Id" title="Editar">
+                                    <i class="bi bi-pencil-square text-dark"></i>
+                                </a>
+                            </td>
+                            <td style="height: 50px" class="text-nowrap">
+                                <a asp-action="Details" asp-route-id="@item.Id" title="Ver detalhes">
+                                    <i class="bi bi-eye text-dark"></i>
+                                </a>
+                            </td>
+                            <td style="height: 50px" class="text-nowrap">
+                                <a asp-action="Delete" asp-route-id="@item.Id" title="Deletar">
+                                    <i class="bi bi-trash text-dark"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+
+    }
+
+</body>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,32 +1,33 @@
 ﻿using ListaTelefonicaIACOApp.Models;
+using ListaTelefonicaIACOApp.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Oracle.ManagedDataAccess.Client;
 
 namespace ListaTelefonicaIACOApp.Controllers
 {
-    public class ColaboradorController : Controller
+    public class ContatoController : Controller
     {
-        private readonly ILogger<ColaboradorController> _logger;
+        private readonly ILogger<ContatoController> _logger;
         private readonly IConfiguration? _configuration;
         int registrosPorPagina = 10;
         int TotalRegistros;
         int TotalPaginas;
         int offset;
-        public ColaboradorController(ILogger<ColaboradorController> logger, IConfiguration configuration)
+        public ContatoController(ILogger<ContatoController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
         }
 
-        private List<Colaborador> ObterColaboradoresPaginados(int pagina, int registrosPorPagina, out int totalPaginas)
+        private ContatoViewModel ObterColaboradoresPaginados(int pagina, int registrosPorPagina, out int totalPaginas)
         {
             int offset = (pagina - 1) * registrosPorPagina;
             int totalRegistros = 0;
             totalPaginas = 0;
 
-            var lista = new List<Colaborador>();
-            var connectionString = _configuration?.GetConnectionString("ListaTelefonicaIACOLocalConnectionString");
+            var lista = new ContatoViewModel();
+            var connectionString = _configuration?.GetConnectionString("ListaTelefonicaIACOConnectionString");
 
             using (var conn = new OracleConnection(connectionString))
             {
@@ -52,7 +53,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                     {
                         while (reader.Read())
                         {
-                            lista.Add(new Colaborador
+                            lista.Colaboradores.Add(new ContatoViewModel
                             {
                                 Id = reader.GetInt32(0),
                                 Nome = reader.GetString(1),
@@ -84,7 +85,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
         public IActionResult PaginaDados(int paginaAtual = 1)
         {
-           
+
 
             int registrosPorPagina = 10;
             var lista = ObterColaboradoresPaginados(paginaAtual, registrosPorPagina, out int totalPaginas);
@@ -111,6 +112,20 @@ namespace ListaTelefonicaIACOApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult FiltrarPorContatos(IFormCollection collection)
         {
             try
             {

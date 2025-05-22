@@ -8,7 +8,7 @@ namespace ListaTelefonicaIACOApp.Infrastructure.Seeding
 {
     public class DatabaseSeeder
     {
-       
+
         public static void Seed(OracleConnection conn)
         {
 
@@ -42,7 +42,7 @@ namespace ListaTelefonicaIACOApp.Infrastructure.Seeding
 
 
                 using var cmdVerificaSeVazia = new OracleCommand(verificaSeTabelaVaziaQuery, conn);
-                using var cmdInserir = new OracleCommand(null ,conn);
+                using var cmdInserir = new OracleCommand(null, conn);
 
                 int linhasAfetadas = Convert.ToInt32(cmdVerificaSeVazia.ExecuteScalar()); // retorna o número de linhas alteradas
 
@@ -81,7 +81,7 @@ namespace ListaTelefonicaIACOApp.Infrastructure.Seeding
                     Console.WriteLine("Tabela já populada.");
                 }
 
-            
+
             }
             catch (OracleException ex)
             {
@@ -91,7 +91,7 @@ namespace ListaTelefonicaIACOApp.Infrastructure.Seeding
 
             finally
             {
-                
+
                 if (conn.State == System.Data.ConnectionState.Open)
                 {
                     conn.Close();

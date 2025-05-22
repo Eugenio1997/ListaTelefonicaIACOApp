@@ -27,6 +27,8 @@ body {
     height: 50px
 }
 
+
+
 .table > tbody > tr {
     height: 80px
 }
@@ -40,15 +42,21 @@ body {
     font-size: 50px;
 }
 
-.acoes {
+/*
+.acao {
     display: flex;
     align-items: center;
     justify-content: center;
     align-content: center;
     height: 100%;
 }
-
+    */
 .campos-filtros {
     min-width: 200px;
-    max-width: 300px
+    max-width: 300px;
+    height: 102px;
+}
+
+.fs-12px {
+    font-size: 12px;
 }
