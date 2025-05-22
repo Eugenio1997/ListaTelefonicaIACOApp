@@ -1,0 +1,14 @@
+﻿@using ListaTelefonicaIACOApp.ViewModels
+@model List<Colaborador>
+@{
+    int paginaAtual = (int)ViewBag.PaginaAtual;
+    int totalPaginas = (int)ViewBag.TotalPaginas;
+}
+
+@await Html.PartialAsync("_TabelaColaboradores", Model)
+@await Html.PartialAsync("_Paginacao", new PaginacaoViewModel {
+PaginaAtual = paginaAtual,
+    TotalPaginas = totalPaginas,
+    Action = "Index",
+    Controller = "Colaborador"
+})

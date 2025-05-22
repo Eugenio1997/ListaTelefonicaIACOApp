@@ -19,70 +19,80 @@ namespace ListaTelefonicaIACOApp.Controllers
             _configuration = configuration;
         }
 
-        // GET: ColaboradorController
-        public ActionResult Index(int paginaAtual = 1)
+        private List<Colaborador> ObterColaboradoresPaginados(int pagina, int registrosPorPagina, out int totalPaginas)
         {
-            int registrosPorPagina = 10;
-            int offset = (paginaAtual - 1) * registrosPorPagina;
+            int offset = (pagina - 1) * registrosPorPagina;
+            int totalRegistros = 0;
+            totalPaginas = 0;
 
             var lista = new List<Colaborador>();
-            int totalRegistros = 0;
-            int totalPaginas = 0;
+            var connectionString = _configuration?.GetConnectionString("ListaTelefonicaIACOLocalConnectionString");
 
-            var connectionString = _configuration?.GetConnectionString("ListaTelefonicaIACOConnectionString");
-
-            try
+            using (var conn = new OracleConnection(connectionString))
             {
-                using (var conn = new OracleConnection(connectionString))
+                conn.Open();
+
+                using (var countCmd = conn.CreateCommand())
                 {
-                    conn.Open();
+                    countCmd.CommandText = "SELECT COUNT(*) FROM LISTA_FONES";
+                    totalRegistros = Convert.ToInt32(countCmd.ExecuteScalar());
+                }
 
-                    // 1. Obter total de registros
-                    using (var countadorRegistrosCmd = conn.CreateCommand())
+                totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
+
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = $@"
+                        SELECT *
+                        FROM LISTA_FONES
+                        ORDER BY ID
+                        OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
+
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        countadorRegistrosCmd.CommandText = "SELECT COUNT(*) FROM LISTA_FONES";
-                        totalRegistros = Convert.ToInt32(countadorRegistrosCmd.ExecuteScalar());
-                    }
-
-                    totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
-
-                    // 2. Buscar página atual com SQL paginado
-                    using (var cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = $@"
-                            SELECT *
-                            FROM LISTA_FONES
-                            ORDER BY ID
-                            OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
-
-                        using (var reader = cmd.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
+                            lista.Add(new Colaborador
                             {
-                                lista.Add(new Colaborador
-                                {
-                                    Id = reader.GetInt32(0),
-                                    Nome = reader.GetString(1),
-                                    Fixo = reader.GetString(2),
-                                    Celular = reader.GetString(3),
-                                    Comercial = reader.GetString(4),
-                                    Endereco = reader.GetString(5),
-                                    Email = reader.GetString(6)
-                                });
-                            }
+                                Id = reader.GetInt32(0),
+                                Nome = reader.GetString(1),
+                                Fixo = reader.GetString(2),
+                                Celular = reader.GetString(3),
+                                Comercial = reader.GetString(4),
+                                Endereco = reader.GetString(5),
+                                Email = reader.GetString(6)
+                            });
                         }
                     }
                 }
             }
-            catch (OracleException)
-            {
-                throw; // ou log e redirect para uma página de erro amigável
-            }
+
+            return lista;
+        }
+
+        // GET: ColaboradorController
+        public ActionResult Index(int paginaAtual = 1)
+        {
+            int registrosPorPagina = 10;
+            var lista = ObterColaboradoresPaginados(paginaAtual, registrosPorPagina, out int totalPaginas);
 
             ViewBag.PaginaAtual = paginaAtual;
             ViewBag.TotalPaginas = totalPaginas;
 
             return View(lista);
+        }
+
+        public IActionResult PaginaDados(int paginaAtual = 1)
+        {
+           
+
+            int registrosPorPagina = 10;
+            var lista = ObterColaboradoresPaginados(paginaAtual, registrosPorPagina, out int totalPaginas);
+
+            ViewBag.PaginaAtual = paginaAtual;
+            ViewBag.TotalPaginas = totalPaginas;
+
+            return PartialView("_TabelaColaboradores", lista);
         }
 
         // GET: ColaboradorController/Details/5

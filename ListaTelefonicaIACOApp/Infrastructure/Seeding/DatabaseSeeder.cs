@@ -51,14 +51,14 @@ namespace ListaTelefonicaIACOApp.Infrastructure.Seeding
                     Console.WriteLine("Tabela LISTA_FONES vazia.");
                     Console.WriteLine("Aplicando Seeder ...");
 
-                    foreach (var dado in colaboradores)
+                    foreach (var colaborador in colaboradores)
                     {
-                        string nome = dado.Nome.Replace("'", "''");
-                        string fixo = dado.Fixo.Replace("'", "''");
-                        string celular = dado.Celular.Replace("'", "''");
-                        string comercial = dado.Comercial.Replace("'", "''");
-                        string endereco = dado.Endereco.Replace("'", "''");
-                        string email = dado.Email.Replace("'", "''");
+                        string nome = colaborador.Nome.Replace("'", "''");
+                        string fixo = colaborador.Fixo.Replace("'", "''");
+                        string celular = colaborador.Celular.Replace("'", "''");
+                        string comercial = colaborador.Comercial.Replace("'", "''");
+                        string endereco = colaborador.Endereco.Replace("'", "''");
+                        string email = colaborador.Email.Replace("'", "''");
 
                         var query = $@"
                             INSERT INTO LISTA_FONES(ID, Nome, Fixo, Celular, Comercial, Endereco, Email)

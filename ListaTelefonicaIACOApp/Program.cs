@@ -16,7 +16,7 @@ builder.Services.AddScoped(sp =>
 var app = builder.Build();
 
 // Crie a conexão com Oracle
-using (var connection = new OracleConnection(builder.Configuration.GetConnectionString("ListaTelefonicaIACOConnectionString")))
+using (var connection = new OracleConnection(builder.Configuration.GetConnectionString("ListaTelefonicaIACOLocalConnectionString")))
 {
     connection.Open();
     DatabaseSeeder.Seed(connection);

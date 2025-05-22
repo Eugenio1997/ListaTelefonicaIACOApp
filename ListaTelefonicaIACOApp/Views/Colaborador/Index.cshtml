@@ -27,7 +27,7 @@
             <div class="d-flex flex-column w-100 col-auto gap-3 m-0">
                 <h2 class="col-auto border-1 border-bottom">Filtros</h2>
 
-                <div class="row d-flex gap-5 col-auto flex-row">
+                <div class="row d-flex gap-5 col-auto justify-content-evenly">
                     <div class="col-auto campos-filtros">
                         <label for="Nome" class="">Nome</label>
                         <input type="text" class="form-control" id="Nome" placeholder="Nome">
@@ -54,11 +54,15 @@
                         <input type="text" class="form-control" id="Email" placeholder="Email">
 
                     </div>
+
+                    <div style="height:50px" class="d-flex w-100 justify-content-center align-items-center col-auto">
+
+                        <button style="width:100px" type="submit" class="btn btn-primary h-75">Buscar</button>
+
+                    </div>
                 </div>
 
-                <div style="height:50px" class="d-flex w-100 justify-content-end align-items-center col-auto">
-                    <button style="width:100px" type="submit" class="btn btn-primary h-75">Buscar</button>
-                </div>
+                
             </div>
         </form>
     </div>
@@ -67,98 +71,34 @@
    
     @if (Model != null && Model.Any())
     {
-        <div style="height:700px" class="table-responsive p-2">
-            <table  class="table table-hover table-bordered m-0 h-75">
-                <thead style="height:50px" class="table-light position-sticky top-0">
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().Id)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().Nome)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().Fixo)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().Celular)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().Comercial)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().Endereco)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().Email)
-                        </th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Id)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Nome)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Fixo)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Celular)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Comercial)
-                            </td>
-                            <td class="">
-                                @Html.DisplayFor(modelItem => item.Endereco)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Email)
-                            </td>
-                            
-                            <td class="acao">
-                                <a asp-action="Edit" asp-route-id="@item.Id" title="Editar ">
-                                    <i class="bi bi-pencil-square "> </i>
-                                </a>
-                            </td>
-                            <td class="acao">
-                                <a asp-action="Details" asp-route-id="@item.Id" title="Ver detalhes">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                            </td>
-                            <td class="acao">
-                                <a asp-action="Delete" asp-route-id="@item.Id" title="Deletar">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div id="divTabela">
+            @await Html.PartialAsync("_TabelaColaboradores", Model)
+            @await Html.PartialAsync("_Paginacao", new PaginacaoViewModel {
+            PaginaAtual = ViewBag.PaginaAtual,
+                TotalPaginas = ViewBag.TotalPaginas,
+                Action = "Index",
+                Controller = "Colaborador"
+                })
         </div>
-        
 
     }
 
 </body>
 
 
-@await Html.PartialAsync("_Paginacao", new PaginacaoViewModel
-{
-    PaginaAtual = ViewBag.PaginaAtual,
-    TotalPaginas = ViewBag.TotalPaginas,
-    Action = "Index",
-    Controller = "Colaborador"
-})
-
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+            function carregarPagina(pagina) {
+            // Atualiza a URL na barra do navegador
+            const url = `/Colaborador/Index?pagina=${pagina}`;
+            history.pushState(null, '', url);
+
+            // Carrega os dados da tabela via AJAX
+            $.get('/Colaborador/PaginaDados?pagina=' + pagina, function (html) {
+                $('#divTabela').html(html);
+            });
+        }
+    </script>
 }
