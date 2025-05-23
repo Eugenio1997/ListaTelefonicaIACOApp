@@ -154,7 +154,7 @@
                 {
 
                     <li class="page-item">
-                        <a class="page-link" href="javascript:void(0)" onclick="carregarPagina(@(ViewBag.PaginaAtual - 1))">Anterior</a>
+                        <a class="page-link" href="javascript:void(0)" data-pagina="@ViewBag.PaginaAtual - 1">Anterior</a>
                     </li>
 
                 }
@@ -163,7 +163,7 @@
                 @for (int i = 1; i <= ViewBag.TotalPaginas; i++)
                 {
                     <li class="page-item @(i == ViewBag.PaginaAtual ? "active" : "")">
-                        <a class="page-link" href="javascript:void(0)" onclick="carregarPagina(@i)">@i</a>
+                        <a class="page-link" href="javascript:void(0)">@i</a>
 
                     </li>
                 }
@@ -173,7 +173,7 @@
 
 
                     <li class="page-item">
-                        <a class="page-link" href="javascript:void(0)" onclick="carregarPagina(@(ViewBag.PaginaAtual + 1))">Próximo</a>
+                        <a class="page-link" href="javascript:void(0) data-pagina=" @ViewBag.PaginaAtual + 1"">Próximo</a>
                     </li>
 
                 }
@@ -192,9 +192,21 @@
     <script>
         $(document).ready(function () {
             $('.page-link').on('click', function (e) {
-                alert('Link da paginação clicado!');
+                e.preventDefault();
+                let pagina = $(this).data('pagina');
+
+                $.ajax({
+                    url: '/Contato/Pagina', // sua rota real
+                    method: 'GET',
+                    data: { paginaAtual: pagina },
+                    success: function (response) {
+                        $('#tabela-contatos tbody').html(response); // injeta só as linhas da tabela
+                    },
+                    error: function () {
+                        alert('Erro ao carregar os dados.');
+                    }
+                });
             });
         });
-
     </script>
 }
