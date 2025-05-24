@@ -5,6 +5,7 @@ using ListaTelefonicaIACOApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Plugins;
 using System.Data;
+using System.Text;
 
 
 namespace ListaTelefonicaIACOApp.Controllers
@@ -31,8 +32,10 @@ namespace ListaTelefonicaIACOApp.Controllers
             _context = context;
         }
 
-        private async Task<List<ContatoViewModel>> ObterColaboradoresPaginados(int registrosPorPagina = 10, int paginaAtual = 1)
+       
+        public async Task<IActionResult> ObterColaboradoresPaginados(int registrosPorPagina = 10, int paginaAtual = 1)
         {
+            
             offset = (paginaAtual - 1) * registrosPorPagina;
             string ordenacao = "NOME"; // default order by NOME
             string query = @$"SELECT *
@@ -42,21 +45,63 @@ namespace ListaTelefonicaIACOApp.Controllers
                         FETCH NEXT {registrosPorPagina} ROWS ONLY";
 
             //contatos paginados
-            List<ContatoViewModel> contatos = (await _conn.
-                                                    QueryAsync<ContatoViewModel>(query))
-                                                    .ToList();
-            return contatos;
+            if (_conn == null)
+                _conn = await _context.GetOpenConnectionAsync();
+
+            var totalRegistros = await _conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_FONES");
+            totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
+
+            var contatos = (await _conn.QueryAsync<ContatoViewModel>(query)).ToList();
+          
+            StringBuilder sb = new StringBuilder();
+            foreach (var contato in contatos)
+            {
+                sb.Append("<tr>");
+                sb.Append($"<td class='text-nowrap'>{contato.Id}</td>");
+                sb.Append($"<td class='text-nowrap'>{contato.Nome}</td>");
+                sb.Append($"<td class='text-nowrap'>{contato.Fixo}</td>");
+                sb.Append($"<td class='text-nowrap'>{contato.Celular}</td>");
+                sb.Append($"<td class='text-nowrap'>{contato.Comercial}</td>");
+                sb.Append($"<td class='text-nowrap'>{contato.Endereco}</td>");
+                sb.Append($"<td class='text-nowrap'><a href='mailto:{contato.Email}'>{contato.Email}</a></td>");
+                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                    $"<a href='/Contato/Edit/{contato.Id}' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
+                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                    $"<a href='/Contato/Details/{contato.Id}' title='Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
+                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                    $"<a href='/Contato/Delete/{contato.Id}' title='Excluir'><i class='bi bi-trash text-dark'></i></a></td>");
+
+
+            }
+
+            return Json(new
+            {
+                html = sb.ToString(),
+                paginaAtual,
+                totalPaginas
+            });
         }
 
         // GET: ColaboradorController
         public async Task<IActionResult> Index(int paginaAtual = 1)
         {
 
-            _conn = _context.GetOpenConnection();
+            _conn = await _context.GetOpenConnectionAsync();
             var totalRegistros = await _conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_FONES");
             totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
-            contato.Colaboradores = await ObterColaboradoresPaginados(registrosPorPagina, paginaAtual);
+            offset = (paginaAtual - 1) * registrosPorPagina;
+            string ordenacao = "NOME"; // default order by NOME
+            string query = @$"SELECT *
+                        FROM LISTA_FONES 
+                        ORDER BY {ordenacao}
+                        OFFSET {offset} ROWS
+                        FETCH NEXT {registrosPorPagina} ROWS ONLY";
+
+            //contatos paginados
+            contato.Colaboradores = (await _conn.QueryAsync<ContatoViewModel>(query)).ToList();
+
+           
 
             ViewBag.PaginaAtual = paginaAtual;
             ViewBag.TotalPaginas = totalPaginas;

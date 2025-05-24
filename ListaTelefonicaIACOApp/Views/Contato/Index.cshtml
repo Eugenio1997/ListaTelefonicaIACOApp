@@ -31,7 +31,7 @@
                 <h2 class="col-auto border-1 border-bottom">Filtros</h2>
 
                 <div class="row d-flex gap-2 gap-md-3 col-auto flex-row justify-content-sm-center 
-                        justify-content-md-between">
+                        justify-content-md-between ">
                    
 
                    
@@ -42,11 +42,11 @@
                             <span asp-validation-for="Nome" class="text-danger"></span>
                         </div>
                     </div>
-                        
+                   
                    
                     <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
                         <label asp-for="Fixo" class="">Fixo</label>
-                        <input asp-for="Fixo" type="text" class="form-control" id="Fixo" placeholder="Ex: (11) 2345-6789  ">
+                        <input asp-for="Fixo" type="text" class="form-control" id="Fixo" placeholder="Ex: 11 2345-6789  ">
                         <div class="fs-12px">
                             <span asp-validation-for="Fixo" class="text-danger"></span>
                         </div>
@@ -54,7 +54,7 @@
 
                     <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
                         <label asp-for="Celular" class="">Celular</label>
-                        <input asp-for="Celular" type="text" class="form-control" id="Celular" placeholder="Ex: (11) 998877665">
+                        <input asp-for="Celular" type="text" class="form-control" id="Celular" placeholder="Ex: 11 998877665">
                         <div class="fs-12px">
                             <span asp-validation-for="Celular" class="text-danger"></span>
                         </div>
@@ -62,7 +62,7 @@
 
                     <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
                         <label asp-for="Comercial" class="">Comercial</label>
-                        <input asp-for="Comercial" type="text" class="form-control" id="Comercial" placeholder="Ex: (61) 3030-4040">
+                        <input asp-for="Comercial" type="text" class="form-control" id="Comercial" placeholder="Ex: 61 3030-4040">
                         <div class="fs-12px">
                             <span asp-validation-for="Comercial" class="text-danger"></span>
                         </div>
@@ -75,11 +75,11 @@
                             <span asp-validation-for="Endereco" class="text-danger"></span>
                         </div> 
                     </div>
-                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
+                    <div class="col-md-6 d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
                         <label asp-for="Email" class="">Email</label>
                         <input asp-for="Email" type="text" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">
                         <div class="fs-12px">
-                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <span asp-validation-for="Email" class="alert-danger"></span>
                         </div>           
                     </div>
                 </div>
@@ -96,7 +96,7 @@
     @if (Model != null && Model.Colaboradores.Any())
     {
         <div class="table-responsive p-2">
-            <table class="table table-hover table-bordered m-0 h-75" style="height: 500px">
+            <table id="table" class="table table-hover table-bordered m-0 h-75" style="height: 500px">
                 
                 <thead style="height:50px" class="table-light position-sticky top-0">
                     <tr itemscope>
@@ -122,7 +122,7 @@
                             <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Comercial)</td>
                             <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco)</td>
                             <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Email)</td>
-                            <td class="text-nowrap">
+                            <td style="height: 50px" class="text-nowrap">
                                 <a asp-action="Edit" asp-route-id="@item.Id" title="Editar">
                                     <i class="bi bi-pencil-square text-dark"></i>
                                 </a>
@@ -154,16 +154,20 @@
                 {
 
                     <li class="page-item">
-                        <a class="page-link" href="javascript:void(0)" data-pagina="@ViewBag.PaginaAtual - 1">Anterior</a>
+                        <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual - 1)">Anterior</a>
                     </li>
 
+                }else{
+                      <li class="page-item disabled">
+                        <a class="page-link" href="javascript:void(0)">Anterior</a>
+                       </li>
                 }
 
 
                 @for (int i = 1; i <= ViewBag.TotalPaginas; i++)
                 {
                     <li class="page-item @(i == ViewBag.PaginaAtual ? "active" : "")">
-                        <a class="page-link" href="javascript:void(0)">@i</a>
+                        <a class="page-link" href="javascript:void(0)" data-pagina="@i">@i</a>
 
                     </li>
                 }
@@ -173,10 +177,13 @@
 
 
                     <li class="page-item">
-                        <a class="page-link" href="javascript:void(0) data-pagina=" @ViewBag.PaginaAtual + 1"">Próximo</a>
+                        <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual + 1)">Próximo</a>
                     </li>
 
-                }
+                }else{
+                    <li class="page-item disabled">
+                        <a class="page-link" href="javascript:void(0)">Próximo</a>
+                    </li>}
 
             </ul>
         </nav>
@@ -188,25 +195,64 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-
     <script>
         $(document).ready(function () {
-            $('.page-link').on('click', function (e) {
-                e.preventDefault();
-                let pagina = $(this).data('pagina');
+            $(document).on('click', '.pagination .page-link', function (e) {
+            e.preventDefault();
 
-                $.ajax({
-                    url: '/Contato/Pagina', // sua rota real
-                    method: 'GET',
-                    data: { paginaAtual: pagina },
-                    success: function (response) {
-                        $('#tabela-contatos tbody').html(response); // injeta só as linhas da tabela
-                    },
-                    error: function () {
-                        alert('Erro ao carregar os dados.');
+            let pagina = $(this).data('pagina');
+
+            $.ajax({
+                url: '/Contato/ObterColaboradoresPaginados',
+                method: 'GET',
+                data: { paginaAtual: pagina },
+                success: function (response) {
+                    $('#table tbody').html(response.html);
+
+                    let paginacaoHtml = '';
+
+                    if (response.paginaAtual > 1) {
+                        paginacaoHtml += `
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual - 1}">Anterior</a>
+                            </li>`;
                     }
-                });
+                    else{
+                        paginacaoHtml += `
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:void(0)">Anterior</a>
+                            </li>`;
+                    }
+
+                    for (let i = 1; i <= response.totalPaginas; i++) {
+                        let activeClass = (i === response.paginaAtual) ? 'active' : '';
+                        paginacaoHtml += `
+                            <li class="page-item ${activeClass}">
+                                <a class="page-link" href="javascript:void(0)" data-pagina="${i}">${i}</a>
+                            </li>`;
+                    }
+
+                    if (response.paginaAtual < response.totalPaginas) {
+                        paginacaoHtml += `
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual + 1}">Próximo</a>
+                            </li>`;
+                    }
+                    else{
+                        paginacaoHtml += `
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:void(0)">Próximo</a>
+                            </li>`;
+                    }
+
+                    $('.pagination').html(paginacaoHtml);
+                },
+                error: function () {
+                    alert('Erro ao carregar os dados.');
+                }
             });
+        });
+
         });
     </script>
 }
