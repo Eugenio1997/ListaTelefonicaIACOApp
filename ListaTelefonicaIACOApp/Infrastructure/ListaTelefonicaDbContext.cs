@@ -18,10 +18,10 @@ namespace ListaTelefonicaIACOApp.Infrastructure
             return new OracleConnection(_connectionString);
         }
 
-        public IDbConnection GetOpenConnection()
+        public async Task<IDbConnection> GetOpenConnectionAsync()
         {
             var conn = CreateConnection();
-            conn.Open();
+            await conn.OpenAsync();
             return conn;
         }
 
