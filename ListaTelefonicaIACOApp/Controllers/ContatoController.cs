@@ -62,7 +62,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                 sb.Append($"<td class='text-nowrap'>{contato.Fixo}</td>");
                 sb.Append($"<td class='text-nowrap'>{contato.Celular}</td>");
                 sb.Append($"<td class='text-nowrap'>{contato.Comercial}</td>");
-                sb.Append($"<td class='text-nowrap'>{contato.Endereco}</td>");
+                //sb.Append($"<td class='text-nowrap'>{contato.Endereco}</td>");
                 sb.Append($"<td class='text-nowrap'><a href='mailto:{contato.Email}'>{contato.Email}</a></td>");
                 sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
                     $"<a href='/Contato/Edit/{contato.Id}' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");

@@ -39,9 +39,11 @@ body {
 
 
 .icon-add-colaborador {
-    font-size: 50px;
+    font-size: 40px;
 }
-
+.form-group-h80px {
+    height: 80px;
+}
 /*
 .acao {
     display: flex;

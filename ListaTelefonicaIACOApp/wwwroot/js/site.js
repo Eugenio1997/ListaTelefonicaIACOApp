@@ -5,10 +5,8 @@
 
 
 $(document).ready(function () {
-    // Landline or commercial phone format: (99) 9999-9999
-    $('#Fixo').mask('(00) 0000-0000');
-    $('#Comercial').mask('(00) 0000-0000');
-
-    // Mobile phone format: (99) 999999999
-    $('#Celular').mask('(00) 000000000');
+    $('.telefone-fixo').mask('(00) 0000-0000');
+    $('.telefone-celular').mask('(00) 000000000');
+    $('.telefone-comercial').mask('(00) 0000-0000');
+    $('.CEP').mask('00000-000');
 });
