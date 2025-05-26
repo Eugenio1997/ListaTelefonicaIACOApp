@@ -1,5 +1,5 @@
 ﻿@using ListaTelefonicaIACOApp.ViewModels
-@model ContatoViewModel
+@model ContatoIndexViewModel
 
 @{
     ViewData["Title"] = "Agenda Telefônica - IACO";
@@ -17,7 +17,7 @@
                 background-color: #f9f9f9;  border-radius: 5px;"
                 data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar Contato"
                 >
-            <a  class="d-flex justify-content-center" asp-action="Create">
+            <a  class="d-flex justify-content-center align-items-center" asp-action="Create">
                 <i class="bi bi-person-plus text-dark icon-add-colaborador"> </i>
             </a>
         </div>
@@ -37,45 +37,74 @@
 
                    
                     <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
-                        <label asp-for="Nome" class="">Nome</label>
-                        <input asp-for="Nome" type="text" class="form-control" id="Nome" placeholder="Ex: Ana">
+                        <label asp-for="Contato_Nome" class="">Nome</label>
+                        <input asp-for="Contato_Nome" type="text" class="form-control" id="Nome" placeholder="Ex: Ana">
                         <div id="erro" class="fs-12px">
-                            <span asp-validation-for="Nome" class="text-danger"></span>
+                            <span asp-validation-for="Contato_Nome" class="text-danger"></span>
                         </div>
                     </div>
 
                     <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
-                        <label asp-for="Sobrenome" class="">Sobrenome</label>
-                        <input asp-for="Sobrenome" type="text" class="form-control" id="Sobrenome" placeholder="Ex: Clara">
+                        <label asp-for="Contato_Sobrenome" class="">Sobrenome</label>
+                        <input asp-for="Contato_Sobrenome" type="text" class="form-control" id="Sobrenome" placeholder="Ex: Clara">
                         <div id="erro" class="fs-12px">
-                            <span asp-validation-for="Sobrenome" class="text-danger"></span>
+                            <span asp-validation-for="Contato_Sobrenome" class="text-danger"></span>
                         </div>
                     </div>
-                   
-                   
-                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
-                        <label asp-for="Fixo" class="">Fixo</label>
-                        <input asp-for="Fixo" type="tel" class="form-control telefone-fixo" id="Fixo" placeholder="Ex: 11 2345-6789  ">
+
+                     <div class="col-md-6 d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
+                        <label asp-for="Contato_Email" class="">Email</label>
+                        <input asp-for="Contato_Email" type="email" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">
                         <div class="fs-12px">
-                            <span asp-validation-for="Fixo" class="text-danger"></span>
+                            <span asp-validation-for="Contato_Email" class="text-danger"></span>
+                        </div>           
+                    </div>
+       
+                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
+                        <label asp-for="Contato_Fixo" class="">Fixo</label>
+                        <input asp-for="Contato_Fixo" type="tel" class="form-control telefone-fixo" id="Fixo" placeholder="Ex: 11 2345-6789  ">
+                        <div class="fs-12px">
+                            <span asp-validation-for="Contato_Fixo" class="text-danger"></span>
                         </div>
                     </div>
 
                     <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
-                        <label asp-for="Celular" class="">Celular</label>
-                        <input asp-for="Celular" type="tel" class="form-control telefone-celular" id="Celular" placeholder="Ex: 11 998877665">
+                        <label asp-for="Contato_Celular" class="">Celular</label>
+                        <input asp-for="Contato_Celular" type="tel" class="form-control telefone-celular" id="Celular" placeholder="Ex: 11 998877665">
                         <div class="fs-12px">
-                            <span asp-validation-for="Celular" class="text-danger"></span>
+                            <span asp-validation-for="Contato_Celular" class="text-danger"></span>
                         </div>
                     </div>
 
                     <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
-                        <label asp-for="Comercial" class="">Comercial</label>
-                        <input asp-for="Comercial" type="tel" class="form-control telefone-comercial" id="Comercial" placeholder="Ex: 61 3030-4040">
+                        <label asp-for="Contato_Comercial" class="">Comercial</label>
+                        <input asp-for="Contato_Comercial" type="tel" class="form-control telefone-comercial" id="Comercial" placeholder="Ex: 61 3030-4040">
                         <div class="fs-12px">
-                            <span asp-validation-for="Comercial" class="text-danger"></span>
+                            <span asp-validation-for="Contato_Comercial" class="text-danger"></span>
                         </div>
                     </div>
+                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 col-xl-8 campos-filtros">
+                        <label asp-for="Endereco.Endereco_Rua" class="d-flex justify-content-between"></label>
+                        <input asp-for="Endereco.Endereco_Rua" type="text" class="form-control" id="Endereco" placeholder="Ex: Centro">
+                        <div class="fs-12px">
+                            <span asp-validation-for="Endereco.Endereco_Rua" class="text-danger"></span>
+                        </div> 
+                    </div>
+                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 col-xl-8 campos-filtros">
+                        <label asp-for="Endereco.Endereco_Bairro" class="d-flex justify-content-between"></label>
+                        <input asp-for="Endereco.Endereco_Bairro" type="text" class="form-control" id="Endereco" placeholder="Ex: Centro">
+                        <div class="fs-12px">
+                            <span asp-validation-for="Endereco.Endereco_Bairro" class="text-danger"></span>
+                        </div> 
+                    </div>
+                    <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 col-xl-8 campos-filtros">
+                        <label asp-for="Endereco.Endereco_Cidade" class="d-flex justify-content-between"></label>
+                        <input asp-for="Endereco.Endereco_Cidade" type="text" class="form-control" id="Endereco" placeholder="Ex: São Paulo">
+                        <div class="fs-12px">
+                            <span asp-validation-for="Endereco.Endereco_Cidade" class="text-danger"></span>
+                        </div> 
+                    </div>
+
                     @{
                         /*
                           <div class="d-flex gap-2 flex-column col-sm-12 col-md-6 col-xl-8 campos-filtros">
@@ -96,14 +125,7 @@
                          */
                     
                     }
-                   
-                    <div class="col-md-6 d-flex gap-2 flex-column col-sm-12 col-md-6 campos-filtros">
-                        <label asp-for="Email" class="">Email</label>
-                        <input asp-for="Email" type="email" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">
-                        <div class="fs-12px">
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>           
-                    </div>
+
                 </div>
 
                 <div style="height:50px" class="d-flex w-100 justify-content-end align-items-center col-auto">
@@ -126,40 +148,54 @@
                 
                 <thead style="height:50px" class="table-light position-sticky top-0">
                     <tr itemscope>
-                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Id)</th>
-                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Nome)</th>
-                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Fixo)</th>
-                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Celular)</th>
-                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Comercial)</th>
-                        @{/*<th class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco)</th> */}
-                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Email)</th>
+                        @{/*<th class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Id)</th>*/}
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Nome)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Sobrenome)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Fixo)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Celular)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Comercial)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Email)</th>
+                        @{/*<th class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Id)</th>*/}
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Rua)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Numero)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Bairro)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Cidade)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_CEP)</th>
+                        <th class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Complemento)</th>
                         <th colspan="3"></th>
-                       
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.Colaboradores)
                     {
                         <tr>
-                            <td class="text-nowrap h-100 d-flex justify-content-center align-items-center">@Html.DisplayFor(modelItem => item.Id)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Nome)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Fixo)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Celular)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Comercial)</td>
-                            @{/*<td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco)</td>*/}
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Email)</td>
+                            @{/*<td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Id)</td> */}
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Sobrenome)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Fixo)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Celular)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Comercial)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Email)</td>
+                            @{/*<td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Id)</td>*/}
+
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Rua)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Numero)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Bairro)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Cidade)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_CEP)</td>
+                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Complemento)</td>
                             <td style="height: 50px" class="text-nowrap">
-                                <a asp-action="Edit" asp-route-id="@item.Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" >
+                                <a asp-action="Edit" asp-route-id="@item.Contato_Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                                     <i class="bi bi-pencil-square text-dark"></i>
                                 </a>
                             </td>
                             <td style="height: 50px" class="text-nowrap">
-                                <a asp-action="Details" asp-route-id="@item.Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalhes">
+                                <a asp-action="Details" asp-route-id="@item.Contato_Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalhes">
                                     <i class="bi bi-eye text-dark"></i>
                                 </a>
                             </td>
                             <td style="height: 50px" class="text-nowrap">
-                                <a asp-action="Delete" asp-route-id="@item.Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Deletar">
+                                <a asp-action="Delete" asp-route-id="@item.Contato_Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Deletar">
                                     <i class="bi bi-trash text-dark"></i>
                                 </a>
                             </td>

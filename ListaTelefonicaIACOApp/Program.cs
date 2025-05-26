@@ -13,6 +13,8 @@ builder.Services.AddScoped(sp =>
     return new ListaTelefonicaDbContext(configuration);
 });
 
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
 var app = builder.Build();
 
 // Crie a conexão com Oracle
