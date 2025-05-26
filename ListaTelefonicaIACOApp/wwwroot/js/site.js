@@ -10,3 +10,8 @@ $(document).ready(function () {
     $('.telefone-comercial').mask('(00) 0000-0000');
     $('.CEP').mask('00000-000');
 });
+
+//Ativando o tooltip do Bootstrap
+$(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip();
+});
