@@ -41,6 +41,7 @@ body {
 .icon-add-colaborador {
     font-size: 40px;
 }
+
 .form-group-h80px {
     height: 80px;
 }
@@ -56,7 +57,7 @@ body {
 .campos-filtros {
     min-width: 200px;
     max-width: 300px;
-    height: 102px;
+    height: 80px;
 }
 
 .fs-12px {
