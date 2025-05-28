@@ -74,16 +74,16 @@
                             </div>
                             <div class="d-flex gap-2 flex-column col-md-4 campos-filtros">
                                 <label asp-for="Endereco.Endereco_Rua" class="d-flex justify-content-between"></label>
-                                <input asp-for="Endereco.Endereco_Rua" type="text" class="form-control" id="Endereco" placeholder="Ex: Centro">
+                                <input asp-for="Endereco.Endereco_Rua" type="text" class="form-control" id="Rua" placeholder="Ex: Centro">
                             </div>
                             <div class="d-flex gap-2 flex-column col-md-6 campos-filtros">
                                 <label asp-for="Endereco.Endereco_Bairro" class="d-flex justify-content-between"></label>
-                                <input asp-for="Endereco.Endereco_Bairro" type="text" class="form-control" id="Endereco" placeholder="Ex: Centro"> 
+                                <input asp-for="Endereco.Endereco_Bairro" type="text" class="form-control" id="Bairro" placeholder="Ex: Centro"> 
                             </div>
                            
                             <div class="d-flex gap-2 flex-column col-md-6 campos-filtros">
                                 <label asp-for="Endereco.Endereco_Cidade" class="form-label">Selecionar a cidade</label>
-                                <select asp-for="Endereco.Endereco_Cidade" class="form-select" aria-label="Selecionar cidade">
+                                <select id="Cidade" asp-for="Endereco.Endereco_Cidade" class="form-select" aria-label="Selecionar cidade">
                                     <option selected value="">Escolha uma cidade</option> <!-- Valor em branco para seleção inicial -->
                                     <option value="CostaRica">Costa Rica</option>
                                     <option value="ChapadaoDoSul">Chapadao do Sul</option>
@@ -94,17 +94,28 @@
 
                     </div>
 
+                   
+                    <div style="height:50px" class="d-flex w-100 justify-content-end gap-4 align-items-center col-auto">
+                        <button
+                                id="btnLimparFiltros"
+                                style=""
+                                type="submit"
+                                class="btn btn-primary col-auto h-75">Limpar Filtros
+                        </button>
 
+                        <button
+                            
+                                id="btnFiltrar"
+                                style=""
+                                type="submit"
+                                class="btn btn-primary col-auto h-75">Buscar
+                        </button>
+                    </div>
+                           
+              
                 </div>
                 
-
-                <div style="height:50px" class="d-flex w-100 justify-content-end align-items-center col-auto">
-                    <button
-                            id="btnFiltrar"
-                            style="width:100px"
-                            type="submit"
-                            class="btn btn-primary h-75">Buscar</button>
-                </div>
+                
             </div>
         </form>
     </div>
@@ -116,56 +127,53 @@
         <div style="height:500px; min-width:500px" class="table-responsive">
             <table id="table" class="table table-hover table-borderless m-0 h-75">
                 
-                <thead style="height:50px" class="table-light position-sticky top-0">
-                    <tr itemscope>
-                        @{/*<th class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Id)</th>*/}
-                        <th style="font-size:16px; width:40px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Nome)</th>
-                        <th style="font-size:16px; width:40px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Sobrenome)</th>
-                        <th style="font-size:16px; width:40px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Fixo)</th>
-                        <th style="font-size:16px; width:40px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Celular)</th>
-                        <th style="font-size:16px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Comercial)</th>
-                        <th style="font-size:16px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Email)</th>
-                        @{/*<th class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Id)</th>*/}
-                        <th style="font-size:16px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Rua)</th>
-                        <th style="font-size:16px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Numero)</th>
-                        <th style="font-size:16px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Bairro)</th>
-                        <th style="font-size:16px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Cidade)</th>
-                        <th style="font-size:16px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Complemento)</th>
-                        <th colspan="3"></th>
+                <thead class="table-light position-sticky top-0" style="min-height:60px">
+                    <tr>
+                        <th style="font-size:16px; min-width:120px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Nome)</th>
+                        <th style="font-size:16px; min-width:120px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Sobrenome)</th>
+                        <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Fixo)</th>
+                        <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Celular)</th>
+                        <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Comercial)</th>
+                        <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Email)</th>
+
+                        <th style="font-size:16px; min-width:140px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Rua)</th>
+                        <th style="font-size:16px; min-width:80px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Numero)</th>
+                        <th style="font-size:16px; min-width:120px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Bairro)</th>
+                        <th style="font-size:16px; min-width:140px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Cidade)</th>
+                        <th style="font-size:16px; min-width:160px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Complemento)</th>
+
+              
+                        <th style="min-width:50px; min-height:60px"></th>
+                        <th style="min-width:50px; min-height:60px"></th>
+                        <th style="min-width:50px; min-height:60px"></th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @foreach (var item in Model.Colaboradores)
                     {
-                        <tr>
-                            @{/*<td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Id)</td> */}
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Sobrenome)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Fixo)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Celular)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Comercial)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Contato_Email)</td>
-                            @{/*<td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Id)</td>*/}
+                        <tr style="height:60px">
+                            <td class="text-nowrap" style="min-width:120px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
+                            <td class="text-nowrap" style="min-width:120px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Sobrenome)</td>
+                            <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Fixo)</td>
+                            <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Celular)</td>
+                            <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Comercial)</td>
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Email)</td>
+                            <td class="text-nowrap" style="min-width:140px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Rua)</td>
+                            <td class="text-nowrap" style="min-width:80px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Numero)</td>
+                            <td class="text-nowrap" style="min-width:120px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Bairro)</td>
+                            <td class="text-nowrap" style="min-width:140px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Cidade)</td>
+                            <td class="text-nowrap" style="width:160px; height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Complemento)</td>
 
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Rua)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Numero)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Bairro)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Cidade)</td>
-                            <td class="text-nowrap">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Complemento)</td>
-                            <td style="height: 50px" class="text-nowrap">
-                                <a asp-action="Edit" asp-route-id="@item.Contato_Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
-                                    <i class="bi bi-pencil-square text-dark"></i>
-                                </a>
+                            
+                            <td style="width:50px; height:60px" class="text-nowrap">
+                                <a asp-action="Edit" asp-route-id="@item.Contato_Id"><i class="bi bi-pencil-square text-dark"></i></a>
                             </td>
-                            <td style="height: 50px" class="text-nowrap">
-                                <a asp-action="Details" asp-route-id="@item.Contato_Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalhes">
-                                    <i class="bi bi-eye text-dark"></i>
-                                </a>
+                            <td style="width:50px; height:60px" class="text-nowrap">
+                                <a asp-action="Details" asp-route-id="@item.Contato_Id"><i class="bi bi-eye text-dark"></i></a>
                             </td>
-                            <td style="height: 50px" class="text-nowrap">
-                                <a asp-action="Delete" asp-route-id="@item.Contato_Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Deletar">
-                                    <i class="bi bi-trash text-dark"></i>
-                                </a>
+                            <td style="width:50px; height:60px" class="text-nowrap">
+                                <a asp-action="Delete" asp-route-id="@item.Contato_Id"><i class="bi bi-trash text-dark"></i></a>
                             </td>
                         </tr>
                     }
@@ -227,7 +235,7 @@
 
     <script>
         $(document).ready(function () {
-            $(document).on('click', '.pagination .page-link', function (e) {
+            $(document).on('click', '.pagination .page-link, #btnLimparFiltros', function (e) {
             e.preventDefault();
 
             let pagina = $(this).data('pagina');
@@ -238,7 +246,6 @@
                 data: { paginaAtual: pagina },
                 success: function (response) {
                     $('#table tbody').html(response.html);
-                    //$('thColspan3').attr('colspan', 3);
 
                     let paginacaoHtml = '';
 
@@ -290,30 +297,34 @@
     <script>
        $(document).ready(function () {
             $('#btnFiltrar').on('click', function () {
-                let filtros = [];
+                
+                const params = {
+                    Nome: $('#Nome').val(),
+                    Sobrenome: $('#Sobrenome').val(),
+                    Fixo: $('#Fixo').val(),
+                    Celular: $('#Celular').val(),
+                    Comercial: $('#Comercial').val(),
+                    Email: $('#Email').val(),
+                    Rua: $('#Rua').val(),
+                    Bairro: $('#Bairro').val(),
+                    Cidade: $('#Cidade').val()
+                };
 
-                $('#formFiltro').find('input, select').each(function () {
-                    let nome = $(this).attr('name');
-                    let valor = $(this).val();
-
-                    if (valor !== '' && valor !== null) {
-                        filtros.push({ Nome: nome, Valor: valor });
-                    }
-                });
+                const queryString = Object.keys(params)
+                    .map(k => `${k}=${encodeURIComponent(params[k])}`)
+                    .join('&');
 
                 $.ajax({
-                    type: "POST",
-                    url: '/Contato/ObterContatosFiltrados',
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify(filtros),
+                    type: "GET",
+                    url: `/Contato/ObterContatosFiltrados?${queryString}`,
                     success: function (html) {
-                        $('##table tbody').html(html); // Atualiza <tbody> com o HTML recebido
+                        $('#table tbody').html(html);
                     },
                     error: function (xhr) {
-                        console.error("Erro ao buscar contatos:", xhr.responseText);
+                        console.error("Erro:", xhr.responseText);
                     }
                 });
             });
-    });
+       });
     </script>
 }
