@@ -8,7 +8,7 @@
 
 <body>
 
-    <header class="d-flex gap-3 
+    <header style="min-width: 500px;" class="d-flex gap-3 
         justify-content-end 
         align-items-center"
     >
@@ -46,7 +46,7 @@
                                 <input asp-for="Contato_Sobrenome" type="text" class="form-control" id="Sobrenome" placeholder="Ex: Clara">
                             </div>
 
-                             <div class="d-flex gap-2 flex-column col-sm-12 col-md-4 campos-filtros">
+                            <div class="d-flex gap-2 flex-column col-sm-12 col-md-4 campos-filtros">
                                 <label asp-for="Contato_Fixo" class="">Fixo</label>
                                 <input asp-for="Contato_Fixo" type="tel" class="form-control telefone-fixo" id="Fixo" placeholder="Ex: 11 2345-6789  ">
                             </div>
@@ -122,10 +122,15 @@
     
 
    
-    @if (Model != null && Model.Colaboradores.Any())
+    @if (Model != null && Model.Contatos.Any())
     {
+        <div id="spinner-loading" class="text-center py-4" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+        </div>
         <div style="height:500px; min-width:500px" class="table-responsive">
-            <table id="table" class="table table-hover table-borderless m-0 h-75">
+            <table id="table" class="table table-hover table-borderless m-0 h-75 tabela-contatos">
                 
                 <thead class="table-light position-sticky top-0" style="min-height:60px">
                     <tr>
@@ -150,14 +155,31 @@
                 </thead>
 
                 <tbody>
-                    @foreach (var item in Model.Colaboradores)
+                    @foreach (var item in Model.Contatos)
                     {
                         <tr style="height:60px">
                             <td class="text-nowrap" style="min-width:120px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
                             <td class="text-nowrap" style="min-width:120px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Sobrenome)</td>
-                            <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Fixo)</td>
-                            <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Celular)</td>
-                            <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Comercial)</td>
+
+                            <td class="text-nowrap" style="min-width:120px; min-height:60px">
+                             <input type="text" value="@item.Contato_Fixo" class="form-control telefone-fixo input-sem-borda" readonly />
+                            </td>
+                            <td class="text-nowrap" style="min-width:120px; min-height:60px">
+                             <input type="text" value="@item.Contato_Celular" class="form-control telefone-celular input-sem-borda" readonly />
+                            </td>
+                            <td class="text-nowrap" style="min-width:120px; min-height:60px">
+                             <input type="text" value="@item.Contato_Celular" class="form-control telefone-comercial input-sem-borda" readonly />
+                            </td>
+                            @{
+                                /* 
+                                   <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Fixo)</td>
+                                    <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Celular)</td>
+                                    <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Comercial)</td>
+                                 
+                                 */
+                            }
+                           
+
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Email)</td>
                             <td class="text-nowrap" style="min-width:140px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Rua)</td>
                             <td class="text-nowrap" style="min-width:80px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Numero)</td>
@@ -179,11 +201,14 @@
                     }
                 </tbody>
             </table>
+            <div id="mensagem-nenhum-contato" class="text-center py-4 d-none">
+                <p class="fw-bold fs-4">Nenhum contato foi encontrado.</p>
+            </div>
         </div>
         
 
     }
-    <div style="height: 60px" class="d-flex col-auto justify-content-end align-items-center">
+    <div style="height: 60px; min-width: 500px;" class="d-flex col-auto justify-content-end align-items-center">
         <nav class="" aria-label="Paginação">
             <ul class="pagination mb-0">
 
@@ -238,6 +263,11 @@
             $(document).on('click', '.pagination .page-link, #btnLimparFiltros', function (e) {
             e.preventDefault();
 
+            //limpando todos os campos de filtro
+            $('#formFiltro').find('input, select').each(function () {
+                $(this).val('');
+            });
+
             let pagina = $(this).data('pagina');
 
             $.ajax({
@@ -246,6 +276,14 @@
                 data: { paginaAtual: pagina },
                 success: function (response) {
                     $('#table tbody').html(response.html);
+                    $('#table').show();
+                    $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
+                    $('#mensagem-nenhum-contato').hide();
+                   
+                    $('.pagination').show(); // Mostra a paginacao
+
+                      // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
+                      aplicarMascaras();
 
                     let paginacaoHtml = '';
 
@@ -294,37 +332,62 @@
         });
     </script>
 
-    <script>
-       $(document).ready(function () {
-            $('#btnFiltrar').on('click', function () {
-                
-                const params = {
-                    Nome: $('#Nome').val(),
-                    Sobrenome: $('#Sobrenome').val(),
-                    Fixo: $('#Fixo').val(),
-                    Celular: $('#Celular').val(),
-                    Comercial: $('#Comercial').val(),
-                    Email: $('#Email').val(),
-                    Rua: $('#Rua').val(),
-                    Bairro: $('#Bairro').val(),
-                    Cidade: $('#Cidade').val()
-                };
+   <script>
+    $(document).ready(function () {
+        $('#btnFiltrar').on('click', function (e) {
+            e.preventDefault(); // impede envio padrão do formulário
 
-                const queryString = Object.keys(params)
-                    .map(k => `${k}=${encodeURIComponent(params[k])}`)
-                    .join('&');
+            //usando 'cleanVal' para obter o valor do input sem máscara
+            const params = {
+                Nome: $('#Nome').val(),
+                Sobrenome: $('#Sobrenome').val(),
+                Fixo: $('#Fixo').cleanVal(),
+                Celular: $('#Celular').cleanVal(),
+                Comercial: $('#Comercial').cleanVal(),
+                Email: $('#Email').val(),
+                Rua: $('#Rua').val(),
+                Bairro: $('#Bairro').val(),
+                Cidade: $('#Cidade').val()
+            };
 
-                $.ajax({
-                    type: "GET",
-                    url: `/Contato/ObterContatosFiltrados?${queryString}`,
-                    success: function (html) {
-                        $('#table tbody').html(html);
-                    },
-                    error: function (xhr) {
-                        console.error("Erro:", xhr.responseText);
+            //montando a querystring
+            const queryString = Object.keys(params)
+                .map(k => `${k}=${encodeURIComponent(params[k])}`)
+                .join('&');
+
+            $.ajax({
+                type: "GET",
+                url: `/Contato/ObterContatosFiltrados?${queryString}`,
+                beforeSend: function () {
+                    $('#spinner-loading').show();         // Mostra o spinner
+                    $('#table').hide();                  // Esconde tabela enquanto carrega
+                    $('#mensagem-nenhum-contato').hide(); // Garante que mensagem esteja oculta durante o carregamento
+                },
+                success: function (response) {
+                    if (!response.encontrou) {
+                        $('#table').hide();
+                        $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
+                        $('.pagination').hide(); // Oculta a paginação
+                    } else {
+                        $('#mensagem-nenhum-contato').hide();
+                        $('#table tbody').html(response.html);
+                        $('#table').show();
+                        $('.pagination').show(); // Mostra a paginação novamente se necessário
+
+
+                        // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
+                       aplicarMascaras();
                     }
-                });
+                },
+                error: function (xhr) {
+                    console.error("Erro:", xhr.responseText);
+                },
+                complete: function () {
+                    $('#spinner-loading').hide(); // Oculta o spinner após conclusão
+                }
             });
-       });
-    </script>
+        });
+    });
+</script>
+
 }
