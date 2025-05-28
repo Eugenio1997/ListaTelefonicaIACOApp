@@ -22,7 +22,7 @@ namespace ListaTelefonicaIACOApp.ViewModels
         [Required(ErrorMessage = "O campo Comercial é obrigatório.")]
         [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: (99) 9999-9999")]
         public string Comercial { get; set; } = string.Empty;
-        [Required(ErrorMessage = "O e-mail é Obrigatório.")]
+        [Required(ErrorMessage = "O e-mail é obrigatório.")]
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
         public string Email { get; set; } = string.Empty;
         public int EnderecoId { get; set; }
@@ -48,6 +48,6 @@ namespace ListaTelefonicaIACOApp.ViewModels
         [RegularExpression(@"^\d{5}-?\d{3}$", ErrorMessage = "O CEP deve estar no formato 00000000.")]
         public string CEP { get; set; } = string.Empty;
         public string? Complemento { get; set; }
-        public List<ContatoCadastroViewModel> Colaboradores { get; set; } = new();
+        public List<ContatoCadastroViewModel> Contatos { get; set; } = new();
     }
 }

@@ -40,7 +40,7 @@ namespace ListaTelefonicaIACOApp.ViewModels
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
         public string Contato_Email { get; set; } = string.Empty;
         public int Contato_EnderecoId { get; set; }
-        public List<ContatoIndexViewModel> Colaboradores { get; set; } = new();
+        public List<ContatoIndexViewModel> Contatos { get; set; } = new();
         [Display(Name = "Endereço")]
         public EnderecoViewModel Endereco { get; set; } = new();
 

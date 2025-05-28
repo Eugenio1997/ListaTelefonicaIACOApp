@@ -13,7 +13,7 @@ namespace ListaTelefonicaIACOApp.ViewModels
         public string Endereco_Rua { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O número é obrigatório.")]
-        [Display(Name = "Número da Residência")]
+        [Display(Name = "Nº Residência")]
         [RegularExpression(@"^\d+$", ErrorMessage = "O número deve conter apenas dígitos.")]
         public string Endereco_Numero { get; set; } = string.Empty;
 
