@@ -13,16 +13,9 @@ namespace ListaTelefonicaIACOApp.Infrastructure
             _connectionString = configuration.GetConnectionString("ListaTelefonicaIACOConnectionString");
         }
 
-        public OracleConnection CreateConnection()
+        public IDbConnection CreateConnection()
         {
             return new OracleConnection(_connectionString);
-        }
-
-        public async Task<IDbConnection> GetOpenConnectionAsync()
-        {
-            var conn = CreateConnection();
-            await conn.OpenAsync();
-            return conn;
         }
 
     }
