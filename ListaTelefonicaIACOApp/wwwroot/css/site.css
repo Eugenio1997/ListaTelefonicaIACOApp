@@ -45,15 +45,17 @@ body {
 .form-group-h80px {
     height: 80px;
 }
-/*
-.acao {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    align-content: center;
-    height: 100%;
+
+.tabela-contatos tr {
+    height: 36px !important; /* ou outro valor desejado */
 }
-    */
+
+.tabela-contatos td, .tabela-contatos th {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    font-size: 14px;
+}
+
 .campos-filtros {
     min-width: 200px;
     max-width: 300px;
@@ -62,4 +64,13 @@ body {
 
 .fs-12px {
     font-size: 12px;
+}
+
+.input-sem-borda {
+    border: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    font-size: inherit;
+    width: 100%;
 }

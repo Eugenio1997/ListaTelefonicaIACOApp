@@ -138,6 +138,60 @@
 
             
 
+@section Scripts {
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('#btnCadastrarContato').on('click', function (e) {
+                e.preventDefault(); // impede envio padrão do formulário
+
+                //usando 'cleanVal' para obter o valor do input sem máscara
+                const params = {
+                    Nome: $('#Nome').val(),
+                    Sobrenome: $('#Sobrenome').val(),
+                    Fixo: $('#Fixo').cleanVal(),
+                    Celular: $('#Celular').cleanVal(),
+                    Comercial: $('#Comercial').cleanVal(),
+                    Email: $('#Email').val(),
+                    Rua: $('#Rua').val(),
+                    Bairro: $('#Bairro').val(),
+                    Cidade: $('#Cidade').val()
+                };
+
+                //montando a querystring
+                /*
+                const queryString = Object.keys(params)
+                    .map(k => `${k}=${encodeURIComponent(params[k])}`)
+                    .join('&');
+                */
+
+                $.ajax({
+                    type: "POST",
+                    url: `/Contato/Create`,
+                    contentType:'application/json; charset=utf-8',
+                    data: JSON.stringify(formData),
+                    beforeSend: function () {
+                        $('#spinner-loading').show();         // Mostra o spinner
+                       
+                    },
+                    success: function (response) {
+                        
+                    },
+                    error: function (xhr) {
+                        console.error("Erro:", xhr.responseText);
+                    },
+                    complete: function () {
+                        $('#spinner-loading').hide(); // Oculta o spinner após conclusão
+                    }
+                });
+            });
+        });
+    </script>
+
+}
+
        
 
              

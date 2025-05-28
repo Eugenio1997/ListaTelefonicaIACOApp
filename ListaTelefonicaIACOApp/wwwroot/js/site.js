@@ -3,15 +3,22 @@
 
 // Write your JavaScript code.
 
-
-$(document).ready(function () {
+function aplicarMascaras() {
+    console.log("✅ aplicando máscaras...");
     $('.telefone-fixo').mask('(00) 0000-0000');
-    $('.telefone-celular').mask('(00) 000000000');
+    $('.telefone-celular').mask('(00) 00000-0000');
     $('.telefone-comercial').mask('(00) 0000-0000');
     $('.CEP').mask('00000-000');
+
+}
+
+$(document).ready(function () {
+    aplicarMascaras();
 });
 
 //Ativando o tooltip do Bootstrap
 $(function () {
     $('[data-bs-toggle="tooltip"]').tooltip();
 });
+
+
