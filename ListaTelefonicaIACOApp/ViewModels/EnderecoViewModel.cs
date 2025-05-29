@@ -30,7 +30,7 @@ namespace ListaTelefonicaIACOApp.ViewModels
         [Required(ErrorMessage = "O CEP é obrigatório.")]
         [Display(Name = "CEP")]
         [RegularExpression(@"^\d{5}-?\d{3}$", ErrorMessage = "O CEP deve estar no formato 00000-000.")]
-        public string Endereco_CEP { get; set; } = string.Empty;
+        public string? Endereco_CEP { get; set; } = string.Empty;
 
         [Display(Name = "Complemento")]
         public string? Endereco_Complemento { get; set; }

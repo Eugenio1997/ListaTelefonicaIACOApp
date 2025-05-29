@@ -10,7 +10,7 @@ namespace ListaTelefonicaIACOApp.Models
         public string Numero { get; set; } = string.Empty;
         public string Bairro { get; set; } = string.Empty;
         public string Cidade { get; set; } = string.Empty;
-        public string CEP { get; set; } = string.Empty;
+        public string? CEP { get; set; } = string.Empty;
         public string? Complemento { get; set; }
 
         //Um endereco contém uma lista de contatos
