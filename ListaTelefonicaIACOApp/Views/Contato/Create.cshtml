@@ -96,7 +96,7 @@
                 <div style="min-height:90px" class="form-group col-md-12">
                     <label asp-for="Complemento"></label>
                     <input id="Complemento" asp-for="Complemento" class="form-control" placeholder="Ex: Apt 101, Bloco B" />
-                    <span asp-validation-for="Complemento" class="text-danger fs-12px"></span>
+                    <span asp-validation-for="Complemento" class="text-danger fs-12"></span>
                 </div>
             </div>
         </div>
@@ -106,16 +106,30 @@
     </form>
 </div>
 
-
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="10000">
+        <div class="d-flex gap-2 toast-header">
+            <i style="color:green" class="bi bi-check-circle fs-6"></i>
+            <strong class="me-auto text-success">Sucesso</strong>
+        </div>
+        <div class="toast-body text-success">
+            Cadastro realizado com sucesso.
+        </div>
+    </div>
+</div>
             
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-
     <script>
         $(document).ready(function () {
-        
+
+            //APLICANDO MÁSCARAS
+            $('#Fixo').mask('(00) 0000-0000');
+            $('#Celular').mask('(00) 00000-0000');
+            $('#Comercial').mask('(00) 0000-0000');
+            $('#CEP').mask('00000-000');
+
             $('#btnCadastrarContato').on('click', function (e) {
                 e.preventDefault();
 
@@ -125,12 +139,12 @@
                     return;
                 }
 
+                // ✅ SOMENTE FUNCIONA SE A MÁSCARA FOI APLICADA
                 $('#Fixo').val($('#Fixo').cleanVal());
                 $('#Celular').val($('#Celular').cleanVal());
                 $('#Comercial').val($('#Comercial').cleanVal());
                 $('#CEP').val($('#CEP').cleanVal());
 
-                // ✅ Captura os dados do form automaticamente
                 const formData = new FormData(form[0]);
 
                 $.ajax({
@@ -139,8 +153,18 @@
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function () {
-                        window.location.href = '/Contato/Index';
+                    success: function (response) {
+                            console.log("Resposta recebida:", response);
+
+                            if (response.sucesso) {
+                                var toastLiveExample = document.getElementById('liveToast');
+                                var toast = new bootstrap.Toast(toastLiveExample);
+                                toast.show();
+
+                                setTimeout(() => {
+                                    window.location.href = '/Contato/Index';
+                                }, 2000);
+                            }   
                     },
                     error: function (xhr) {
                         console.error("Erro:", xhr.responseText);
@@ -149,5 +173,6 @@
             });
         });
     </script>
+
 }
 
