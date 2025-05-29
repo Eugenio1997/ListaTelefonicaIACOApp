@@ -348,16 +348,20 @@ namespace ListaTelefonicaIACOApp.Controllers
         // POST: ContatoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ContatoCadastroViewModel contato)
+        public async Task<IActionResult> Create(ContatoCadastroViewModel c)
         {
-
-            string query = $@"
+            
+            //Cadastrar um novo endereco
+            string queryInserirEndereco = $@"
                     INSERT INTO LISTA_ENDERECOS (
-                        RUA, NUMERO, BAIRRO, CIDADE, CEP, COMPLEMENTO, CRIADO_AS, EDITADO_AS
+                        RUA, NUMERO, BAIRRO, CIDADE, CEP, COMPLEMENTO
                     ) VALUES (
-                        {contato.Rua}, {contato.Numero}, {contato.Numero}, {contato.Numero}, {contato.Numero}, {contato.Numero}, :Complemento, :CriadoAs, :EditadoAs
+                        '{c.Rua}', '{c.Numero}', '{c.Bairro}', '{c.Cidade}', '{c.CEP}', '{c.Complemento}'
                     )";
+            //Recuperar o último ID de endereco cadastrado
+            string queryObterUltimoEnderecoInserido = $@"SELECT MAX(ID) FROM LISTA_ENDERECOS";
 
+            
             try
             {
                 using (var conn = _context.CreateConnection())
@@ -366,26 +370,36 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
                     conn.Open();
+                    //1.Cadastrando o endereco
+                    int linhasAfetadasEndereco = await conn.ExecuteAsync(queryInserirEndereco);
 
-                    await conn.ExecuteAsync()
-                    //recebo um contato com um objeto complexo endereco
-                    //1.Cadastrar o endereco
-                    //2.Recuperar o ID do endereco cadastrado
-                    //3.Cadastrar o Contato e passar como valor para a coluna Endereco_ID (chave estrangeira) o ID recuperado
-                    //4. 
+                    //await conn.ExecuteAsync("COMMIT");
+
+                    if (linhasAfetadasEndereco >= 1)
+                    {
+                        //2.Recuperar o ID do endereco cadastrado
+                        var ultimoEnderecoIdDb = await conn.QueryAsync<int>(queryObterUltimoEnderecoInserido);
+
+                        string queryInserirContato = $@"
+                            INSERT INTO LISTA_CONTATOS (
+                                NOME, SOBRENOME, FIXO, CELULAR, COMERCIAL, ENDERECO_ID, EMAIL
+                            ) VALUES (
+                                '{c.Nome}', '{c.Sobrenome}', '{c.Fixo}', '{c.Celular}', '{c.Comercial}', '{ultimoEnderecoIdDb}', '{c.Email}'
+                            )";
+
+                        await conn.ExecuteAsync(queryInserirContato);
+                        //await conn.ExecuteAsync("COMMIT");
+
+                    }
 
                 }
-
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
                 return View();
             }
-            finally
-            {
-
-                RedirectToAction(nameof(Index));
-            }
+          
         }
 
         [HttpPost]

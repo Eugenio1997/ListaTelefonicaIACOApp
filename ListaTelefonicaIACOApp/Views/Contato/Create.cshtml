@@ -26,21 +26,21 @@
             <div class="row">
                 <div class="form-group form-group-h80px col-md-4">
                     <label asp-for="Nome" class="control-label"></label>
-                    <input asp-for="Nome" class="form-control" placeholder="Ex: Ana" />
+                    <input id="Nome" asp-for="Nome" class="form-control" placeholder="Ex: Ana" />
                     <div class="fs-12px">
                         <span asp-validation-for="Nome" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group form-group-h80px col-md-4">
                     <label asp-for="Sobrenome" class="control-label"></label>
-                    <input asp-for="Sobrenome" class="form-control" placeholder="Ex: Clara" />
+                    <input id="Sobrenome" asp-for="Sobrenome" class="form-control" placeholder="Ex: Clara" />
                     <div class="fs-12px">
                         <span asp-validation-for="Sobrenome" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group form-group-h80px col-md-4">
                     <label asp-for="Fixo" class="control-label"></label>
-                    <input asp-for="Fixo" class="form-control telefone-fixo" placeholder="Ex: 11 2345-6789" />
+                    <input id="Fixo" asp-for="Fixo" class="form-control telefone-fixo" placeholder="Ex: 11 2345-6789" />
                     <div class="fs-12px">
                         <span asp-validation-for="Fixo" class="text-danger"></span>
                     </div>
@@ -49,21 +49,21 @@
             <div class="row">
                 <div class="form-group form-group-h80px col-md-6">
                     <label asp-for="Celular" class="control-label"></label>
-                    <input asp-for="Celular" class="form-control telefone-celular" placeholder="Ex: 11 998877665" />
+                    <input id="Celular" asp-for="Celular" class="form-control telefone-celular" placeholder="Ex: 11 998877665" />
                     <div class="fs-12px">
                         <span asp-validation-for="Celular" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group form-group-h80px col-md-6">
                     <label asp-for="Comercial" class="control-label"></label>
-                    <input asp-for="Comercial" class="form-control telefone-comercial" placeholder="Ex: 61 3030-4040" />
+                    <input id="Comercial" asp-for="Comercial" class="form-control telefone-comercial" placeholder="Ex: 61 3030-4040" />
                     <div class="fs-12px">
                         <span asp-validation-for="Comercial" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group form-group-h80px col-md-6">
                     <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" placeholder="Ex: Ana.clara@iaco.com" />
+                    <input id="Email" asp-for="Email" class="form-control" placeholder="Ex: Ana.clara@iaco.com" />
                     <div class="fs-12px">
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
@@ -80,21 +80,21 @@
             <div class="row">
                 <div class="form-group form-group-h80px col-md-4">
                     <label asp-for="Rua" class="control-label"></label>
-                    <input asp-for="Rua" class="form-control" placeholder="Ex: Rua das Flores" />
+                    <input id="Rua" asp-for="Rua" class="form-control" placeholder="Ex: Rua das Flores" />
                     <div class="fs-12px">
                         <span asp-validation-for="Rua" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group form-group-h80px col-md-4">
                     <label asp-for="Numero" class="control-label"></label>
-                    <input asp-for="Numero" class="form-control" placeholder="Ex: 123" />
+                    <input id="Numero" asp-for="Numero" class="form-control" placeholder="Ex: 123" />
                     <div class="fs-12px">
                         <span asp-validation-for="Numero" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group form-group-h80px col-md-4">
                     <label asp-for="Bairro" class="control-label"></label>
-                    <input asp-for="Bairro" class="form-control" placeholder="Ex: Centro" />
+                    <input id="Bairro" asp-for="Bairro" class="form-control" placeholder="Ex: Centro" />
                     <div class="fs-12px">
                         <span asp-validation-for="Bairro" class="text-danger"></span>
                     </div>
@@ -104,14 +104,14 @@
             <div class="row">
                 <div class="form-group form-group-h80px col-md-6">
                     <label asp-for="Cidade" class="control-label"></label>
-                    <input asp-for="Cidade" class="form-control" placeholder="Ex: São Paulo" />
+                    <input id="Cidade" asp-for="Cidade" class="form-control" placeholder="Ex: São Paulo" />
                     <div class="fs-12px">
                         <span asp-validation-for="Cidade" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group form-group-h80px col-md-6">
                     <label asp-for="CEP" class="control-label"></label>
-                    <input asp-for="CEP" class="form-control CEP" placeholder="Ex: 01001-000" />
+                    <input id="CEP" asp-for="CEP" class="form-control CEP" placeholder="Ex: 01001-000" />
                     <div class="fs-12px">
                         <span asp-validation-for="CEP" class="text-danger"></span>
                     </div>
@@ -120,7 +120,7 @@
             <div class="row">
                 <div class="form-group form-group-h80px col-md-12">
                     <label asp-for="Complemento" class="control-label"></label>
-                    <input asp-for="Complemento" class="form-control" placeholder="Ex: Apt 101, Bloco B" />
+                    <input id="Complemento" asp-for="Complemento" class="form-control" placeholder="Ex: Apt 101, Bloco B" />
                     <div class="fs-12px">
                         <span asp-validation-for="Complemento" class="text-danger"></span>
                     </div>
@@ -130,7 +130,7 @@
         </div>
 
         <div style="height:50px" class="d-flex form-group col-12 m-0 align-items-center justify-content-end">
-            <button style="width:110px" type="submit" value="Create" class="btn btn-primary h-75">Cadastrar</button>
+            <button id="btnCadastrarContato" style="width:110px" type="submit" value="Create" class="btn btn-primary h-75">Cadastrar</button>
         </div>
     </form>
 </div>
@@ -139,16 +139,17 @@
             
 
 @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
 
         $(document).ready(function () {
 
-            $('#btnCadastrarContato').on('click', function (e) {
-                e.preventDefault(); // impede envio padrão do formulário
+            $(document).on('click', '#btnCadastrarContato', function (e) {
+                //e.preventDefault(); // impede envio padrão do formulário
 
                 //usando 'cleanVal' para obter o valor do input sem máscara
-                const params = {
+                const formData = {
                     Nome: $('#Nome').val(),
                     Sobrenome: $('#Sobrenome').val(),
                     Fixo: $('#Fixo').cleanVal(),
@@ -174,10 +175,10 @@
                     data: JSON.stringify(formData),
                     beforeSend: function () {
                         $('#spinner-loading').show();         // Mostra o spinner
-                       
+
                     },
                     success: function (response) {
-                        
+
                     },
                     error: function (xhr) {
                         console.error("Erro:", xhr.responseText);
@@ -190,16 +191,7 @@
         });
     </script>
 
-}
-
-       
-
-             
-
-        
-
-
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
