@@ -147,43 +147,43 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
 
-            if (!string.IsNullOrEmpty(filtros.Nome))
+            if (!string.IsNullOrWhiteSpace(filtros.Nome))
             {
-                queryBase += $@" AND LOWER(c.NOME) LIKE LOWER('{filtros.Nome}%')";
+                queryBase += $@" AND LOWER(TRIM(c.NOME)) LIKE LOWER('%{filtros.Nome.Trim()}%')";
+            }
+            if (!string.IsNullOrWhiteSpace(filtros.Sobrenome))
+            {
+                queryBase += $@" AND LOWER(TRIM(c.SOBRENOME)) LIKE LOWER('%{filtros.Sobrenome.Trim()}%')";
+            }
+            if (!string.IsNullOrWhiteSpace(filtros.Fixo))
+            {
+                queryBase += $@" AND LOWER(TRIM(c.FIXO)) LIKE LOWER('%{filtros.Fixo.Trim()}%')";
+            }
+            if (!string.IsNullOrWhiteSpace(filtros.Celular))
+            {
+                queryBase += $@" AND LOWER(TRIM(c.CELULAR)) LIKE LOWER('%{filtros.Celular.Trim()}%')";
+            }
+            if (!string.IsNullOrWhiteSpace(filtros.Comercial))
+            {
+                queryBase += $@" AND LOWER(TRIM(c.COMERCIAL)) LIKE LOWER('%{filtros.Comercial.Trim()}%')";
+            }
+            if (!string.IsNullOrWhiteSpace(filtros.Email))
+            {
+                queryBase += $@" AND LOWER(TRIM(c.EMAIL)) LIKE LOWER('%{filtros.Email.Trim()}%')";
+            }
+            if (!string.IsNullOrWhiteSpace(filtros.Rua))
+            {
+                queryBase += $@" AND LOWER(TRIM(e.RUA)) LIKE LOWER('%{filtros.Rua.Trim()}%')";
+            }
+            if (!string.IsNullOrWhiteSpace(filtros.Bairro))
+            {
+                queryBase += $@" AND LOWER(TRIM(e.BAIRRO)) LIKE LOWER('%{filtros.Bairro.Trim()}%')";
+            }
+            if (!string.IsNullOrWhiteSpace(filtros.Cidade))
+            {
+                queryBase += $@" AND LOWER(TRIM(e.CIDADE)) LIKE LOWER('%{filtros.Cidade.Trim()}%')";
+            }
 
-            }
-            if (!string.IsNullOrEmpty(filtros.Sobrenome))
-            {
-                queryBase += $@" AND LOWER(c.SOBRENOME) LIKE LOWER('{filtros.Sobrenome}%')";
-            }
-            if (!string.IsNullOrEmpty(filtros.Fixo))
-            {
-                queryBase += $@" AND LOWER(c.FIXO) LIKE LOWER('{filtros.Fixo}%')";
-            }
-            if (!string.IsNullOrEmpty(filtros.Celular))
-            {
-                queryBase += $@" AND LOWER(c.CELULAR) LIKE LOWER('{filtros.Celular}%')";
-            }
-            if (!string.IsNullOrEmpty(filtros.Comercial))
-            {
-                queryBase += $@" AND LOWER(c.COMERCIAL) LIKE LOWER('{filtros.Comercial}%')";
-            }
-            if (!string.IsNullOrEmpty(filtros.Email))
-            {
-                queryBase += $@" AND LOWER(c.EMAIL) LIKE LOWER('{filtros.Email}%')";
-            }
-            if (!string.IsNullOrEmpty(filtros.Rua))
-            {
-                queryBase += $@" AND LOWER(e.RUA) LIKE LOWER('{filtros.Rua}%')";
-            }
-            if (!string.IsNullOrEmpty(filtros.Bairro))
-            {
-                queryBase += $@" AND LOWER(e.BAIRRO) LIKE LOWER('{filtros.Bairro}%')";
-            }
-            if (!string.IsNullOrEmpty(filtros.Cidade))
-            {
-                queryBase += $@" AND LOWER(e.CIDADE) LIKE LOWER('{filtros.Cidade}%')";
-            }
 
 
 
