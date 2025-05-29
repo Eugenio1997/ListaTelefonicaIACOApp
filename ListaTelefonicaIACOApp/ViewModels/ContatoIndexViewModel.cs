@@ -22,12 +22,12 @@ namespace ListaTelefonicaIACOApp.ViewModels
 
         [Required(ErrorMessage = "O campo Fixo é obrigatório.")]
         [Display(Name = "Telefone Fixo")]
-        [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: (99) 9999-9999")]
+        [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: 99 9999-9999")]
         public string Contato_Fixo { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O campo Celular é obrigatório.")]
         [Display(Name = "Celular")]
-        [RegularExpression(@"^\(\d{2}\) \d{9}$", ErrorMessage = "Celular deve estar no formato (99) 999999999")]
+        [RegularExpression(@"^\(\d{2}\) \d{5}-\d{4}$", ErrorMessage = "Celular deve estar no formato 99 99999-9999")]
         public string Contato_Celular { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O campo Comercial é obrigatório.")]
