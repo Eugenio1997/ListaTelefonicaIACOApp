@@ -275,6 +275,7 @@
                 method: 'GET',
                 data: { paginaAtual: pagina },
                 success: function (response) {
+                    $('.table-responsive').css('height','500px');
                     $('#table tbody').html(response.html);
                     $('#table').show();
                     $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
@@ -366,10 +367,12 @@
                 success: function (response) {
                     if (!response.encontrou) {
                         $('#table').hide();
+                        $('.table-responsive').css('height','100px')
                         $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
                         $('.pagination').hide(); // Oculta a paginação
                     } else {
                         $('#mensagem-nenhum-contato').hide();
+                        $('.table-responsive').css('height','500px')
                         $('#table tbody').html(response.html);
                         $('#table').show();
                         $('.pagination').show(); // Mostra a paginação novamente se necessário
