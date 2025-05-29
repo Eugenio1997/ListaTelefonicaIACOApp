@@ -1,4 +1,4 @@
-﻿@model ListaTelefonicaIACOApp.ViewModels.ContatoCadastroViewModel
+﻿@model ListaTelefonicaIACOApp.ViewModels.ContatoCadastroRequestViewModel
 
 @{
     ViewData["Title"] = "Adicionar Contato - IACO";
@@ -15,122 +15,93 @@
 
 <div style="padding:10px; gap:30px " class="d-flex flex-column">
     <h2>Adicionar novo contato</h2>
-    <form style="gap:30px" class="row" asp-action="Create">
+
+    <form id="formCadastrarContato" class="row" method="post" asp-action="Create" asp-controller="Contato" style="gap:30px">
+        @Html.AntiForgeryToken()
+
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         @* ---------- Dados Pessoais ---------- *@
         <div class="row g-3 rounded-2 m-0 p-4" style="gap:20px;background-color: #f9f9f9">
-            <h4 class="d-flex justify-content-start m-0 border-1 border-bottom">
-                Dados Pessoais
-            </h4>
+            <h4>Dados Pessoais</h4>
             <div class="row">
-                <div class="form-group form-group-h80px col-md-4">
-                    <label asp-for="Nome" class="control-label"></label>
+                <div style="min-height:90px" class="form-group col-md-4">
+                    <label asp-for="Nome"></label>
                     <input id="Nome" asp-for="Nome" class="form-control" placeholder="Ex: Ana" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Nome" class="text-danger"></span>
-                    </div>
+                    <span asp-validation-for="Nome" class="text-danger fs-12px"></span>
                 </div>
-                <div class="form-group form-group-h80px col-md-4">
-                    <label asp-for="Sobrenome" class="control-label"></label>
+                <div style="min-height:90px" class="form-group col-md-4">
+                    <label asp-for="Sobrenome"></label>
                     <input id="Sobrenome" asp-for="Sobrenome" class="form-control" placeholder="Ex: Clara" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Sobrenome" class="text-danger"></span>
-                    </div>
+                    <span asp-validation-for="Sobrenome" class="text-danger fs-12px"></span>
                 </div>
-                <div class="form-group form-group-h80px col-md-4">
-                    <label asp-for="Fixo" class="control-label"></label>
+                <div style="min-height:90px" class="form-group col-md-4">
+                    <label asp-for="Fixo"></label>
                     <input id="Fixo" asp-for="Fixo" class="form-control telefone-fixo" placeholder="Ex: 11 2345-6789" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Fixo" class="text-danger"></span>
-                    </div>
+                    <span asp-validation-for="Fixo" class="text-danger fs-12px"></span>
                 </div>
             </div>
             <div class="row">
-                <div class="form-group form-group-h80px col-md-6">
-                    <label asp-for="Celular" class="control-label"></label>
+                <div style="min-height:90px" class="form-group col-md-6">
+                    <label asp-for="Celular"></label>
                     <input id="Celular" asp-for="Celular" class="form-control telefone-celular" placeholder="Ex: 11 998877665" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Celular" class="text-danger"></span>
-                    </div>
+                    <span asp-validation-for="Celular" class="text-danger fs-12px"></span>
                 </div>
-                <div class="form-group form-group-h80px col-md-6">
-                    <label asp-for="Comercial" class="control-label"></label>
+                <div style="min-height:90px" class="form-group col-md-6">
+                    <label asp-for="Comercial"></label>
                     <input id="Comercial" asp-for="Comercial" class="form-control telefone-comercial" placeholder="Ex: 61 3030-4040" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Comercial" class="text-danger"></span>
-                    </div>
+                    <span asp-validation-for="Comercial" class="text-danger fs-12px"></span>
                 </div>
-                <div class="form-group form-group-h80px col-md-6">
-                    <label asp-for="Email" class="control-label"></label>
+                <div style="min-height:90px" class="form-group col-md-6">
+                    <label asp-for="Email"></label>
                     <input id="Email" asp-for="Email" class="form-control" placeholder="Ex: Ana.clara@iaco.com" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
+                    <span asp-validation-for="Email" class="text-danger fs-12px"></span>
                 </div>
             </div>
-            
-        </div>
-        
-        @* ---------- Dados de Endereço ---------- *@
-        <div class="row g-3 p-4 rounded-2 m-0" style="gap:20px;background-color: #f9f9f9">
-            <h4 class="d-flex justify-content-start m-0 border-1 border-bottom">
-                Endereço
-            </h4>
-            <div class="row">
-                <div class="form-group form-group-h80px col-md-4">
-                    <label asp-for="Rua" class="control-label"></label>
-                    <input id="Rua" asp-for="Rua" class="form-control" placeholder="Ex: Rua das Flores" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Rua" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group form-group-h80px col-md-4">
-                    <label asp-for="Numero" class="control-label"></label>
-                    <input id="Numero" asp-for="Numero" class="form-control" placeholder="Ex: 123" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Numero" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group form-group-h80px col-md-4">
-                    <label asp-for="Bairro" class="control-label"></label>
-                    <input id="Bairro" asp-for="Bairro" class="form-control" placeholder="Ex: Centro" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Bairro" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="form-group form-group-h80px col-md-6">
-                    <label asp-for="Cidade" class="control-label"></label>
-                    <input id="Cidade" asp-for="Cidade" class="form-control" placeholder="Ex: São Paulo" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Cidade" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group form-group-h80px col-md-6">
-                    <label asp-for="CEP" class="control-label"></label>
-                    <input id="CEP" asp-for="CEP" class="form-control CEP" placeholder="Ex: 01001-000" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="CEP" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group form-group-h80px col-md-12">
-                    <label asp-for="Complemento" class="control-label"></label>
-                    <input id="Complemento" asp-for="Complemento" class="form-control" placeholder="Ex: Apt 101, Bloco B" />
-                    <div class="fs-12px">
-                        <span asp-validation-for="Complemento" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            
         </div>
 
-        <div style="height:50px" class="d-flex form-group col-12 m-0 align-items-center justify-content-end">
-            <button id="btnCadastrarContato" style="width:110px" type="submit" value="Create" class="btn btn-primary h-75">Cadastrar</button>
+        @* ---------- Endereço ---------- *@
+        <div class="row g-3 p-4 rounded-2 m-0" style="gap:20px;background-color: #f9f9f9">
+            <h4>Endereço</h4>
+            <div class="row">
+                <div style="min-height:90px" class="form-group col-md-4">
+                    <label asp-for="Rua"></label>
+                    <input id="Rua" asp-for="Rua" class="form-control" placeholder="Ex: Rua das Flores" />
+                    <span asp-validation-for="Rua" class="text-danger fs-12px"></span>
+                </div>
+                <div style="min-height:90px" class="form-group col-md-4">
+                    <label asp-for="Numero"></label>
+                    <input id="Numero" asp-for="Numero" class="form-control" placeholder="Ex: 123" />
+                    <span asp-validation-for="Numero" class="text-danger fs-12px"></span>
+                </div>
+                <div style="min-height:90px" class="form-group col-md-4">
+                    <label asp-for="Bairro"></label>
+                    <input id="Bairro" asp-for="Bairro" class="form-control" placeholder="Ex: Centro" />
+                    <span asp-validation-for="Bairro" class="text-danger fs-12px"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div style="min-height:90px" class="form-group col-md-6">
+                    <label asp-for="Cidade"></label>
+                    <input id="Cidade" asp-for="Cidade" class="form-control" placeholder="Ex: São Paulo" />
+                    <span asp-validation-for="Cidade" class="text-danger fs-12px"></span>
+                </div>
+                <div style="min-height:90px" class="form-group col-md-6">
+                    <label asp-for="CEP"></label>
+                    <input id="CEP" asp-for="CEP" class="form-control cep" placeholder="Ex: 01001-000" />
+                    <span asp-validation-for="CEP" class="text-danger fs-12px"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div style="min-height:90px" class="form-group col-md-12">
+                    <label asp-for="Complemento"></label>
+                    <input id="Complemento" asp-for="Complemento" class="form-control" placeholder="Ex: Apt 101, Bloco B" />
+                    <span asp-validation-for="Complemento" class="text-danger fs-12px"></span>
+                </div>
+            </div>
+        </div>
+        <div style="height:50px" class="form-group d-flex justify-content-end col-12 ">
+            <button type="button" id="btnCadastrarContato" class="btn btn-primary h-75" style="width: 110px;">Cadastrar</button>
         </div>
     </form>
 </div>
@@ -139,59 +110,44 @@
             
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
     <script>
-
         $(document).ready(function () {
+        
+            $('#btnCadastrarContato').on('click', function (e) {
+                e.preventDefault();
 
-            $(document).on('click', '#btnCadastrarContato', function (e) {
-                //e.preventDefault(); // impede envio padrão do formulário
+                const form = $('#formCadastrarContato');
 
-                //usando 'cleanVal' para obter o valor do input sem máscara
-                const formData = {
-                    Nome: $('#Nome').val(),
-                    Sobrenome: $('#Sobrenome').val(),
-                    Fixo: $('#Fixo').cleanVal(),
-                    Celular: $('#Celular').cleanVal(),
-                    Comercial: $('#Comercial').cleanVal(),
-                    Email: $('#Email').val(),
-                    Rua: $('#Rua').val(),
-                    Bairro: $('#Bairro').val(),
-                    Cidade: $('#Cidade').val()
-                };
+                if (!form.valid()) {
+                    return;
+                }
 
-                //montando a querystring
-                /*
-                const queryString = Object.keys(params)
-                    .map(k => `${k}=${encodeURIComponent(params[k])}`)
-                    .join('&');
-                */
+                $('#Fixo').val($('#Fixo').cleanVal());
+                $('#Celular').val($('#Celular').cleanVal());
+                $('#Comercial').val($('#Comercial').cleanVal());
+                $('#CEP').val($('#CEP').cleanVal());
+
+                // ✅ Captura os dados do form automaticamente
+                const formData = new FormData(form[0]);
 
                 $.ajax({
-                    type: "POST",
-                    url: `/Contato/Create`,
-                    contentType:'application/json; charset=utf-8',
-                    data: JSON.stringify(formData),
-                    beforeSend: function () {
-                        $('#spinner-loading').show();         // Mostra o spinner
-
-                    },
-                    success: function (response) {
-
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        window.location.href = '/Contato/Index';
                     },
                     error: function (xhr) {
                         console.error("Erro:", xhr.responseText);
-                    },
-                    complete: function () {
-                        $('#spinner-loading').hide(); // Oculta o spinner após conclusão
                     }
                 });
             });
         });
     </script>
-
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
 }
+

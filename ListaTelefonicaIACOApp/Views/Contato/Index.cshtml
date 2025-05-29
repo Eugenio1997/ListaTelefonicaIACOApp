@@ -140,6 +140,8 @@
                         <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Celular)</th>
                         <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Comercial)</th>
                         <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Email)</th>
+                        <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_CriadoAs)</th>
+                        <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_EditadoAs)</th>
 
                         <th style="font-size:16px; min-width:140px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Rua)</th>
                         <th style="font-size:16px; min-width:80px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Numero)</th>
@@ -158,17 +160,17 @@
                     @foreach (var item in Model.Contatos)
                     {
                         <tr style="height:60px">
-                            <td class="text-nowrap" style="min-width:120px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
-                            <td class="text-nowrap" style="min-width:120px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Sobrenome)</td>
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Sobrenome)</td>
 
-                            <td class="text-nowrap" style="min-width:120px; min-height:60px">
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">
                              <input type="text" value="@item.Contato_Fixo" class="form-control telefone-fixo input-sem-borda" readonly />
                             </td>
-                            <td class="text-nowrap" style="min-width:120px; min-height:60px">
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">
                              <input type="text" value="@item.Contato_Celular" class="form-control telefone-celular input-sem-borda" readonly />
                             </td>
-                            <td class="text-nowrap" style="min-width:120px; min-height:60px">
-                             <input type="text" value="@item.Contato_Celular" class="form-control telefone-comercial input-sem-borda" readonly />
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">
+                             <input type="text" value="@item.Contato_Comercial" class="form-control telefone-comercial input-sem-borda" readonly />
                             </td>
                             @{
                                 /* 
@@ -179,13 +181,15 @@
                                  */
                             }
                            
-
+                            
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Email)</td>
-                            <td class="text-nowrap" style="min-width:140px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Rua)</td>
-                            <td class="text-nowrap" style="min-width:80px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Numero)</td>
-                            <td class="text-nowrap" style="min-width:120px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Bairro)</td>
-                            <td class="text-nowrap" style="min-width:140px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Cidade)</td>
-                            <td class="text-nowrap" style="width:160px; height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Complemento)</td>
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_CriadoAs)</td>
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_EditadoAs)</td>
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Rua)</td>
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Numero)</td>
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Bairro)</td>
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Cidade)</td>
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Complemento)</td>
 
                             
                             <td style="width:50px; height:60px" class="text-nowrap">

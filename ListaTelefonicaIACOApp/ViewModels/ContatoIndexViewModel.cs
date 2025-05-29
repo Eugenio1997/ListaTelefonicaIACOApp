@@ -43,6 +43,11 @@ namespace ListaTelefonicaIACOApp.ViewModels
         public List<ContatoIndexViewModel> Contatos { get; set; } = new();
         [Display(Name = "Endereço")]
         public EnderecoViewModel Endereco { get; set; } = new();
+        [Display(Name = "Criado Em")]
+        public string Contato_CriadoAs { get; set; } = string.Empty;
+
+        [Display(Name = "Editado Em")]
+        public string Contato_EditadoAs { get; set; } = string.Empty;
 
     }
 }
