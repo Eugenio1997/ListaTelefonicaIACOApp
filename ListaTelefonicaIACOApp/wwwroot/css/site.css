@@ -37,8 +37,11 @@ body {
         vertical-align: middle !important;
     }
 
+.icon-add-endereco {
+    font-size: 40px;
+}
 
-.icon-add-colaborador {
+.icon-add-contato {
     font-size: 40px;
 }
 

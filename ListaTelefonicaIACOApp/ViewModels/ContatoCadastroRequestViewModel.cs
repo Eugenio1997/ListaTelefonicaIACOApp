@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace ListaTelefonicaIACOApp.ViewModels
 {
@@ -25,8 +26,12 @@ namespace ListaTelefonicaIACOApp.ViewModels
         [Required(ErrorMessage = "O e-mail é obrigatório.")]
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
         public string Email { get; set; } = string.Empty;
-        public int EnderecoId { get; set; }
 
+        public int? EnderecoId { get; set; } // propriedade que recebera o valor selecionado do dropdown no POST
+
+        public List<SelectListItem> Enderecos { get; set; } = new();
+
+        /*
         // Endereço
         [Required(ErrorMessage = "A rua é obrigatória.")]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "A rua deve ter entre 3 e 100 caracteres.")]
@@ -48,5 +53,6 @@ namespace ListaTelefonicaIACOApp.ViewModels
         public string? CEP { get; set; }
         public string? Complemento { get; set; }
         public List<ContatoCadastroRequestViewModel> Contatos { get; set; } = new();
+        */
     }
 }

@@ -3,10 +3,12 @@ using ListaTelefonicaIACOApp.Infrastructure;
 using ListaTelefonicaIACOApp.Models;
 using ListaTelefonicaIACOApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol.Plugins;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 
@@ -348,9 +350,31 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         // GET: ContatoController/Create
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+
+            var model = new ContatoCadastroRequestViewModel();
+            using (var conn = _context.CreateConnection())
+            {
+                conn.Open();
+
+
+                var enderecos = (await conn.QueryAsync<Endereco>(
+                    $@"SELECT ID, RUA, NUMERO, BAIRRO, CIDADE, CEP, COMPLEMENTO FROM LISTA_ENDERECOS ORDER BY ID ASC"
+                )).ToList();
+
+                model.Enderecos = enderecos
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.ToString(),
+                        Text = $"{e.Rua}, {e.Numero}, {e.Bairro}, {e.Cidade} (ID {e.Id})"
+                    })
+                    .ToList();
+
+            }
+
+            return View(model);
+
         }
 
         // POST: ContatoController/Create

@@ -1,0 +1,308 @@
+﻿@using ListaTelefonicaIACOApp.ViewModels
+@model EnderecoIndexViewModel
+
+@{
+    ViewData["Title"] = "Endereços - IACO";
+}
+
+<body>
+    <header class="d-flex gap-3 justify-content-end align-items-center">
+        <div class="d-flex justify-content-center" style="height: 70px; width: 70px; background-color: #f9f9f9; border-radius: 5px;"
+             data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar Endereço">
+            <a class="d-flex justify-content-center align-items-center" asp-action="Create">
+                <i class="bi bi-person-plus text-dark icon-add-endereco"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="bg-light p-4 rounded-3">
+        <form id="formFiltroEndereco" asp-action="FiltrarEnderecos" method="post" class="row g-3">
+            <h1 class="border-bottom pb-2">Filtros</h1>
+
+            <div class="col-md-4">
+                <label asp-for="Rua" class="form-label">Rua</label>
+                <input asp-for="Rua" class="form-control" placeholder="Ex: Avenida Brasil" />
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Bairro" class="form-label">Bairro</label>
+                <input asp-for="Bairro" class="form-control" placeholder="Ex: Centro" />
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Cidade" class="form-label">Cidade</label>
+                <select asp-for="Cidade" class="form-select">
+                    <option value="">Escolha uma cidade</option>
+                    <option value="CostaRica">Costa Rica</option>
+                    <option value="ChapadaoDoSul">Chapadão do Sul</option>
+                    <option value="ParaisodasAguas">Paraíso das Águas</option>
+                </select>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <button type="submit" id="btnLimparEndereco" class="btn btn-secondary">Limpar</button>
+                <button type="submit" id="btnFiltrarEndereco" class="btn btn-primary">Buscar</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="spinner-loading" class="text-center py-4" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table id="tableEnderecos" class="table table-hover table-borderless m-0 h-75 tabela-contatos">
+            <thead class="table-light position-sticky top-0" style="min-height:60px">
+                <tr>
+                    <th style="font-size:16px; min-width:120px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Rua)</th>
+                    <th style="font-size:16px; min-width:120px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Numero)</th>
+                    <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Bairro)</th>
+                    <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Cidade)</th>
+                    <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.CEP)</th>
+                    <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Complemento)</th>
+                    <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.CriadoAs)</th>
+                    <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.EditadoAs)</th>
+
+                    <th style="min-width:50px; min-height:60px"></th>
+                    <th style="min-width:50px; min-height:60px"></th>
+                    <th style="min-width:50px; min-height:60px"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Enderecos)
+                {
+                    <tr style="height:60px">
+                        <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Rua)</td>
+                        <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Numero)</td>
+                        <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Bairro)</td>
+                        <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Cidade)</td>
+                        <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.CEP)</td>
+                        <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Complemento)</td>
+                        <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.CriadoAs)</td>
+                        <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.EditadoAs)</td>
+
+
+
+
+
+
+
+
+                        <td style="width:50px; height:60px" class="text-nowrap">
+                            <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square text-dark"></i></a>
+                        </td>
+                        <td style="width:50px; height:60px" class="text-nowrap">
+                            <a asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye text-dark"></i></a>
+                        </td>
+                        <td style="width:50px; height:60px" class="text-nowrap">
+                            <a asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash text-dark"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div id="mensagem-nenhum-contato" class="text-center py-4 d-none">
+            <p class="fw-bold fs-4">Nenhum endereço foi encontrado.</p>
+        </div>
+    </div>
+
+    <div style="height: 60px; min-width: 500px;" class="d-flex col-auto justify-content-end align-items-center">
+        <nav class="" aria-label="Paginação">
+            <ul class="pagination mb-0">
+
+
+                @if (ViewBag.PaginaAtual > 1)
+                {
+
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual - 1)">Anterior</a>
+                    </li>
+
+                }else{
+                      <li class="page-item disabled">
+                        <a class="page-link" href="javascript:void(0)">Anterior</a>
+                       </li>
+                }
+
+                 
+                <li class="page-item disabled">
+                    <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual)">@(ViewBag.PaginaAtual)</a>
+                </li>
+                        
+                   
+                <li class="page-item disabled">
+                    <a class="page-link" href="javascript:void(0)">de</a>
+                </li> 
+                        
+                   
+                <li class="page-item disabled">
+                    <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.totalPaginas)">@(ViewBag.totalPaginas)</a>
+                </li>
+                
+
+                @if (ViewBag.PaginaAtual < ViewBag.TotalPaginas)
+                {
+
+
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual + 1)">Próximo</a>
+                    </li>
+
+                }else{
+                    <li class="page-item disabled">
+                        <a class="page-link" href="javascript:void(0)">Próximo</a>
+                    </li>}
+
+            </ul>
+        </nav>
+
+    </div>
+</body>
+@section Scripts {
+        <script>
+            $(document).ready(function () {
+                
+
+                $('#btnFiltrarEndereco').on('click', function (e) {
+                    e.preventDefault();
+
+                    const params = {
+                        Rua: $('#Rua').val(),
+                        Bairro: $('#Bairro').val(),
+                        Cidade: $('#Cidade').val()
+                    };
+
+                    const queryString = Object.keys(params)
+                        .map(k => `${k}=${encodeURIComponent(params[k])}`)
+                        .join('&');
+
+                    $.ajax({
+                        type: "GET",
+                        url: `/Endereco/ObterEnderecosFiltrados?${queryString}`,
+                        beforeSend: function () {
+                            $('#spinner-loading').show();
+                            $('#tableEnderecos').hide();
+                        },
+                        success: function (response) {
+                            if (!response.encontrou) {
+                                $('#tableEnderecos').hide();
+                            } else {
+                                $('#tableEnderecos tbody').html(response.html);
+                                $('#tableEnderecos').show();
+                            }
+                        },
+                        error: function () {
+                            alert('Erro ao carregar endereços.');
+                        },
+                        complete: function () {
+                            $('#spinner-loading').hide();
+                        }
+                    });
+                });
+            });
+        </script>
+
+
+
+
+
+
+    <script>
+        
+        //PAGINACAO
+
+
+        $(document).ready(function () {
+            $(document).on('click', '.pagination .page-link, #btnLimparEndereco', function (e) {
+                
+                //previne o comportamento padrao do formulario
+                e.preventDefault();
+
+                // Limpa os campos de filtro
+                $('#formFiltroEndereco').find('input, select').val('');
+
+                let pagina = $(this).data('pagina') || 1;
+
+                const filtros = {
+                    Rua: $('#Rua').val(),
+                    Bairro: $('#Bairro').val(),
+                    Cidade: $('#Cidade').val(),
+                    paginaAtual: pagina
+                };
+
+                $.ajax({
+                    url: '/Endereco/ObterEnderecosFiltrados',
+                    method: 'GET',
+                    data: filtros,
+                    beforeSend: function () {
+                        $('#spinner-loading').show();
+                        $('#tableEnderecos').hide();
+                        $('.pagination').hide();
+                    },
+                    success: function (response) {
+                        $('.table-responsive').css('height','500px');
+
+                        if (!response.encontrou) {
+                            $('#tableEnderecos tbody').html('<tr><td colspan="9" class="text-center">Nenhum endereço encontrado.</td></tr>');
+                            $('.pagination').hide();
+                            $('#tableEnderecos').show();
+                            return;
+                        }
+
+                        $('#tableEnderecos tbody').html(response.html);
+                        $('#tableEnderecos').show();
+
+                        let paginacaoHtml = '';
+
+                        if (response.paginaAtual > 1) {
+                            paginacaoHtml += `
+                                <li class="page-item">
+                                    <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual - 1}">Anterior</a>
+                                </li>`;
+                        } else {
+                            paginacaoHtml += `
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="javascript:void(0)">Anterior</a>
+                                </li>`;
+                        }
+
+                        paginacaoHtml += `
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual}">${response.paginaAtual}</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:void(0)">de</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:void(0)" data-pagina="${response.totalPaginas}">${response.totalPaginas}</a>
+                            </li>`;
+
+                        if (response.paginaAtual < response.totalPaginas) {
+                            paginacaoHtml += `
+                                <li class="page-item">
+                                    <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual + 1}">Próximo</a>
+                                </li>`;
+                        } else {
+                            paginacaoHtml += `
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="javascript:void(0)">Próximo</a>
+                                </li>`;
+                        }
+
+                        $('.pagination').html(paginacaoHtml).show();
+                    },
+                    error: function () {
+                        alert('Erro ao carregar os endereços.');
+                    },
+                    complete: function () {
+                        $('#spinner-loading').hide();
+                    }
+                });
+            });
+
+            // Carregar ao abrir a tela
+            $('.pagination .page-link:first').trigger('click');
+        });
+    </script>
+
+}

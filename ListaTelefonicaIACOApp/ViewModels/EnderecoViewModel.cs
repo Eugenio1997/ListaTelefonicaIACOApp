@@ -35,5 +35,11 @@ namespace ListaTelefonicaIACOApp.ViewModels
         [Display(Name = "Complemento")]
         public string? Endereco_Complemento { get; set; }
 
+        [Display(Name = "Criado Em")]
+        public string Endereco_CriadoAs { get; set; } = string.Empty;
+
+        [Display(Name = "Editado Em")]
+        public string Endereco_EditadoAs { get; set; } = string.Empty;
+
     }
 }

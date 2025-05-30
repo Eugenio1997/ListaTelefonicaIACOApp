@@ -1,0 +1,225 @@
+﻿using Dapper;
+using ListaTelefonicaIACOApp.Controllers;
+using ListaTelefonicaIACOApp.Infrastructure;
+using ListaTelefonicaIACOApp.Models;
+using ListaTelefonicaIACOApp.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using System.Data;
+using System.Text;
+using System.Threading.Tasks;
+
+public class EnderecoController : Controller
+{
+    private readonly ILogger<ContatoController> _logger;
+    private readonly IConfiguration? _configuration;
+    private readonly ListaTelefonicaDbContext _context;
+    public EnderecoIndexViewModel contato = new EnderecoIndexViewModel();
+    int registrosPorPagina = 10;
+    int totalRegistros;
+    int totalPaginas;
+    int offset;
+
+    public EnderecoController(ILogger<ContatoController> logger,
+                                 IConfiguration configuration,
+                                 ListaTelefonicaDbContext context)
+    {
+        _logger = logger;
+        _configuration = configuration;
+        _context = context;
+    }
+
+    [HttpGet]
+    public IActionResult ObterEnderecosFiltrados(string? Rua, string? Bairro, string? Cidade)
+    {
+        string query = @"
+        SELECT * 
+        FROM LISTA_ENDERECOS
+        WHERE 1 = 1";
+
+        if (!string.IsNullOrWhiteSpace(Rua))
+            query += $" AND LOWER(TRIM(RUA)) LIKE LOWER('%{Rua.Trim()}%')";
+
+        if (!string.IsNullOrWhiteSpace(Bairro))
+            query += $" AND LOWER(TRIM(BAIRRO)) LIKE LOWER('%{Bairro.Trim()}%')";
+
+        if (!string.IsNullOrWhiteSpace(Cidade))
+            query += $" AND LOWER(TRIM(CIDADE)) LIKE LOWER('%{Cidade.Trim()}%')";
+
+        using (var conn = _context.CreateConnection())
+        {
+            conn.Open();
+
+            var enderecos = conn.Query<Endereco>(query);
+
+            if (!enderecos.Any())
+            {
+                return Json(new { encontrou = false });
+            }
+
+            var htmlBuilder = new StringBuilder();
+
+            foreach (var item in enderecos)
+            {
+                htmlBuilder.Append("<tr style='height:60px'>");
+                htmlBuilder.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{item.Rua}</td>");
+                htmlBuilder.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{item.Numero}</td>");
+                htmlBuilder.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{item.Bairro}</td>");
+                htmlBuilder.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{item.Cidade}</td>");
+                htmlBuilder.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{item.CEP}</td>");
+                htmlBuilder.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{item.Complemento}</td>");
+                htmlBuilder.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{item.CriadoAs}</td>");
+                htmlBuilder.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{item.EditadoAs}</td>");
+                htmlBuilder.Append($"<td style='height: 50px' class='text-nowrap'><a href='/Endereco/Edit/{item.Id}'><i class='bi bi-pencil-square text-dark'></i></a></td>");
+                htmlBuilder.Append($"<td style='height: 50px' class='text-nowrap'><a href='/Endereco/Details/{item.Id}'><i class='bi bi-eye text-dark'></i></a></td>");
+                htmlBuilder.Append($"<td style='height: 50px' class='text-nowrap'><a href='/Endereco/Delete/{item.Id}'><i class='bi bi-trash text-dark'></i></a></td>");
+                htmlBuilder.Append("</tr>");
+            }
+
+            return Json(new
+            {
+                encontrou = true,
+                html = htmlBuilder.ToString()
+            });
+        }
+    }
+
+
+    public async Task<IActionResult> Index(int paginaAtual = 1)
+    {
+        using (var conn = _context.CreateConnection())
+        {
+            conn.Open();
+
+            var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_ENDERECOS");
+            totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
+
+            offset = (paginaAtual - 1) * registrosPorPagina;
+            string ordenacao = "CRIADO_AS"; // default order by NOME
+
+            string query = @$"
+                            SELECT
+                                e.ID AS Endereco_Id,
+                                e.RUA AS Endereco_Rua,
+                                e.NUMERO AS Endereco_Numero,
+                                e.BAIRRO AS Endereco_Bairro,
+                                e.CIDADE AS Endereco_Cidade,
+                                e.CEP AS Endereco_CEP,
+                                TO_CHAR(e.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS Endereco_CriadoAs,
+                                TO_CHAR(e.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS Endereco_EditadoAs
+                            FROM LISTA_ENDERECOS e
+                            ORDER BY {ordenacao}
+                            OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
+
+            var enderecos = await conn.QueryAsync<EnderecoIndexViewModel>(query);
+
+            StringBuilder sb = new StringBuilder();
+
+
+            foreach (var e in enderecos)
+            {
+                sb.Append($"<tr style='height:60px'>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Rua}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Numero}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Bairro}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Cidade}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.CEP}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Complemento}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.CriadoAs}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.EditadoAs}</td>");
+                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                    $"<a href='/Endereco/Edit/{e.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
+                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                    $"<a href='/Endereco/Details/{e.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
+                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                    $"<a href='/Endereco/Delete/{e.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
+                sb.Append("</tr>");
+            }
+
+            var enderecoIndexViewModel = new EnderecoIndexViewModel
+            {
+                Enderecos = enderecos.ToList()
+            };
+
+            ViewBag.PaginaAtual = paginaAtual;
+            ViewBag.TotalPaginas = totalPaginas;
+
+            return View(enderecoIndexViewModel);
+        }
+    }
+
+    public IActionResult Create() => View();
+
+
+    /*
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(Endereco endereco)
+    {
+        if (!ModelState.IsValid) return View(endereco);
+
+        string query = $@"
+            INSERT INTO LISTA_ENDERECOS 
+                (RUA, NUMERO, BAIRRO, CIDADE, CEP, COMPLEMENTO)S
+            VALUES 
+                ('{endereco.Rua}', '{endereco.Numero}', '{endereco.Bairro}', 
+                 '{endereco.Cidade}', '{endereco.CEP}', '{endereco.Complemento}')";
+
+        await _conn.ExecuteAsync(query);
+        return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Edit(int id)
+    {
+        var query = $"SELECT * FROM LISTA_ENDERECOS WHERE ID = {id}";
+        var endereco = await _conn.QueryFirstOrDefaultAsync<Endereco>(query);
+
+        return endereco == null ? NotFound() : View(endereco);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(Endereco endereco)
+    {
+        if (!ModelState.IsValid) return View(endereco);
+
+        string query = $@"
+            UPDATE LISTA_ENDERECOS SET 
+                RUA = '{endereco.Rua}', 
+                NUMERO = '{endereco.Numero}', 
+                BAIRRO = '{endereco.Bairro}',
+                CIDADE = '{endereco.Cidade}', 
+                CEP = '{endereco.CEP}', 
+                COMPLEMENTO = '{endereco.Complemento}'
+            WHERE ID = {endereco.Id}";
+
+        await _conn.ExecuteAsync(query);
+        return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Delete(int id)
+    {
+        var query = $"SELECT * FROM LISTA_ENDERECOS WHERE ID = {id}";
+        var endereco = await _conn.QueryFirstOrDefaultAsync<Endereco>(query);
+
+        return endereco == null ? NotFound() : View(endereco);
+    }
+
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var query = $"DELETE FROM LISTA_ENDERECOS WHERE ID = {id}";
+        await _conn.ExecuteAsync(query);
+        return RedirectToAction(nameof(Index));
+    }
+   
+    public async Task<IActionResult> Details(int id)
+    {
+        var query = $"SELECT * FROM LISTA_ENDERECOS WHERE ID = {id}";
+        var endereco = await _conn.QueryFirstOrDefaultAsync<Endereco>(query);
+
+        return endereco == null ? NotFound() : View(endereco);
+    }
+
+     */
+}
