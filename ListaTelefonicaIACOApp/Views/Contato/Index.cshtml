@@ -230,14 +230,21 @@
                        </li>
                 }
 
-
-                @for (int i = 1; i <= ViewBag.TotalPaginas; i++)
-                {
-                    <li class="page-item @(i == ViewBag.PaginaAtual ? "active" : "")">
-                        <a class="page-link" href="javascript:void(0)" data-pagina="@i">@i</a>
-
-                    </li>
-                }
+                 
+                <li class="page-item disabled">
+                    <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual)">@(ViewBag.PaginaAtual)</a>
+                </li>
+                        
+                   
+                <li class="page-item disabled">
+                    <a class="page-link" href="javascript:void(0)">de</a>
+                </li> 
+                        
+                   
+                <li class="page-item disabled">
+                    <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.totalPaginas)">@(ViewBag.totalPaginas)</a>
+                </li>
+                
 
                 @if (ViewBag.PaginaAtual < ViewBag.TotalPaginas)
                 {
@@ -305,6 +312,7 @@
                             </li>`;
                     }
 
+                    /*
                     for (let i = 1; i <= response.totalPaginas; i++) {
                         let activeClass = (i === response.paginaAtual) ? 'active' : '';
                         paginacaoHtml += `
@@ -312,6 +320,23 @@
                                 <a class="page-link" href="javascript:void(0)" data-pagina="${i}">${i}</a>
                             </li>`;
                     }
+                    */
+
+                   paginacaoHtml += `
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual}">${response.paginaAtual}</a>
+                            </li>`;
+                        
+                    paginacaoHtml += `
+                        <li class="page-item disabled">
+                            <a class="page-link" href="javascript:void(0)">de</a>
+                        </li>`;   
+                        
+                    paginacaoHtml += `
+                        <li class="page-item disabled">
+                            <a class="page-link" href="javascript:void(0)" data-pagina="${response.totalPaginas}">${response.totalPaginas}</a>
+                        </li>`;
+
 
                     if (response.paginaAtual < response.totalPaginas) {
                         paginacaoHtml += `
