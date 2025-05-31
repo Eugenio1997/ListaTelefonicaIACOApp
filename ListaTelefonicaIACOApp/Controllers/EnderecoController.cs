@@ -28,6 +28,67 @@ public class EnderecoController : Controller
         _context = context;
     }
 
+    public async Task<IActionResult> ObterEnderecosPaginados(int registrosPorPagina = 10, int paginaAtual = 1)
+    {
+        int offset = (paginaAtual - 1) * registrosPorPagina;
+        string ordenacao = "CRIADO_AS"; // Ordena por data de criação
+
+        string query = @$"
+        SELECT 
+            e.ID AS Endereco_Id,
+            e.RUA AS Endereco_Rua,
+            e.NUMERO AS Endereco_Numero,
+            e.BAIRRO AS Endereco_Bairro,
+            e.CIDADE AS Endereco_Cidade,
+            e.CEP AS Endereco_CEP,
+            e.COMPLEMENTO AS Endereco_Complemento,
+            TO_CHAR(e.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS Endereco_CriadoAs,
+            TO_CHAR(e.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS Endereco_EditadoAs
+        FROM LISTA_ENDERECOS e
+        ORDER BY {ordenacao}
+        OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
+
+        using (var conn = _context.CreateConnection())
+        {
+            conn.Open();
+
+            var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_ENDERECOS");
+            int totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
+
+            var enderecos = await conn.QueryAsync<EnderecoViewModel>(query);
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var e in enderecos)
+            {
+                sb.Append("<tr style='height:60px'>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Endereco_Rua}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Endereco_Numero}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Endereco_Bairro}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Endereco_Cidade}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Endereco_CEP}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Endereco_Complemento}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Endereco_CriadoAs}</td>");
+                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Endereco_EditadoAs}</td>");
+                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                          $"<a href='/Endereco/Edit/{e.Endereco_Id}' title='Editar'><i class='bi bi-pencil-square text-dark'></i></a></td>");
+                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                          $"<a href='/Endereco/Details/{e.Endereco_Id}' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
+                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                          $"<a href='/Endereco/Delete/{e.Endereco_Id}' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
+                sb.Append("</tr>");
+            }
+
+            return Json(new
+            {
+                html = sb.ToString(),
+                paginaAtual,
+                totalPaginas
+            });
+        }
+    }
+
+
     [HttpGet]
     public IActionResult ObterEnderecosFiltrados(string? Rua, string? Bairro, string? Cidade)
     {
@@ -112,28 +173,6 @@ public class EnderecoController : Controller
 
             var enderecos = await conn.QueryAsync<EnderecoIndexViewModel>(query);
 
-            StringBuilder sb = new StringBuilder();
-
-
-            foreach (var e in enderecos)
-            {
-                sb.Append($"<tr style='height:60px'>");
-                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Rua}</td>");
-                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Numero}</td>");
-                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Bairro}</td>");
-                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Cidade}</td>");
-                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.CEP}</td>");
-                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.Complemento}</td>");
-                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.CriadoAs}</td>");
-                sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{e.EditadoAs}</td>");
-                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                    $"<a href='/Endereco/Edit/{e.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
-                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                    $"<a href='/Endereco/Details/{e.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
-                sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                    $"<a href='/Endereco/Delete/{e.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
-                sb.Append("</tr>");
-            }
 
             var enderecoIndexViewModel = new EnderecoIndexViewModel
             {

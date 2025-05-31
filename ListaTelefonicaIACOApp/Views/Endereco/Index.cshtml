@@ -10,7 +10,7 @@
         <div class="d-flex justify-content-center" style="height: 70px; width: 70px; background-color: #f9f9f9; border-radius: 5px;"
              data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar Endereço">
             <a class="d-flex justify-content-center align-items-center" asp-action="Create">
-                <i class="bi bi-person-plus text-dark icon-add-endereco"></i>
+                <i style="font-size:35px" class="text-black bi bi-geo-alt"></i><i class=" text-black bi bi-plus" style="position: relative; left: -5px; top: -10px; font-size:27px"></i>
             </a>
         </div>
     </header>
@@ -38,7 +38,7 @@
             </div>
 
             <div class="col-12 d-flex justify-content-end gap-2">
-                <button type="submit" id="btnLimparEndereco" class="btn btn-secondary">Limpar</button>
+                <button type="submit" id="btnLimparEndereco" class="btn btn-secondary">Limpar Filtros</button>
                 <button type="submit" id="btnFiltrarEndereco" class="btn btn-primary">Buscar</button>
             </div>
         </form>
@@ -83,11 +83,6 @@
 
 
 
-
-
-
-
-
                         <td style="width:50px; height:60px" class="text-nowrap">
                             <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square text-dark"></i></a>
                         </td>
@@ -101,7 +96,7 @@
                 }
             </tbody>
         </table>
-        <div id="mensagem-nenhum-contato" class="text-center py-4 d-none">
+        <div id="mensagem-nenhum-endereco" class="text-center py-4 d-none">
             <p class="fw-bold fs-4">Nenhum endereço foi encontrado.</p>
         </div>
     </div>
@@ -159,150 +154,106 @@
     </div>
 </body>
 @section Scripts {
-        <script>
-            $(document).ready(function () {
-                
-
-                $('#btnFiltrarEndereco').on('click', function (e) {
-                    e.preventDefault();
-
-                    const params = {
-                        Rua: $('#Rua').val(),
-                        Bairro: $('#Bairro').val(),
-                        Cidade: $('#Cidade').val()
-                    };
-
-                    const queryString = Object.keys(params)
-                        .map(k => `${k}=${encodeURIComponent(params[k])}`)
-                        .join('&');
-
-                    $.ajax({
-                        type: "GET",
-                        url: `/Endereco/ObterEnderecosFiltrados?${queryString}`,
-                        beforeSend: function () {
-                            $('#spinner-loading').show();
-                            $('#tableEnderecos').hide();
-                        },
-                        success: function (response) {
-                            if (!response.encontrou) {
-                                $('#tableEnderecos').hide();
-                            } else {
-                                $('#tableEnderecos tbody').html(response.html);
-                                $('#tableEnderecos').show();
-                            }
-                        },
-                        error: function () {
-                            alert('Erro ao carregar endereços.');
-                        },
-                        complete: function () {
-                            $('#spinner-loading').hide();
-                        }
-                    });
-                });
-            });
-        </script>
-
-
-
-
-
-
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-        
-        //PAGINACAO
+    $(document).ready(function () {
 
+        // ✅ Clique em paginação ou botão "Limpar"
+        $(document).on('click', '.pagination .page-link, #btnLimparEndereco', function (e) {
+            e.preventDefault();
 
-        $(document).ready(function () {
-            $(document).on('click', '.pagination .page-link, #btnLimparEndereco', function (e) {
-                
-                //previne o comportamento padrao do formulario
-                e.preventDefault();
+            // Limpa filtros
+            $('#formFiltroEndereco').find('input, select').val('');
 
-                // Limpa os campos de filtro
-                $('#formFiltroEndereco').find('input, select').val('');
+            let pagina = $(this).data('pagina');
 
-                let pagina = $(this).data('pagina') || 1;
-
-                const filtros = {
-                    Rua: $('#Rua').val(),
-                    Bairro: $('#Bairro').val(),
-                    Cidade: $('#Cidade').val(),
-                    paginaAtual: pagina
-                };
-
-                $.ajax({
-                    url: '/Endereco/ObterEnderecosFiltrados',
-                    method: 'GET',
-                    data: filtros,
-                    beforeSend: function () {
-                        $('#spinner-loading').show();
-                        $('#tableEnderecos').hide();
-                        $('.pagination').hide();
-                    },
-                    success: function (response) {
-                        $('.table-responsive').css('height','500px');
-
-                        if (!response.encontrou) {
-                            $('#tableEnderecos tbody').html('<tr><td colspan="9" class="text-center">Nenhum endereço encontrado.</td></tr>');
-                            $('.pagination').hide();
-                            $('#tableEnderecos').show();
-                            return;
-                        }
-
-                        $('#tableEnderecos tbody').html(response.html);
-                        $('#tableEnderecos').show();
-
-                        let paginacaoHtml = '';
-
-                        if (response.paginaAtual > 1) {
-                            paginacaoHtml += `
-                                <li class="page-item">
-                                    <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual - 1}">Anterior</a>
-                                </li>`;
-                        } else {
-                            paginacaoHtml += `
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="javascript:void(0)">Anterior</a>
-                                </li>`;
-                        }
-
-                        paginacaoHtml += `
-                            <li class="page-item disabled">
-                                <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual}">${response.paginaAtual}</a>
-                            </li>
-                            <li class="page-item disabled">
-                                <a class="page-link" href="javascript:void(0)">de</a>
-                            </li>
-                            <li class="page-item disabled">
-                                <a class="page-link" href="javascript:void(0)" data-pagina="${response.totalPaginas}">${response.totalPaginas}</a>
-                            </li>`;
-
-                        if (response.paginaAtual < response.totalPaginas) {
-                            paginacaoHtml += `
-                                <li class="page-item">
-                                    <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual + 1}">Próximo</a>
-                                </li>`;
-                        } else {
-                            paginacaoHtml += `
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="javascript:void(0)">Próximo</a>
-                                </li>`;
-                        }
-
-                        $('.pagination').html(paginacaoHtml).show();
-                    },
-                    error: function () {
-                        alert('Erro ao carregar os endereços.');
-                    },
-                    complete: function () {
-                        $('#spinner-loading').hide();
-                    }
-                });
-            });
-
-            // Carregar ao abrir a tela
-            $('.pagination .page-link:first').trigger('click');
+            carregarEnderecos(pagina);
         });
-    </script>
+
+        // ✅ Clique no botão de filtro
+        $(document).on('click', '#btnFiltrarEndereco', function (e) {
+            e.preventDefault();
+
+            const params = {
+                Rua: $('#Rua').val(),
+                Bairro: $('#Bairro').val(),
+                Cidade: $('#Cidade').val()
+            };
+            
+            
+            if(params.Rua === '' && params.Bairro === '' && params.Cidade === ''){
+                return; //nao faca requisicao
+            }
+         
+            const queryString = Object.keys(params)
+                .map(k => `${k}=${encodeURIComponent(params[k])}`)
+                .join('&');
+
+            $.ajax({
+                url: `/Endereco/ObterEnderecosFiltrados?${queryString}`,
+                method: 'GET',
+                beforeSend: function () {
+                    $('#spinner-loading').show();
+                    $('#tableEnderecos').hide();
+                    $('.pagination').hide();
+                },
+                success: function (response) {
+                    $('.table-responsive').css('height', '500px');
+
+                    if (!response.encontrou) {
+                        $('#tableEnderecos').hide();
+                        $('.table-responsive').css('height', '100px');
+                        $('#mensagem-nenhum-endereco')[0].style.setProperty('display', 'block', 'important');
+                        $('.pagination').hide();
+                        return;
+                    }
+
+                    $('#mensagem-nenhum-endereco').hide();
+                    $('#tableEnderecos tbody').html(response.html);
+                    $('#tableEnderecos').show();
+                    $('.pagination').show();
+                    aplicarMascaras();
+
+                    gerarPaginacao(response.paginaAtual, response.totalPaginas);
+                },
+                error: function () {
+                    alert('Erro ao carregar os endereços.');
+                },
+                complete: function () {
+                    $('#spinner-loading').hide();
+                }
+            });
+        });
+
+        // ✅ Carrega automaticamente a página 1 ao abrir
+        carregarEnderecos(1);
+
+        // 🔁 Função para carregar endereços via AJAX
+        function carregarEnderecos(pagina) {
+            $.ajax({
+                url: '/Endereco/ObterEnderecosPaginados',
+                method: 'GET',
+                data: { paginaAtual: pagina },
+                success: function (response) {
+                    $('.table-responsive').css('height', '500px');
+                    $('#tableEnderecos tbody').html(response.html);
+                    $('#tableEnderecos').show();
+                    $('#mensagem-nenhum-endereco')[0].style.setProperty('display', 'block', 'important');
+                    $('#mensagem-nenhum-endereco').hide();
+                    $('.pagination').show();
+
+                    aplicarMascaras();
+                    gerarPaginacao(response.paginaAtual, response.totalPaginas);
+                },
+                error: function () {
+                    alert('Erro ao carregar os dados.');
+                }
+            });
+        }
+
+        
+    });
+</script>
+
 
 }

@@ -64,7 +64,7 @@
                     <select asp-for="EnderecoId" class="form-select" asp-items="Model.Enderecos">
                         <option value="">Selecione um endereço</option>
                     </select>
-                    <span asp-validation-for="EnderecoId" class="text-danger"></span>
+                    <span asp-validation-for="EnderecoId" class="text-danger fs-12px"></span>
                 </div>
             </div>
             <div style="height:fit-content" class="row align-items-center ps-4">
@@ -72,16 +72,10 @@
                 <div class="d-flex w-100 justify-content-start p-0">
                     <i style="width:10px" class="bi bi-exclamation-circle p-0" data-bs-toggle='tooltip' data-bs-placement='top' title='Caso o seu endereço não exista, crie ele apertando no botao.'></i>
                 </div>
-               
-                <button style="background-color: #FFFFFF" type="button" id="btnCadastrarEndereco" class="btn bg-primary d-flex h-100 gap-1 col-auto">
-                   
-                    <a asp-controller="Endereco" asp-action="Create" class="btn bg-primary h-100 col-auto" style="min-width: 180px">
-                        <div class="align-self-center">
-                            <i style="font-size:25px" class="bi bi-plus text-white"></i>
-                        </div>
-                        Cadastrar Endereço
-                    </a>
-                </button>
+
+                <a asp-controller="Endereco" asp-action="Create" class="btn bg-primary col-auto text-white d-flex align-items-center" style="min-width: 180px; height:50px">
+                    Cadastrar Endereço
+                </a>
             </div>
         </div>
         

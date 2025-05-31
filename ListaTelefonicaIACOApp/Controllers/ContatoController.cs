@@ -366,7 +366,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                 model.Enderecos = enderecos
                     .Select(e => new SelectListItem
                     {
-                        Value = e.ToString(),
+                        Value = e.Id.ToString(),
                         Text = $"{e.Rua}, {e.Numero}, {e.Bairro}, {e.Cidade} (ID {e.Id})"
                     })
                     .ToList();

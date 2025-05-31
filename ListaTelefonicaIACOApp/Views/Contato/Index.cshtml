@@ -18,7 +18,7 @@
                 data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar Contato"
                 >
             <a  class="d-flex justify-content-center align-items-center" asp-action="Create">
-                <i class="bi bi-person-plus text-dark icon-add-contato"> </i>
+                <i style="font-size:40px" class="bi bi-person-plus text-dark icon-add-colaborador"> </i>
             </a>
         </div>
        
@@ -100,7 +100,7 @@
                                 id="btnLimparFiltros"
                                 style=""
                                 type="submit"
-                                class="btn btn-primary col-auto h-75">Limpar Filtros
+                                class="btn btn-secondary col-auto h-75">Limpar Filtros
                         </button>
 
                         <button
@@ -281,85 +281,40 @@
 
             let pagina = $(this).data('pagina');
 
-            $.ajax({
-                url: '/Contato/ObterContatosPaginados',
-                method: 'GET',
-                data: { paginaAtual: pagina },
-                success: function (response) {
-                    $('.table-responsive').css('height','500px');
-                    $('#table tbody').html(response.html);
-                    $('#table').show();
-                    $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
-                    $('#mensagem-nenhum-contato').hide();
+            carregarEnderecos(pagina);
+        });
+
+    }); 
+
+    // ✅ Carrega automaticamente a página 1 ao abrir
+    carregarEnderecos(1);
+
+    function carregarEnderecos(pagina){
+        $.ajax({
+            url: '/Contato/ObterContatosPaginados',
+            method: 'GET',
+            data: { paginaAtual: pagina },
+            success: function (response) {
+                $('.table-responsive').css('height','500px');
+                $('#table tbody').html(response.html);
+                $('#table').show();
+                $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
+                $('#mensagem-nenhum-contato').hide();
                    
-                    $('.pagination').show(); // Mostra a paginacao
+                $('.pagination').show(); // Mostra a paginacao
 
-                      // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
-                      aplicarMascaras();
+                    // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
+                    aplicarMascaras();
+                    gerarPaginacao(response.paginaAtual, response.totalPaginas);
 
-                    let paginacaoHtml = '';
-
-                    if (response.paginaAtual > 1) {
-                        paginacaoHtml += `
-                            <li class="page-item">
-                                <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual - 1}">Anterior</a>
-                            </li>`;
-                    }
-                    else{
-                        paginacaoHtml += `
-                            <li class="page-item disabled">
-                                <a class="page-link" href="javascript:void(0)">Anterior</a>
-                            </li>`;
-                    }
-
-                    /*
-                    for (let i = 1; i <= response.totalPaginas; i++) {
-                        let activeClass = (i === response.paginaAtual) ? 'active' : '';
-                        paginacaoHtml += `
-                            <li class="page-item ${activeClass}">
-                                <a class="page-link" href="javascript:void(0)" data-pagina="${i}">${i}</a>
-                            </li>`;
-                    }
-                    */
-
-                   paginacaoHtml += `
-                            <li class="page-item disabled">
-                                <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual}">${response.paginaAtual}</a>
-                            </li>`;
-                        
-                    paginacaoHtml += `
-                        <li class="page-item disabled">
-                            <a class="page-link" href="javascript:void(0)">de</a>
-                        </li>`;   
-                        
-                    paginacaoHtml += `
-                        <li class="page-item disabled">
-                            <a class="page-link" href="javascript:void(0)" data-pagina="${response.totalPaginas}">${response.totalPaginas}</a>
-                        </li>`;
-
-
-                    if (response.paginaAtual < response.totalPaginas) {
-                        paginacaoHtml += `
-                            <li class="page-item">
-                                <a class="page-link" href="javascript:void(0)" data-pagina="${response.paginaAtual + 1}">Próximo</a>
-                            </li>`;
-                    }
-                    else{
-                        paginacaoHtml += `
-                            <li class="page-item disabled">
-                                <a class="page-link" href="javascript:void(0)">Próximo</a>
-                            </li>`;
-                    }
-
-                    $('.pagination').html(paginacaoHtml);
-                },
-                error: function () {
-                    alert('Erro ao carregar os dados.');
-                }
-            });
+            },
+            error: function () {
+                alert('Erro ao carregar os dados.');
+            },
+               
         });
+    }
 
-        });
     </script>
 
    <script>
@@ -409,6 +364,8 @@
 
                         // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
                        aplicarMascaras();
+                       gerarPaginacao(response.paginaAtual, response.totalPaginas);
+
                     }
                 },
                 error: function (xhr) {

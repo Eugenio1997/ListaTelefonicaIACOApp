@@ -22,3 +22,23 @@ $(function () {
 });
 
 
+// 🔁 Função para gerar paginação
+function gerarPaginacao(paginaAtual, totalPaginas) {
+    let paginacaoHtml = '';
+
+    paginacaoHtml += paginaAtual > 1
+        ? `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-pagina="${paginaAtual - 1}">Anterior</a></li>`
+        : `<li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Anterior</a></li>`;
+
+    paginacaoHtml += `
+                <li class="page-item disabled"><a class="page-link" href="#">${paginaAtual}</a></li>
+                <li class="page-item disabled"><a class="page-link" href="#">de</a></li>
+                <li class="page-item disabled"><a class="page-link" href="#">${totalPaginas}</a></li>`;
+
+    paginacaoHtml += paginaAtual < totalPaginas
+        ? `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-pagina="${paginaAtual + 1}">Próximo</a></li>`
+        : `<li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Próximo</a></li>`;
+
+    $('.pagination').html(paginacaoHtml);
+}
+
