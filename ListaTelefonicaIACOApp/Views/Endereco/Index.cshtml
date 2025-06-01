@@ -1,4 +1,5 @@
 ﻿@using ListaTelefonicaIACOApp.ViewModels
+@using ListaTelefonicaIACOApp.ViewModels.Endereco
 @model EnderecoIndexViewModel
 
 @{
@@ -6,18 +7,18 @@
 }
 
 <body>
-    <header class="d-flex gap-3 justify-content-end align-items-center">
-        <div class="d-flex justify-content-center" style="height: 70px; width: 70px; background-color: #f9f9f9; border-radius: 5px;"
-             data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar Endereço">
-            <a class="d-flex justify-content-center align-items-center" asp-action="Create">
-                <i style="font-size:35px" class="text-black bi bi-geo-alt"></i><i class=" text-black bi bi-plus" style="position: relative; left: -5px; top: -10px; font-size:27px"></i>
-            </a>
-        </div>
-    </header>
-
+    
     <div class="bg-light p-4 rounded-3">
         <form id="formFiltroEndereco" asp-action="FiltrarEnderecos" method="post" class="row g-3">
-            <h1 class="border-bottom pb-2">Filtros</h1>
+            <div class="row justify-content-between border-1 border-bottom">
+                <h1 class="col-auto m-0">Filtros</h1>
+                <div class="d-flex justify-content-center" style="height: 70px; width: 70px; background-color: #f9f9f9; border-radius: 5px;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar Endereço">
+                    <a class="d-flex justify-content-center align-items-center" asp-action="Create">
+                        <i style="font-size:35px" class="text-black bi bi-geo-alt"></i><i class=" text-black bi bi-plus" style="position: relative; left: -5px; top: -10px; font-size:27px"></i>
+                    </a>
+                </div>
+            </div>
 
             <div class="col-md-4">
                 <label asp-for="Rua" class="form-label">Rua</label>
@@ -38,7 +39,7 @@
             </div>
 
             <div class="col-12 d-flex justify-content-end gap-2">
-                <button type="submit" id="btnLimparEndereco" class="btn btn-secondary">Limpar Filtros</button>
+                <button type="submit" id="btnLimparEndereco" class="btn btn-outline-secondary">Limpar Filtros</button>
                 <button type="submit" id="btnFiltrarEndereco" class="btn btn-primary">Buscar</button>
             </div>
         </form>

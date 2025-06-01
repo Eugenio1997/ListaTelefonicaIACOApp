@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using ListaTelefonicaIACOApp.Infrastructure;
 using ListaTelefonicaIACOApp.Models;
-using ListaTelefonicaIACOApp.ViewModels;
+using ListaTelefonicaIACOApp.ViewModels.Contato;
+using ListaTelefonicaIACOApp.ViewModels.Endereco;
+using ListaTelefonicaIACOApp.ViewModels.Filtros;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol.Plugins;
@@ -76,9 +78,9 @@ namespace ListaTelefonicaIACOApp.Controllers
                 var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_CONTATOS");
                 totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
-                var contatos = await conn.QueryAsync<ContatoIndexViewModel, EnderecoViewModel, ContatoIndexViewModel>(
+                var contatos = await conn.QueryAsync(
                     query,
-                    (contato, endereco) =>
+                    (ContatoIndexViewModel contato, EnderecoCreateViewModel endereco) =>
                     {
                         contato.Endereco = endereco;
                         return contato;
@@ -125,7 +127,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterContatosFiltrados(FiltroViewModel filtros)
+        public async Task<IActionResult> ObterContatosFiltrados(FiltroContatoViewModel filtros)
         {
             string queryBase = @"
                     SELECT 
@@ -203,9 +205,9 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
 
-                var contatos = await conn.QueryAsync<ContatoIndexViewModel, EnderecoViewModel, ContatoIndexViewModel>(
+                var contatos = await conn.QueryAsync(
                     queryBase,
-                     (contato, endereco) =>
+                     (ContatoIndexViewModel contato, EnderecoCreateViewModel endereco) =>
                      {
                          contato.Endereco = endereco;
                          return contato;
@@ -292,9 +294,9 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
 
-                var contatos = await conn.QueryAsync<ContatoIndexViewModel, EnderecoViewModel, ContatoIndexViewModel>(
+                var contatos = await conn.QueryAsync(
                     query,
-                    (contato, endereco) =>
+                    (ContatoIndexViewModel contato, EnderecoCreateViewModel endereco) =>
                     {
                         contato.Endereco = endereco;
                         return contato;
@@ -353,13 +355,13 @@ namespace ListaTelefonicaIACOApp.Controllers
         public async Task<IActionResult> Create()
         {
 
-            var model = new ContatoCadastroRequestViewModel();
+            var model = new ContatoViewModel();
             using (var conn = _context.CreateConnection())
             {
                 conn.Open();
 
 
-                var enderecos = (await conn.QueryAsync<Endereco>(
+                var enderecos = (await conn.QueryAsync<Models.Endereco>(
                     $@"SELECT ID, RUA, NUMERO, BAIRRO, CIDADE, CEP, COMPLEMENTO FROM LISTA_ENDERECOS ORDER BY ID ASC"
                 )).ToList();
 
@@ -381,35 +383,63 @@ namespace ListaTelefonicaIACOApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Contato/Create")]
-        public async Task<IActionResult> Create(ContatoCadastroResponseViewModel model)
+        public async Task<IActionResult> Create(Contato model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState); // Retorna erros de validação
+                return BadRequest(ModelState);
             }
 
             using var conn = _context.CreateConnection();
             conn.Open();
 
-            // 1. Inserir endereço
-            string queryEndereco = $@"
-                INSERT INTO LISTA_ENDERECOS (RUA, NUMERO, BAIRRO, CIDADE, CEP, COMPLEMENTO)
-                VALUES ('{model.Rua}', '{model.Numero}', '{model.Bairro}', '{model.Cidade}', '{model.CEP}', '{model.Complemento}')";
+            // Verifica FIXO
+            if (!string.IsNullOrWhiteSpace(model.Fixo))
+            {
+                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE FIXO = '{model.Fixo}'";
+                var existeFixo = await conn.QuerySingleAsync<int>(query);
+                if (existeFixo > 0)
+                    return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse FIXO." });
+            }
 
-            await conn.ExecuteAsync(queryEndereco);
+            // Verifica CELULAR
+            if (!string.IsNullOrWhiteSpace(model.Celular))
+            {
+                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE CELULAR = '{model.Celular}'";
+                var existeCelular = await conn.QuerySingleAsync<int>(query);
+                if (existeCelular > 0)
+                    return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse CELULAR." });
+            }
 
-            // 2. Recuperar ID do endereço
-            int enderecoId = await conn.ExecuteScalarAsync<int>("SELECT MAX(ID) FROM LISTA_ENDERECOS");
+            /*
+            // Verifica COMERCIAL
+            if (!string.IsNullOrWhiteSpace(model.Comercial))
+            {
+                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE COMERCIAL = '{model.Comercial}'";
+                var existeComercial = await conn.QuerySingleAsync<int>(query);
+                if (existeComercial > 0)
+                    return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse COMERCIAL." });
+            }
+            */
+            // Verifica EMAIL
+            if (!string.IsNullOrWhiteSpace(model.Email))
+            {
+                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE EMAIL = '{model.Email}'";
+                var existeEmail = await conn.QuerySingleAsync<int>(query);
+                if (existeEmail > 0)
+                    return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse EMAIL." });
+            }
 
-            // 3. Inserir contato
-            string queryContato = $@"
+            // Insere o novo contato
+            string queryInserir = $@"
                 INSERT INTO LISTA_CONTATOS (NOME, SOBRENOME, FIXO, CELULAR, COMERCIAL, ENDERECO_ID, EMAIL)
-                VALUES ('{model.Nome}', '{model.Sobrenome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', {enderecoId}, '{model.Email}')";
+                VALUES ('{model.Nome}', '{model.Sobrenome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', {model.EnderecoId}, '{model.Email}')";
 
-            await conn.ExecuteAsync(queryContato);
+            await conn.ExecuteAsync(queryInserir);
 
             return Ok(new { sucesso = true });
         }
+
 
 
         [HttpPost]

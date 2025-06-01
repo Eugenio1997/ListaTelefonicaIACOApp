@@ -1,4 +1,5 @@
-﻿@model ListaTelefonicaIACOApp.Models.Endereco
+﻿@using ListaTelefonicaIACOApp.ViewModels.Endereco
+@model EnderecoCreateViewModel
 
 @{
     ViewData["Title"] = "Adicionar Endereço - IACO";
@@ -24,70 +25,62 @@
         <div class="row g-3 rounded-2 m-0 p-4" style="gap:20px; background-color: #f9f9f9">
             <h4>Dados do Endereço</h4>
 
-            <div class="form-group col-md-6">
-                <label asp-for="Rua"></label>
-                <input asp-for="Rua" class="form-control" placeholder="Ex: Rua das Flores" />
-                <span asp-validation-for="Rua" class="text-danger fs-12px"></span>
+            <div class="form-group col-md-6 min-height-90px-input">
+                <label asp-for="Endereco_Rua"></label>
+                <input asp-for="Endereco_Rua" class="form-control" placeholder="Ex: Rua das Flores" />
+                <span asp-validation-for="Endereco_Rua" class="text-danger fs-12px"></span>
             </div>
 
-            <div class="form-group col-md-3">
-                <label asp-for="Numero"></label>
-                <input asp-for="Numero" class="form-control" placeholder="Ex: 123" />
-                <span asp-validation-for="Numero" class="text-danger fs-12px"></span>
+            <div class="form-group col-md-3 min-height-90px-input">
+                <label asp-for="Endereco_Numero"></label>
+                <input asp-for="Endereco_Numero" class="form-control" placeholder="Ex: 123" />
+                <span asp-validation-for="Endereco_Numero" class="text-danger fs-12px"></span>
             </div>
 
-            <div class="form-group col-md-3">
-                <label asp-for="Bairro"></label>
-                <input asp-for="Bairro" class="form-control" placeholder="Ex: Centro" />
-                <span asp-validation-for="Bairro" class="text-danger fs-12px"></span>
+            <div class="form-group col-md-3 min-height-90px-input">
+                <label asp-for="Endereco_Bairro"></label>
+                <input asp-for="Endereco_Bairro" class="form-control" placeholder="Ex: Centro" />
+                <span asp-validation-for="Endereco_Bairro" class="text-danger fs-12px"></span>
             </div>
 
-            <div class="form-group col-md-6">
-                <label asp-for="Cidade"></label>
-                <input asp-for="Cidade" class="form-control" placeholder="Ex: São Paulo" />
-                <span asp-validation-for="Cidade" class="text-danger fs-12px"></span>
+            <div class="form-group col-md-6 min-height-90px-input">
+                <label asp-for="Endereco_Cidade"></label>
+                <input asp-for="Endereco_Cidade" class="form-control" placeholder="Ex: São Paulo" />
+                <span asp-validation-for="Endereco_Cidade" class="text-danger fs-12px"></span>
             </div>
 
-            <div class="form-group col-md-6">
-                <label asp-for="CEP"></label>
-                <input asp-for="CEP" class="form-control cep" placeholder="Ex: 01001-000" />
-                <span asp-validation-for="CEP" class="text-danger fs-12px"></span>
+            <div class="form-group col-md-6 min-height-90px-input">
+                <label asp-for="Endereco_CEP"></label>
+                <input asp-for="Endereco_CEP" class="form-control CEP" placeholder="Ex: 01001-000" />
+                <span asp-validation-for="Endereco_CEP" class="text-danger fs-12px"></span>
             </div>
 
-            <div class="form-group col-md-12">
-                <label asp-for="Complemento"></label>
-                <input asp-for="Complemento" class="form-control" placeholder="Ex: Apt 101, Bloco B" />
-                <span asp-validation-for="Complemento" class="text-danger fs-12px"></span>
+            <div class="form-group col-md-12 min-height-90px-input">
+                <label asp-for="Endereco_Complemento"></label>
+                <input asp-for="Endereco_Complemento" class="form-control" placeholder="Ex: Apt 101, Bloco B" />
+                <span asp-validation-for="Endereco_Complemento" class="text-danger fs-12px"></span>
             </div>
         </div>
 
         <div class="row d-flex justify-content-end col-auto w-100">
             <button type="button" id="btnCadastrarEndereco" class="btn btn-primary h-100 col-auto" style="min-width: 180px">
-                Cadastrar Endereço
+                Cadastrar Endereco
             </button>
         </div>
     </form>
 </div>
 
-<div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
-    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="10000">
-        <div class="d-flex gap-2 toast-header">
-            <i style="color:green" class="bi bi-check-circle fs-6"></i>
-            <strong class="me-auto text-success">Sucesso</strong>
-        </div>
-        <div class="toast-body text-success">
-            Endereço cadastrado com sucesso.
-        </div>
-    </div>
-</div>
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+
+
     <script>
         $(document).ready(function () {
-
-            $('#CEP').mask('00000-000');
 
             $('#btnCadastrarEndereco').on('click', function (e) {
                 e.preventDefault();
@@ -109,16 +102,39 @@
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                        var toastLiveExample = document.getElementById('liveToast');
-                        var toast = new bootstrap.Toast(toastLiveExample);
-                        toast.show();
-
-                        setTimeout(() => {
-                            window.location.href = '/Endereco/Index';
-                        }, 2000);
+                       if (response.sucesso) {
+                            mostrarToast("Sucesso", "Endereco cadastrado com sucesso!", "success");
+                            setTimeout(() => {
+                                window.location.href = '/Contato/Create';
+                            }, 2000);
+                        }
                     },
                     error: function (xhr) {
-                        console.error("Erro:", xhr.responseText);
+                            if (xhr.status === 409) {
+                                const msg = xhr.responseJSON?.mensagem || "Já existe um endereco com dados duplicados.";
+                                mostrarToast("Duplicidade", msg, "warning");
+                                aplicarMascaras();
+
+                        } else if (xhr.status === 400) {
+                                // ✅ Erros de validação retornados do servidor
+                                let erros = xhr.responseJSON;
+                                let mensagens = '';
+
+                                // Itera sobre cada campo com erro
+                                for (const campo in erros) {
+                                    const mensagensCampo = erros[campo];
+                                    mensagensCampo.forEach(mensagem => {
+                                        mensagens += `• ${mensagem}<br>`;
+                                    });
+                                }
+
+                                mostrarToast("Erros de Validação", mensagens, "danger");
+                                aplicarMascaras();
+
+                        } else {
+                            mostrarToast("Erro", "Erro inesperado ao cadastrar contato.", "danger");
+                        }
+                     }
                     }
                 });
             });

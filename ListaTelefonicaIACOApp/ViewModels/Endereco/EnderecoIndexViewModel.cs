@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ListaTelefonicaIACOApp.ViewModels
+namespace ListaTelefonicaIACOApp.ViewModels.Endereco
 {
     public class EnderecoIndexViewModel
     {

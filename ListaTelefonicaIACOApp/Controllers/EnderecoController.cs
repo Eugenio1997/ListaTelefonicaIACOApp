@@ -2,9 +2,11 @@
 using ListaTelefonicaIACOApp.Controllers;
 using ListaTelefonicaIACOApp.Infrastructure;
 using ListaTelefonicaIACOApp.Models;
-using ListaTelefonicaIACOApp.ViewModels;
+using ListaTelefonicaIACOApp.ViewModels.Endereco;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Plugins;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,7 +57,7 @@ public class EnderecoController : Controller
             var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_ENDERECOS");
             int totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
-            var enderecos = await conn.QueryAsync<EnderecoViewModel>(query);
+            var enderecos = await conn.QueryAsync<EnderecoCreateViewModel>(query);
 
             StringBuilder sb = new StringBuilder();
 
@@ -110,7 +112,7 @@ public class EnderecoController : Controller
         {
             conn.Open();
 
-            var enderecos = conn.Query<Endereco>(query);
+            var enderecos = conn.Query<ListaTelefonicaIACOApp.Models.Endereco>(query);
 
             if (!enderecos.Any())
             {
@@ -189,32 +191,82 @@ public class EnderecoController : Controller
     public IActionResult Create() => View();
 
 
-    /*
+    
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(Endereco endereco)
+    public async Task<IActionResult> Create(EnderecoCreateViewModel model)
     {
-        if (!ModelState.IsValid) return View(endereco);
+        if (!ModelState.IsValid) return BadRequest(model);
 
-        string query = $@"
-            INSERT INTO LISTA_ENDERECOS 
-                (RUA, NUMERO, BAIRRO, CIDADE, CEP, COMPLEMENTO)S
-            VALUES 
-                ('{endereco.Rua}', '{endereco.Numero}', '{endereco.Bairro}', 
-                 '{endereco.Cidade}', '{endereco.CEP}', '{endereco.Complemento}')";
+        
+        
+        string inserirEnderecoQuery = $@"
+                INSERT INTO LISTA_ENDERECOS 
+                    (RUA, NUMERO, BAIRRO, CIDADE, CEP, COMPLEMENTO)
+                VALUES 
+                    ('{model.Endereco_Rua}', '{model.Endereco_Numero}', '{model.Endereco_Bairro}', 
+                     '{model.Endereco_Cidade}', '{model.Endereco_CEP}', '{model.Endereco_Complemento}')";
 
-        await _conn.ExecuteAsync(query);
-        return RedirectToAction(nameof(Index));
+        using var conn = _context.CreateConnection();
+        conn.Open();
+
+        // Verifica CELULAR
+        if (!string.IsNullOrWhiteSpace(model.Endereco_Numero) &&
+            !string.IsNullOrWhiteSpace(model.Endereco_Rua) &&
+            !string.IsNullOrWhiteSpace(model.Endereco_Bairro) &&
+            !string.IsNullOrWhiteSpace(model.Endereco_Cidade) &&
+            !string.IsNullOrWhiteSpace(model.Endereco_CEP) &&
+            !string.IsNullOrWhiteSpace(model.Endereco_Complemento)
+           ) 
+        {
+
+            string verificarEnderecoExiste = @$"
+                SELECT COUNT(*) FROM LISTA_ENDERECOS e
+                WHERE
+                    e.NUMERO = {model.Endereco_Numero} AND
+                    e.RUA = {model.Endereco_Rua} AND
+                    e.BAIRRO = {model.Endereco_Bairro} AND
+                    e.CIDADE = {model.Endereco_Cidade} AND
+                    e.CEP = {model.Endereco_CEP} AND
+                    e.COMPLEMENTO = {model.Endereco_Complemento}
+                ";
+
+
+            var existeEndereco = await conn.QuerySingleAsync<int>(verificarEnderecoExiste);
+            if (existeEndereco > 0)
+                return Conflict(new { sucesso = false, mensagem = "Já existe um endereco cadastrado com esses dados." });
+        }
+
+        Endereco endereco = new Endereco()
+        {
+            Numero = model.Endereco_Numero,
+            Rua = model.Endereco_Rua,
+            Bairro = model.Endereco_Bairro,
+            Cidade = model.Endereco_Cidade,
+            CEP = model.Endereco_CEP,
+            Complemento = model.Endereco_Complemento,
+        };
+
+        await conn.ExecuteAsync(inserirEnderecoQuery, endereco);
+        
+        return Ok( new
+            {
+                sucesso = true
+            }    
+        );
+       
+
     }
-
+    /*
     public async Task<IActionResult> Edit(int id)
     {
         var query = $"SELECT * FROM LISTA_ENDERECOS WHERE ID = {id}";
-        var endereco = await _conn.QueryFirstOrDefaultAsync<Endereco>(query);
+        var endereco = await _conn.QueryFirstOrDefaultAsync<ListaTelefonicaIACOApp.Models.EnderecoViewModel>(query);
 
         return endereco == null ? NotFound() : View(endereco);
     }
 
+    
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Endereco endereco)

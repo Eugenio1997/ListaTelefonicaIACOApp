@@ -1,6 +1,6 @@
-﻿namespace ListaTelefonicaIACOApp.ViewModels
+﻿namespace ListaTelefonicaIACOApp.ViewModels.Filtros
 {
-    public class FiltroViewModel
+    public class FiltroContatoViewModel
     {
         public string? Nome { get; set; }
         public string? Sobrenome { get; set; }

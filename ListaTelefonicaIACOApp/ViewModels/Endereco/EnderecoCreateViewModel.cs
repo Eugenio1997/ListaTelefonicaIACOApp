@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ListaTelefonicaIACOApp.ViewModels
+namespace ListaTelefonicaIACOApp.ViewModels.Endereco
 {
-    public class EnderecoViewModel
+    public class EnderecoCreateViewModel
     {
         [Display(Name = "Código do Endereço")]
         public int Endereco_Id { get; set; }
@@ -27,12 +27,12 @@ namespace ListaTelefonicaIACOApp.ViewModels
         [StringLength(100, ErrorMessage = "A cidade deve ter no máximo 100 caracteres.")]
         public string Endereco_Cidade { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O CEP é obrigatório.")]
         [Display(Name = "CEP")]
         [RegularExpression(@"^\d{5}-?\d{3}$", ErrorMessage = "O CEP deve estar no formato 00000-000.")]
         public string? Endereco_CEP { get; set; } = string.Empty;
 
         [Display(Name = "Complemento")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "O Complemento deve ter entre 3 e 100 caracteres.")]
         public string? Endereco_Complemento { get; set; }
 
         [Display(Name = "Criado Em")]

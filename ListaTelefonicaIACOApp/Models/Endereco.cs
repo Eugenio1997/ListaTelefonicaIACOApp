@@ -14,7 +14,7 @@ namespace ListaTelefonicaIACOApp.Models
         public string? Complemento { get; set; }
 
         //Um endereco contém uma lista de contatos
-        public List<ContatoCadastroRequestViewModel> Contatos { get; set; } = new();
+        public List<Contato> Contatos { get; set; } = new();
 
         public DateTime CriadoAs { get; set; }
         public DateTime? EditadoAs { get; set; }

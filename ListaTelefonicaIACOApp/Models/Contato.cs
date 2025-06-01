@@ -14,6 +14,7 @@ namespace ListaTelefonicaIACOApp.Models
         public string Email { get; set; } = string.Empty;
 
         //Um contato possui associado a ele um endereco
+        public int EnderecoId { get; set; }
         public Endereco? Endereco { get; set; }
         public DateTime CriadoAs { get; set; }
         public DateTime? EditadoAs { get; set; }

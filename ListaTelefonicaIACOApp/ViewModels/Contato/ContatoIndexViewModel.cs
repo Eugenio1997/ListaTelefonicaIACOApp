@@ -1,8 +1,9 @@
 ﻿using ListaTelefonicaIACOApp.Models;
+using ListaTelefonicaIACOApp.ViewModels.Endereco;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 
-namespace ListaTelefonicaIACOApp.ViewModels
+namespace ListaTelefonicaIACOApp.ViewModels.Contato
 {
     public class ContatoIndexViewModel
     {
@@ -42,7 +43,7 @@ namespace ListaTelefonicaIACOApp.ViewModels
         public int Contato_EnderecoId { get; set; }
         public List<ContatoIndexViewModel> Contatos { get; set; } = new();
         [Display(Name = "Endereço")]
-        public EnderecoViewModel Endereco { get; set; } = new();
+        public EnderecoCreateViewModel Endereco { get; set; } = new();
         [Display(Name = "Criado Em")]
         public string Contato_CriadoAs { get; set; } = string.Empty;
 
