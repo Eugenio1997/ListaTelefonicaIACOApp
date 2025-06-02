@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using ListaTelefonicaIACOApp.Controllers;
 using ListaTelefonicaIACOApp.Infrastructure;
+using ListaTelefonicaIACOApp.Mappers;
 using ListaTelefonicaIACOApp.Models;
 using ListaTelefonicaIACOApp.ViewModels.Endereco;
 using Microsoft.AspNetCore.Mvc;
@@ -210,7 +211,7 @@ public class EnderecoController : Controller
         using var conn = _context.CreateConnection();
         conn.Open();
 
-        // Verifica CELULAR
+        // Verifica se todos os campos foram preenchidos
         if (!string.IsNullOrWhiteSpace(model.Endereco_Numero) &&
             !string.IsNullOrWhiteSpace(model.Endereco_Rua) &&
             !string.IsNullOrWhiteSpace(model.Endereco_Bairro) &&
@@ -237,15 +238,7 @@ public class EnderecoController : Controller
                 return Conflict(new { sucesso = false, mensagem = "Já existe um endereco cadastrado com esses dados." });
         }
 
-        Endereco endereco = new Endereco()
-        {
-            Numero = model.Endereco_Numero,
-            Rua = model.Endereco_Rua,
-            Bairro = model.Endereco_Bairro,
-            Cidade = model.Endereco_Cidade,
-            CEP = model.Endereco_CEP,
-            Complemento = model.Endereco_Complemento,
-        };
+        Endereco endereco = EnderecoMapper.MapToEntity(model);
 
         await conn.ExecuteAsync(inserirEnderecoQuery, endereco);
         

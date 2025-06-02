@@ -117,6 +117,12 @@
 
                 if (!formClone.valid()) return;
 
+                 formClone..find('input').each(function () {
+                    // 'this' refers to the current input element
+                    $(this).val($(this).val().trim());
+
+                });
+
                 formClone.find('#Fixo').val($('#Fixo').cleanVal());
                 formClone.find('#Celular').val($('#Celular').cleanVal());
                 formClone.find('#Comercial').val($('#Comercial').cleanVal());

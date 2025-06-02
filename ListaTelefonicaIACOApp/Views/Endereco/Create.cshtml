@@ -90,6 +90,12 @@
 
                 let formClone = $('#formCadastrarEndereco').clone(true, true);
 
+                formClone.find('input').each(function () {
+                    // 'this' refers to the current input element
+                    $(this).val($(this).val().trim());
+
+                });
+
                 if (!formClone.valid()) return;
 
                 formClone.find('.CEP').val($('.CEP').cleanVal());
@@ -114,7 +120,6 @@
                         if (xhr.status === 409) {
                             const msg = xhr.responseJSON?.mensagem || "Já existe um endereco com dados duplicados.";
                             mostrarToast("Duplicidade", msg, "warning");
-                            aplicarMascaras();
 
                         } else if (xhr.status === 400) {
                             let erros = xhr.responseJSON;
