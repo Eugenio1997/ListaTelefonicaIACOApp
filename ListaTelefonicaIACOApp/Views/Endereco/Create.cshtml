@@ -25,44 +25,44 @@
         <div class="row g-3 rounded-2 m-0 p-4" style="gap:20px; background-color: #f9f9f9">
             <h4>Dados do Endereço</h4>
 
-            <div class="form-group col-md-6 min-height-90px-input">
+            <div class="form-group col-md-6 min-height-90px-input m-0">
                 <label asp-for="Endereco_Rua"></label>
-                <input asp-for="Endereco_Rua" class="form-control" placeholder="Ex: Rua das Flores" />
+                <input asp-for="Endereco_Rua" class="form-control m-0" placeholder="Ex: Rua das Flores" />
                 <span asp-validation-for="Endereco_Rua" class="text-danger fs-12px"></span>
             </div>
 
-            <div class="form-group col-md-3 min-height-90px-input">
+            <div class="form-group col-md-3 min-height-90px-inpu m-0">
                 <label asp-for="Endereco_Numero"></label>
                 <input asp-for="Endereco_Numero" class="form-control" placeholder="Ex: 123" />
                 <span asp-validation-for="Endereco_Numero" class="text-danger fs-12px"></span>
             </div>
 
-            <div class="form-group col-md-3 min-height-90px-input">
+            <div class="form-group col-md-3 min-height-90px-input m-0">
                 <label asp-for="Endereco_Bairro"></label>
                 <input asp-for="Endereco_Bairro" class="form-control" placeholder="Ex: Centro" />
                 <span asp-validation-for="Endereco_Bairro" class="text-danger fs-12px"></span>
             </div>
 
-            <div class="form-group col-md-6 min-height-90px-input">
+            <div class="form-group col-md-6 min-height-90px-input m-0">
                 <label asp-for="Endereco_Cidade"></label>
                 <input asp-for="Endereco_Cidade" class="form-control" placeholder="Ex: São Paulo" />
                 <span asp-validation-for="Endereco_Cidade" class="text-danger fs-12px"></span>
             </div>
 
-            <div class="form-group col-md-6 min-height-90px-input">
+            <div class="form-group col-md-6 min-height-90px-input m-0">
                 <label asp-for="Endereco_CEP"></label>
                 <input asp-for="Endereco_CEP" class="form-control CEP" placeholder="Ex: 01001-000" />
                 <span asp-validation-for="Endereco_CEP" class="text-danger fs-12px"></span>
             </div>
 
-            <div class="form-group col-md-12 min-height-90px-input">
+            <div class="form-group col-md-12 min-height-90px-input m-0">
                 <label asp-for="Endereco_Complemento"></label>
                 <input asp-for="Endereco_Complemento" class="form-control" placeholder="Ex: Apt 101, Bloco B" />
                 <span asp-validation-for="Endereco_Complemento" class="text-danger fs-12px"></span>
             </div>
         </div>
 
-        <div class="row d-flex justify-content-end col-auto w-100">
+        <div style="height:50px" class="row d-flex justify-content-end col-auto w-100 m-0">
             <button type="button" id="btnCadastrarEndereco" class="btn btn-primary h-100 col-auto" style="min-width: 180px">
                 Cadastrar Endereco
             </button>
@@ -76,33 +76,34 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
 
 
     <script>
         $(document).ready(function () {
 
+            aplicarMascaras();
+
             $('#btnCadastrarEndereco').on('click', function (e) {
                 e.preventDefault();
 
-                const form = $('#formCadastrarEndereco');
+                let formClone = $('#formCadastrarEndereco').clone(true, true);
 
-                if (!form.valid()) {
-                    return;
-                }
+                if (!formClone.valid()) return;
 
-                $('#CEP').val($('#CEP').cleanVal());
+                formClone.find('.CEP').val($('.CEP').cleanVal());
 
-                const formData = new FormData(form[0]);
+                const formData = new FormData(formClone[0]);
 
                 $.ajax({
-                    url: form.attr('action'),
-                    type: form.attr('method'),
+                    url: formClone.attr('action'),
+                    type: formClone.attr('method'),
                     data: formData,
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                       if (response.sucesso) {
+                        if (response.sucesso) {
                             mostrarToast("Sucesso", "Endereco cadastrado com sucesso!", "success");
                             setTimeout(() => {
                                 window.location.href = '/Contato/Create';
@@ -110,34 +111,32 @@
                         }
                     },
                     error: function (xhr) {
-                            if (xhr.status === 409) {
-                                const msg = xhr.responseJSON?.mensagem || "Já existe um endereco com dados duplicados.";
-                                mostrarToast("Duplicidade", msg, "warning");
-                                aplicarMascaras();
+                        if (xhr.status === 409) {
+                            const msg = xhr.responseJSON?.mensagem || "Já existe um endereco com dados duplicados.";
+                            mostrarToast("Duplicidade", msg, "warning");
+                            aplicarMascaras();
 
                         } else if (xhr.status === 400) {
-                                // ✅ Erros de validação retornados do servidor
-                                let erros = xhr.responseJSON;
-                                let mensagens = '';
+                            let erros = xhr.responseJSON;
+                            let mensagens = '';
 
-                                // Itera sobre cada campo com erro
-                                for (const campo in erros) {
-                                    const mensagensCampo = erros[campo];
-                                    mensagensCampo.forEach(mensagem => {
-                                        mensagens += `• ${mensagem}<br>`;
-                                    });
-                                }
+                            for (const campo in erros) {
+                                const mensagensCampo = erros[campo];
+                                mensagensCampo.forEach(mensagem => {
+                                    mensagens += `• ${mensagem}<br>`;
+                                });
+                            }
 
-                                mostrarToast("Erros de Validação", mensagens, "danger");
-                                aplicarMascaras();
+                            mostrarToast("Erros de Validação", mensagens, "danger");
+                            aplicarMascaras();
 
                         } else {
                             mostrarToast("Erro", "Erro inesperado ao cadastrar contato.", "danger");
                         }
-                     }
                     }
                 });
             });
         });
     </script>
+
 }

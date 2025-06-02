@@ -223,12 +223,12 @@ public class EnderecoController : Controller
             string verificarEnderecoExiste = @$"
                 SELECT COUNT(*) FROM LISTA_ENDERECOS e
                 WHERE
-                    e.NUMERO = {model.Endereco_Numero} AND
-                    e.RUA = {model.Endereco_Rua} AND
-                    e.BAIRRO = {model.Endereco_Bairro} AND
-                    e.CIDADE = {model.Endereco_Cidade} AND
-                    e.CEP = {model.Endereco_CEP} AND
-                    e.COMPLEMENTO = {model.Endereco_Complemento}
+                    e.NUMERO = '{model.Endereco_Numero}' AND
+                    e.RUA = '{model.Endereco_Rua}' AND
+                    e.BAIRRO = '{model.Endereco_Bairro}' AND
+                    e.CIDADE = '{model.Endereco_Cidade}' AND
+                    e.CEP = '{model.Endereco_CEP}' AND
+                    e.COMPLEMENTO = '{model.Endereco_Complemento}'
                 ";
 
 

@@ -411,16 +411,6 @@ namespace ListaTelefonicaIACOApp.Controllers
                     return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse CELULAR." });
             }
 
-            /*
-            // Verifica COMERCIAL
-            if (!string.IsNullOrWhiteSpace(model.Comercial))
-            {
-                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE COMERCIAL = '{model.Comercial}'";
-                var existeComercial = await conn.QuerySingleAsync<int>(query);
-                if (existeComercial > 0)
-                    return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse COMERCIAL." });
-            }
-            */
             // Verifica EMAIL
             if (!string.IsNullOrWhiteSpace(model.Email))
             {

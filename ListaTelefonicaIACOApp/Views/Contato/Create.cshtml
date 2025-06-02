@@ -114,21 +114,13 @@
                 e.preventDefault();
 
                 let formClone = $('#formCadastrarContato').clone(true, true);
-                //const form = $('#formCadastrarContato');
 
                 if (!formClone.valid()) return;
-
-                
-                // Remove máscara antes do envio
-                //$('#Fixo').val($('#Fixo').cleanVal());
-                //$('#Celular').val($('#Celular').cleanVal());
-                //$('#Comercial').val($('#Comercial').cleanVal());
 
                 formClone.find('#Fixo').val($('#Fixo').cleanVal());
                 formClone.find('#Celular').val($('#Celular').cleanVal());
                 formClone.find('#Comercial').val($('#Comercial').cleanVal());
                 formClone.find('select[name="EnderecoId"]').val($('#EnderecoId').val());
-
 
 
                 const formData = new FormData(formClone[0]);
