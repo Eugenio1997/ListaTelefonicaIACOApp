@@ -11,11 +11,11 @@ namespace ListaTelefonicaIACOApp.Models
         public string Fixo { get; set; } = string.Empty;
         public string Celular { get; set; } = string.Empty;
         public string Comercial { get; set; } = string.Empty;
+        public string Endereco { get; set; }
         public string Email { get; set; } = string.Empty;
-
         //Um contato possui associado a ele um endereco
-        public int EnderecoId { get; set; }
-        public Endereco? Endereco { get; set; }
+        //public int EnderecoId { get; set; }
+        //public Endereco? Endereco { get; set; }
         public DateTime CriadoAs { get; set; }
         public DateTime? EditadoAs { get; set; }
 

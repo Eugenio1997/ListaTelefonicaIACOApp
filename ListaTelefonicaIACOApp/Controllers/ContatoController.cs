@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using ListaTelefonicaIACOApp.Infrastructure;
+using ListaTelefonicaIACOApp.Mappers;
 using ListaTelefonicaIACOApp.Models;
 using ListaTelefonicaIACOApp.ViewModels.Contato;
 using ListaTelefonicaIACOApp.ViewModels.Endereco;
@@ -45,26 +46,17 @@ namespace ListaTelefonicaIACOApp.Controllers
             offset = (paginaAtual - 1) * registrosPorPagina;
             string ordenacao = "NOME"; // default order by NOME
             string query = @$"SELECT 
-                                c.ID AS Contato_Id,
-                                c.NOME AS Contato_Nome,
-                                c.SOBRENOME AS Contato_Sobrenome,
-                                c.FIXO AS Contato_Fixo,
-                                c.CELULAR AS Contato_Celular,
-                                c.COMERCIAL AS Contato_Comercial,
-                                c.ENDERECO_ID AS Contato_EnderecoId,
-                                c.EMAIL AS Contato_Email,
-                                TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS Contato_CriadoAs,
-                                TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS Contato_EditadoAs,
-
-                                e.ID AS Endereco_Id,
-                                e.CEP AS Endereco_CEP,
-                                e.RUA AS Endereco_Rua,
-                                e.NUMERO AS Endereco_Numero,
-                                e.BAIRRO AS Endereco_Bairro,
-                                e.CIDADE AS Endereco_Cidade,
-                                e.COMPLEMENTO AS Endereco_Complemento
+                                c.ID AS Id,
+                                c.NOME AS Nome,
+                                c.SOBRENOME AS Sobrenome,
+                                c.FIXO AS Fixo,
+                                c.CELULAR AS Celular,
+                                c.COMERCIAL AS Comercial,
+                                c.ENDERECO AS Endereco,
+                                c.EMAIL AS Email,
+                                TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
+                                TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs,
                             FROM LISTA_CONTATOS c
-                            LEFT JOIN LISTA_ENDERECOS e ON c.ENDERECO_ID = e.ID
                             ORDER BY {ordenacao}
                             OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
 
@@ -78,41 +70,32 @@ namespace ListaTelefonicaIACOApp.Controllers
                 var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_CONTATOS");
                 totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
-                var contatos = await conn.QueryAsync(
-                    query,
-                    (ContatoIndexViewModel contato, EnderecoCreateViewModel endereco) =>
-                    {
-                        contato.Endereco = endereco;
-                        return contato;
-                    },
-                    splitOn: "Endereco_Id"
-                );
+
 
 
                 StringBuilder sb = new StringBuilder();
+                var contatos = (await conn.QueryAsync<Contato>(query)).ToList();
+
 
                 foreach (var c in contatos)
                 {
                     sb.Append($"<tr style='height:60px'>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_Nome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_Sobrenome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Contato_Fixo}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Contato_Celular}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Contato_Comercial}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Contato_Email}'>{c.Contato_Email}</a></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_CriadoAs}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_EditadoAs}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Rua}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Numero}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Bairro}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Cidade}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Complemento}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Sobrenome}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Fixo}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Celular}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Comercial}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
+                    ;
                     sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Edit/{c.Contato_Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
+                        $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
                     sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Details/{c.Contato_Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
+                        $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
                     sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Delete/{c.Contato_Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
+                        $"<a href='/Contato/Delete/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
                     sb.Append("</tr>");
 
                 }
@@ -131,27 +114,16 @@ namespace ListaTelefonicaIACOApp.Controllers
         {
             string queryBase = @"
                     SELECT 
-                        c.ID              AS Contato_Id,
-                        c.NOME            AS Contato_Nome,
-                        c.SOBRENOME       AS Contato_Sobrenome,
-                        c.FIXO            AS Contato_Fixo,
-                        c.CELULAR         AS Contato_Celular,
-                        c.COMERCIAL       AS Contato_Comercial,
-                        c.ENDERECO_ID     AS Contato_EnderecoId,
-                        c.EMAIL           AS Contato_Email,
-                        TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS Contato_CriadoAs,
-                        TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS Contato_EditadoAs,
-
-                        e.ID           AS Endereco_Id,
-                        e.CEP          AS Endereco_CEP,
-                        e.RUA          AS Endereco_Rua,
-                        e.NUMERO       AS Endereco_Numero,
-                        e.BAIRRO       AS Endereco_Bairro,
-                        e.CIDADE       AS Endereco_Cidade,
-                        e.COMPLEMENTO  AS Endereco_Complemento
-
+                        c.ID              AS Id,
+                        c.NOME            AS Nome,
+                        c.FIXO            AS Fixo,
+                        c.CELULAR         AS Celular,
+                        c.COMERCIAL       AS Comercial,
+                        c.ENDERECO        AS Endereco,
+                        c.EMAIL           AS Email,
+                        TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
+                        TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs,
                     FROM LISTA_CONTATOS c
-                    LEFT JOIN LISTA_ENDERECOS e ON c.ENDERECO_ID = e.ID
                     WHERE 1=1
                 ";
 
@@ -160,10 +132,6 @@ namespace ListaTelefonicaIACOApp.Controllers
             if (!string.IsNullOrWhiteSpace(filtros.Nome))
             {
                 queryBase += $@" AND LOWER(TRIM(c.NOME)) LIKE LOWER('%{filtros.Nome.Trim()}%')";
-            }
-            if (!string.IsNullOrWhiteSpace(filtros.Sobrenome))
-            {
-                queryBase += $@" AND LOWER(TRIM(c.SOBRENOME)) LIKE LOWER('%{filtros.Sobrenome.Trim()}%')";
             }
             if (!string.IsNullOrWhiteSpace(filtros.Fixo))
             {
@@ -177,25 +145,14 @@ namespace ListaTelefonicaIACOApp.Controllers
             {
                 queryBase += $@" AND LOWER(TRIM(c.COMERCIAL)) LIKE LOWER('%{filtros.Comercial.Trim()}%')";
             }
+            if (!string.IsNullOrWhiteSpace(filtros.Endereco))
+            {
+                queryBase += $@" AND LOWER(TRIM(c.ENDERECO)) LIKE LOWER('%{filtros.Endereco.Trim()}%')";
+            }
             if (!string.IsNullOrWhiteSpace(filtros.Email))
             {
                 queryBase += $@" AND LOWER(TRIM(c.EMAIL)) LIKE LOWER('%{filtros.Email.Trim()}%')";
             }
-            if (!string.IsNullOrWhiteSpace(filtros.Rua))
-            {
-                queryBase += $@" AND LOWER(TRIM(e.RUA)) LIKE LOWER('%{filtros.Rua.Trim()}%')";
-            }
-            if (!string.IsNullOrWhiteSpace(filtros.Bairro))
-            {
-                queryBase += $@" AND LOWER(TRIM(e.BAIRRO)) LIKE LOWER('%{filtros.Bairro.Trim()}%')";
-            }
-            if (!string.IsNullOrWhiteSpace(filtros.Cidade))
-            {
-                queryBase += $@" AND LOWER(TRIM(e.CIDADE)) LIKE LOWER('%{filtros.Cidade.Trim()}%')";
-            }
-
-
-
 
             queryBase += " ORDER BY c.NOME";
 
@@ -204,41 +161,28 @@ namespace ListaTelefonicaIACOApp.Controllers
                 conn.Open();
 
 
-
-                var contatos = await conn.QueryAsync(
-                    queryBase,
-                     (ContatoIndexViewModel contato, EnderecoCreateViewModel endereco) =>
-                     {
-                         contato.Endereco = endereco;
-                         return contato;
-                     },
-                    splitOn: "Endereco_Id"
-                );
-
                 var sb = new StringBuilder();
+                var contatos = (await conn.QueryAsync<Contato>(queryBase)).ToList();
 
                 foreach (var c in contatos)
                 {
                     sb.Append($"<tr style='height:60px'>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_Nome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_Sobrenome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Contato_Fixo}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Contato_Celular}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Contato_Comercial}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Contato_Email}'>{c.Contato_Email}</a></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_CriadoAs}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_EditadoAs}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Rua}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Numero}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Bairro}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Cidade}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Complemento}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Sobrenome}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Fixo}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Celular}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Comercial}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
+
                     sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Edit/{c.Contato_Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
+                        $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
                     sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Details/{c.Contato_Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
+                        $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
                     sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Delete/{c.Contato_Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
+                        $"<a href='/Contato/Delete/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
                     sb.Append("</tr>");
                 }
 
@@ -267,26 +211,16 @@ namespace ListaTelefonicaIACOApp.Controllers
                 string ordenacao = "NOME"; // default order by NOME
                 string query = @$"
                             SELECT 
-                                c.ID AS Contato_Id,
-                                c.NOME AS Contato_Nome,
-                                c.SOBRENOME AS Contato_Sobrenome,
-                                c.FIXO AS Contato_Fixo,
-                                c.CELULAR AS Contato_Celular,
-                                c.COMERCIAL AS Contato_Comercial,
-                                c.ENDERECO_ID AS Contato_EnderecoId,
-                                c.EMAIL AS Contato_Email,
-                                TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS Contato_CriadoAs,
-                                TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS Contato_EditadoAs,                                
-
-                                e.ID AS Endereco_Id,
-                                e.CEP AS Endereco_CEP,
-                                e.RUA AS Endereco_Rua,
-                                e.NUMERO AS Endereco_Numero,
-                                e.BAIRRO AS Endereco_Bairro,
-                                e.CIDADE AS Endereco_Cidade,
-                                e.COMPLEMENTO AS Endereco_Complemento
+                                c.ID AS Id,
+                                c.NOME AS Nome,
+                                c.FIXO AS Fixo,
+                                c.CELULAR AS Celular,
+                                c.COMERCIAL AS Comercial,
+                                c.ENDERECO AS Endereco,
+                                c.EMAIL AS Email,
+                                TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
+                                TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs                             
                             FROM LISTA_CONTATOS c
-                            LEFT JOIN LISTA_ENDERECOS e ON c.ENDERECO_ID = e.ID
                             ORDER BY {ordenacao}
                             OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
 
@@ -294,52 +228,43 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
 
-                var contatos = await conn.QueryAsync(
-                    query,
-                    (ContatoIndexViewModel contato, EnderecoCreateViewModel endereco) =>
-                    {
-                        contato.Endereco = endereco;
-                        return contato;
-                    },
-                    splitOn: "Endereco_Id"
-                );
+                var contatos = (await conn.QueryAsync<Contato>(query)).ToList();
 
-
+                /*
                 foreach (var c in contatos)
                 {
                     sb.Append($"<tr style='height:60px'>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_Nome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_Sobrenome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Contato_Fixo}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Contato_Celular}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Contato_Comercial}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Contato_Email}'>{c.Contato_Email}</a></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_CriadoAs}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Contato_EditadoAs}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Rua}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Numero}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Bairro}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Cidade}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco.Endereco_Complemento}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Fixo}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Celular}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Comercial}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
+
+                    //botoes de acao
                     sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Edit/{c.Contato_Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
+                        $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
                     sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Details/{c.Contato_Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
+                        $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
                     sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Delete/{c.Contato_Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
+                        $"<a href='/Contato/Delete/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
                     sb.Append("</tr>");
                 }
+                */
 
-                var contatoIndexViewModel = new ContatoIndexViewModel
-                {
-                    Contatos = contatos.ToList()
-                };
+                ContatoIndexViewModel model = new ContatoIndexViewModel();
                 ViewBag.PaginaAtual = paginaAtual;
                 ViewBag.TotalPaginas = totalPaginas;
 
+                foreach (var contato in contatos)
+                {
+                    model.Contatos.Add(ContatoMapper.MapToViewModel(contato));
+                }
+                ;
 
-
-                return View(contatoIndexViewModel);
+                return View(model);
             }
 
         }
@@ -355,27 +280,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         public async Task<IActionResult> Create()
         {
 
-            var model = new ContatoViewModel();
-            using (var conn = _context.CreateConnection())
-            {
-                conn.Open();
-
-
-                var enderecos = (await conn.QueryAsync<Models.Endereco>(
-                    $@"SELECT ID, RUA, NUMERO, BAIRRO, CIDADE, CEP, COMPLEMENTO FROM LISTA_ENDERECOS ORDER BY ID ASC"
-                )).ToList();
-
-                model.Enderecos = enderecos
-                    .Select(e => new SelectListItem
-                    {
-                        Value = e.Id.ToString(),
-                        Text = $"{e.Rua}, {e.Numero}, {e.Bairro}, {e.Cidade} (ID {e.Id})"
-                    })
-                    .ToList();
-
-            }
-
-            return View(model);
+            return View();
 
         }
 
@@ -422,8 +327,8 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             // Insere o novo contato
             string queryInserir = $@"
-                INSERT INTO LISTA_CONTATOS (NOME, SOBRENOME, FIXO, CELULAR, COMERCIAL, ENDERECO_ID, EMAIL)
-                VALUES ('{model.Nome}', '{model.Sobrenome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', {model.EnderecoId}, '{model.Email}')";
+                INSERT INTO LISTA_CONTATOS (NOME, SOBRENOME, FIXO, CELULAR, COMERCIAL, ENDERECO, EMAIL)
+                VALUES ('{model.Nome}', '{model.Sobrenome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', {model.Endereco}, '{model.Email}')";
 
             await conn.ExecuteAsync(queryInserir);
 

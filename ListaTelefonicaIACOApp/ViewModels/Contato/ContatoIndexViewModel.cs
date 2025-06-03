@@ -40,15 +40,16 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         [Display(Name = "E-mail")]
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
         public string Contato_Email { get; set; } = string.Empty;
-        public int Contato_EnderecoId { get; set; }
-        public List<ContatoIndexViewModel> Contatos { get; set; } = new();
         [Display(Name = "Endereço")]
-        public EnderecoCreateViewModel Endereco { get; set; } = new();
+        [RegularExpression(@"^([A-Za-zÀ-ÿ\s]+)\s*-\s*(\d+)\s*-\s*([A-Za-zÀ-ÿ\s]+)\s*-\s*([A-Za-zÀ-ÿ\s]+)$", ErrorMessage = "Formato esperado: Nome da Rua - Número - Bairro - Cidade")]
+        public string Contato_Endereco { get; set; }
+        public List<ContatoIndexViewModel> Contatos { get; set; } = new();
         [Display(Name = "Criado Em")]
         public string Contato_CriadoAs { get; set; } = string.Empty;
 
         [Display(Name = "Editado Em")]
         public string Contato_EditadoAs { get; set; } = string.Empty;
+
 
     }
 }

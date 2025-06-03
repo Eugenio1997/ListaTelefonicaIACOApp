@@ -39,11 +39,6 @@
                             </div>
 
                             <div class="d-flex gap-2 flex-column col-sm-12 col-md-4 campos-filtros">
-                                <label asp-for="Contato_Sobrenome" class="">Sobrenome</label>
-                                <input asp-for="Contato_Sobrenome" type="text" class="form-control" id="Sobrenome" placeholder="Ex: Clara">
-                            </div>
-
-                            <div class="d-flex gap-2 flex-column col-sm-12 col-md-4 campos-filtros">
                                 <label asp-for="Contato_Fixo" class="">Fixo</label>
                                 <input asp-for="Contato_Fixo" type="tel" class="form-control telefone-fixo" id="Fixo" placeholder="Ex: 11 2345-6789  ">
                             </div>
@@ -56,41 +51,16 @@
                                 <label asp-for="Contato_Comercial" class="">Comercial</label>
                                 <input asp-for="Contato_Comercial" type="tel" class="form-control telefone-comercial" id="Comercial" placeholder="Ex: 61 3030-4040">
                             </div>   
+                             <div class="d-flex gap-2 flex-column col-sm-12 col-md-4 campos-filtros">
+                                <label asp-for="Contato_Endereco" class="">Endereco</label>
+                                <input asp-for="Contato_Endereco" type="text" class="form-control" id="Endereco" placeholder="Ex: Rua José de Alencar - 90 - Antares - Costa Rica">
+                            </div> 
                              <div class="d-flex gap-2 flex-column col-sm-12 col-md-12 campos-filtros">
                                 <label asp-for="Contato_Email" class="">Email</label>
                                 <input asp-for="Contato_Email" type="email" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">        
                             </div>
                         </div>   
                     </div>
-
-                    <div style="height:300px" class="row col-12 w-50 d-flex gap-2 gap-md-3 flex-row align-items-lg-center justify-content-sm-center overflow-auto">        
-                
-                        <div style="gap:20px" class="row h-100 align-self-start">
-                            <div style="height:40px; background-color:#FFFFFF; border-radius: 5px" class="position-sticky d-flex w-100 top-0">
-                                <h5 style="padding:5px" class="d-flex align-items-center col-auto m-0 w-100 h-100">Endereço</h5>
-                            </div>
-                            <div class="d-flex gap-2 flex-column col-md-4 campos-filtros">
-                                <label asp-for="Endereco.Endereco_Rua" class="d-flex justify-content-between"></label>
-                                <input asp-for="Endereco.Endereco_Rua" type="text" class="form-control" id="Rua" placeholder="Ex: Centro">
-                            </div>
-                            <div class="d-flex gap-2 flex-column col-md-6 campos-filtros">
-                                <label asp-for="Endereco.Endereco_Bairro" class="d-flex justify-content-between"></label>
-                                <input asp-for="Endereco.Endereco_Bairro" type="text" class="form-control" id="Bairro" placeholder="Ex: Centro"> 
-                            </div>
-                           
-                            <div class="d-flex gap-2 flex-column col-md-6 campos-filtros">
-                                <label asp-for="Endereco.Endereco_Cidade" class="form-label">Selecionar a cidade</label>
-                                <select id="Cidade" asp-for="Endereco.Endereco_Cidade" class="form-select" aria-label="Selecionar cidade">
-                                    <option selected value="">Escolha uma cidade</option> <!-- Valor em branco para seleção inicial -->
-                                    <option value="CostaRica">Costa Rica</option>
-                                    <option value="ChapadaoDoSul">Chapadao do Sul</option>
-                                    <option value="ParaisodasAguas">Paraiso das Aguas</option>
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
                    
                     <div style="height:50px" class="d-flex w-100 justify-content-end gap-4 align-items-center col-auto">
                         <button
@@ -136,15 +106,12 @@
                         <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Fixo)</th>
                         <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Celular)</th>
                         <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Comercial)</th>
+                        <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Endereco)</th>
                         <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Email)</th>
                         <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_CriadoAs)</th>
                         <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_EditadoAs)</th>
 
-                        <th style="font-size:16px; min-width:140px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Rua)</th>
-                        <th style="font-size:16px; min-width:80px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Numero)</th>
-                        <th style="font-size:16px; min-width:120px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Bairro)</th>
-                        <th style="font-size:16px; min-width:140px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Cidade)</th>
-                        <th style="font-size:16px; min-width:160px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Endereco.Endereco_Complemento)</th>
+
 
               
                         <th style="min-width:50px; min-height:60px"></th>
@@ -158,7 +125,6 @@
                     {
                         <tr style="height:60px">
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
-                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Sobrenome)</td>
 
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">
                              <input type="text" value="@item.Contato_Fixo" class="form-control telefone-fixo input-sem-borda" readonly />
@@ -169,24 +135,11 @@
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">
                              <input type="text" value="@item.Contato_Comercial" class="form-control telefone-comercial input-sem-borda" readonly />
                             </td>
-                            @{
-                                /* 
-                                   <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Fixo)</td>
-                                    <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Celular)</td>
-                                    <td class="text-nowrap" style="min-width:100px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Comercial)</td>
-                                 
-                                 */
-                            }
+                          
                            
-                            
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Email)</td>
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_CriadoAs)</td>
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_EditadoAs)</td>
-                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Rua)</td>
-                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Numero)</td>
-                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Bairro)</td>
-                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Cidade)</td>
-                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Endereco.Endereco_Complemento)</td>
 
                             
                             <td style="width:50px; height:60px" class="text-nowrap">

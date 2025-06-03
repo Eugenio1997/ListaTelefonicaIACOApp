@@ -20,8 +20,8 @@ var app = builder.Build();
 // Crie a conexão com Oracle
 using (var connection = new OracleConnection(builder.Configuration.GetConnectionString("ListaTelefonicaIACOConnectionString")))
 {
-    connection.Open();
-    DatabaseSeeder.Seed(connection);
+    //connection.Open();
+    //DatabaseSeeder.Seed(connection);
 }
 
 // Configure the HTTP request pipeline.
