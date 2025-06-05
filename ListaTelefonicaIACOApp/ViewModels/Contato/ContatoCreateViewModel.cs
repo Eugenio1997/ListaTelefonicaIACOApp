@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ListaTelefonicaIACOApp.ViewModels.Contato
 {
-    public class ContatoViewModel
+    public class ContatoCreateViewModel
     {
 
         // Dados pessoais
@@ -11,9 +11,6 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         [Required(ErrorMessage = "O campo Nome é obrigatório.")]
         [RegularExpression(@"^(?=.{3,})(?!.*\d)[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", ErrorMessage = "O Nome deve ter no mínimo 3 letras e não pode conter números.")]
         public string Nome { get; set; } = string.Empty;
-        [Required(ErrorMessage = "O campo Sobrenome é obrigatório.")]
-        [RegularExpression(@"^(?=.{3,})(?!.*\d)[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", ErrorMessage = "O Sobrenome deve ter no mínimo 3 letras e não pode conter números.")]
-        public string Sobrenome { get; set; } = string.Empty;
         [Required(ErrorMessage = "O campo Fixo é obrigatório.")]
         [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: 99 99999999")]
         public string Fixo { get; set; } = string.Empty;
@@ -28,7 +25,7 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         public string Email { get; set; } = string.Empty;
         [Display(Name = "Endereco")]
         [Required(ErrorMessage = "O campo Endereco é obrigatório.")]
-        public int? EnderecoId { get; set; } // propriedade que recebera o valor selecionado do dropdown no POST
+        public int? Endereco { get; set; } // propriedade que recebera o valor selecionado do dropdown no POST
 
         public List<SelectListItem> Enderecos { get; set; } = new();
 

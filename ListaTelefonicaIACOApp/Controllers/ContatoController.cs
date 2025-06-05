@@ -48,14 +48,13 @@ namespace ListaTelefonicaIACOApp.Controllers
             string query = @$"SELECT 
                                 c.ID AS Id,
                                 c.NOME AS Nome,
-                                c.SOBRENOME AS Sobrenome,
                                 c.FIXO AS Fixo,
                                 c.CELULAR AS Celular,
                                 c.COMERCIAL AS Comercial,
                                 c.ENDERECO AS Endereco,
                                 c.EMAIL AS Email,
                                 TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
-                                TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs,
+                                TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
                             FROM LISTA_CONTATOS c
                             ORDER BY {ordenacao}
                             OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
@@ -81,7 +80,6 @@ namespace ListaTelefonicaIACOApp.Controllers
                 {
                     sb.Append($"<tr style='height:60px'>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Sobrenome}</td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Fixo}' /></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Celular}' /></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Comercial}' /></td>");
@@ -168,7 +166,6 @@ namespace ListaTelefonicaIACOApp.Controllers
                 {
                     sb.Append($"<tr style='height:60px'>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Sobrenome}</td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Fixo}' /></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Celular}' /></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Comercial}' /></td>");
@@ -224,35 +221,8 @@ namespace ListaTelefonicaIACOApp.Controllers
                             ORDER BY {ordenacao}
                             OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
 
-                StringBuilder sb = new StringBuilder();
-
-
 
                 var contatos = (await conn.QueryAsync<Contato>(query)).ToList();
-
-                /*
-                foreach (var c in contatos)
-                {
-                    sb.Append($"<tr style='height:60px'>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Fixo}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Celular}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Comercial}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
-
-                    //botoes de acao
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Delete/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
-                    sb.Append("</tr>");
-                }
-                */
 
                 ContatoIndexViewModel model = new ContatoIndexViewModel();
                 ViewBag.PaginaAtual = paginaAtual;
@@ -262,7 +232,6 @@ namespace ListaTelefonicaIACOApp.Controllers
                 {
                     model.Contatos.Add(ContatoMapper.MapToViewModel(contato));
                 }
-                ;
 
                 return View(model);
             }
@@ -277,7 +246,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         // GET: ContatoController/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
 
             return View();
@@ -327,8 +296,8 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             // Insere o novo contato
             string queryInserir = $@"
-                INSERT INTO LISTA_CONTATOS (NOME, SOBRENOME, FIXO, CELULAR, COMERCIAL, ENDERECO, EMAIL)
-                VALUES ('{model.Nome}', '{model.Sobrenome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', {model.Endereco}, '{model.Email}')";
+                INSERT INTO LISTA_CONTATOS (NOME, FIXO, CELULAR, COMERCIAL, ENDERECO, EMAIL)
+                VALUES ('{model.Nome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', {model.Endereco}, '{model.Email}')";
 
             await conn.ExecuteAsync(queryInserir);
 

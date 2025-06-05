@@ -9,8 +9,8 @@
 
 <body>
    
-    <div style="background-color: #f9f9f9; padding:20px; height:500px; min-width:500px" class="p-4 rounded-3">
-        <form id="formFiltro" asp-action="FiltrarPorColaboradores" method="post" class="d-flex row g-3 p-3 flex-column justify-content-center" style="min-width:500px">
+    <div style="background-color: #f9f9f9; padding:20px; min-width:300px" class="p-4 rounded-3">
+        <form id="formFiltro" asp-action="FiltrarPorColaboradores" method="post" class="d-flex row g-3 p-3 flex-column justify-content-center">
             <div class="d-flex flex-column w-100 col-auto m-0" style="padding:10px; gap:30px">
                 <div class="row justify-content-between border-1 border-bottom">
                     <h1 class="col-auto m-0 align-self-center">
@@ -26,41 +26,64 @@
                     </div>
                 </div>
                 <div style="gap:20px" class="row">
-
-
-                    <div style="height:300px" class="row overflow-auto col-12 w-50 d-flex gap-2 gap-md-3 col-auto flex-row align-items-lg-center justify-content-sm-center">
-                        <div style="gap:20px" class="row h-100">
-                            <div style="height:40px; background-color:#FFFFFF; border-radius:5px" class="position-sticky top-0">
-                                <h5 style="padding:5px; border-radius:5px" class="d-flex align-items-center col-auto m-0 h-100">Dados Pessoais</h5>
-                            </div>
-                            <div class="d-flex gap-2 flex-column col-sm-12 col-md-4 campos-filtros">
-                                <label asp-for="Contato_Nome" class="">Nome</label>
-                                <input asp-for="Contato_Nome" type="text" class="form-control" id="Nome" placeholder="Ex: Ana">
-                            </div>
-
-                            <div class="d-flex gap-2 flex-column col-sm-12 col-md-4 campos-filtros">
-                                <label asp-for="Contato_Fixo" class="">Fixo</label>
-                                <input asp-for="Contato_Fixo" type="tel" class="form-control telefone-fixo" id="Fixo" placeholder="Ex: 11 2345-6789  ">
-                            </div>
-
-                            <div class="d-flex gap-2 flex-column col-sm-12 col-md-4 campos-filtros">
-                                <label asp-for="Contato_Celular" class="">Celular</label>
-                                <input asp-for="Contato_Celular" type="tel" class="form-control telefone-celular" id="Celular" placeholder="Ex: 11 998877665">  
-                            </div>
-                            <div class="d-flex gap-2 flex-column col-sm-12 col-md-4 campos-filtros">
-                                <label asp-for="Contato_Comercial" class="">Comercial</label>
-                                <input asp-for="Contato_Comercial" type="tel" class="form-control telefone-comercial" id="Comercial" placeholder="Ex: 61 3030-4040">
-                            </div>   
-                             <div class="d-flex gap-2 flex-column col-sm-12 col-md-4 campos-filtros">
-                                <label asp-for="Contato_Endereco" class="">Endereco</label>
-                                <input asp-for="Contato_Endereco" type="text" class="form-control" id="Endereco" placeholder="Ex: Rua José de Alencar - 90 - Antares - Costa Rica">
-                            </div> 
-                             <div class="d-flex gap-2 flex-column col-sm-12 col-md-12 campos-filtros">
-                                <label asp-for="Contato_Email" class="">Email</label>
-                                <input asp-for="Contato_Email" type="email" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">        
-                            </div>
-                        </div>   
+                    <div class="col-md-6 campos-filtros">
+                        <label asp-for="Contato_Nome" class="">Nome</label>
+                        <input asp-for="Contato_Nome" type="text" class="form-control" id="Nome" placeholder="Ex: Ana Pereira dos Santos">
                     </div>
+
+                    <div class="col-md-4 campos-filtros">
+                        <label asp-for="Contato_Fixo" class="">Fixo</label>
+                        <input asp-for="Contato_Fixo" type="tel" class="form-control telefone-fixo" id="Fixo" placeholder="Ex: 11 2345-6789  ">
+                    </div>
+
+                    <div class="col-md-4 campos-filtros">
+                        <label asp-for="Contato_Celular" class="">Celular</label>
+                        <input asp-for="Contato_Celular" type="tel" class="form-control telefone-celular" id="Celular" placeholder="Ex: 11 998877665">  
+                    </div>
+                    <div class="col-md-4 campos-filtros">
+                        <label asp-for="Contato_Comercial" class="">Comercial</label>
+                        <input asp-for="Contato_Comercial" type="tel" class="form-control telefone-comercial" id="Comercial" placeholder="Ex: 61 3030-4040">
+                    </div>   
+                        <div class="col-md-4 campos-filtros">
+                        <label asp-for="Contato_Endereco" class="">Endereco</label>
+                        <input asp-for="Contato_Endereco" type="text" class="form-control" id="Endereco" placeholder="Ex: Rua José de Alencar - 90 - Antares - Costa Rica">
+                    </div> 
+                        <div class="col-md-8 campos-filtros">
+                        <label asp-for="Contato_Email" class="">Email</label>
+                        <input asp-for="Contato_Email" type="email" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">        
+                    </div>
+                    @{
+                        /*
+                    <div class="col-md-4 campos-filtros">
+                        <label asp-for="Contato_Nome" class="">Nome</label>
+                        <input asp-for="Contato_Nome" type="text" class="form-control" id="Nome" placeholder="Ex: Ana">
+                    </div>
+
+                    <div class="col-md-4 campos-filtros">
+                        <label asp-for="Contato_Fixo" class="">Fixo</label>
+                        <input asp-for="Contato_Fixo" type="tel" class="form-control telefone-fixo" id="Fixo" placeholder="Ex: 11 2345-6789  ">
+                    </div>
+
+                    <div class="col-md-4 campos-filtros">
+                        <label asp-for="Contato_Celular" class="">Celular</label>
+                        <input asp-for="Contato_Celular" type="tel" class="form-control telefone-celular" id="Celular" placeholder="Ex: 11 998877665">  
+                    </div>
+                    <div class="col-md-4 campos-filtros">
+                        <label asp-for="Contato_Comercial" class="">Comercial</label>
+                        <input asp-for="Contato_Comercial" type="tel" class="form-control telefone-comercial" id="Comercial" placeholder="Ex: 61 3030-4040">
+                    </div>   
+                        <div class="col-md-4 campos-filtros">
+                        <label asp-for="Contato_Endereco" class="">Endereco</label>
+                        <input asp-for="Contato_Endereco" type="text" class="form-control" id="Endereco" placeholder="Ex: Rua José de Alencar - 90 - Antares - Costa Rica">
+                    </div> 
+                        <div class="col-md-12 campos-filtros">
+                        <label asp-for="Contato_Email" class="">Email</label>
+                        <input asp-for="Contato_Email" type="email" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">        
+                    </div>
+                    */
+                    }
+                   
+                  
                    
                     <div style="height:50px" class="d-flex w-100 justify-content-end gap-4 align-items-center col-auto">
                         <button
@@ -102,7 +125,6 @@
                 <thead class="table-light position-sticky top-0" style="min-height:60px">
                     <tr>
                         <th style="font-size:16px; min-width:120px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Nome)</th>
-                        <th style="font-size:16px; min-width:120px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Sobrenome)</th>
                         <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Fixo)</th>
                         <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Celular)</th>
                         <th style="font-size:16px; min-width:100px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_Comercial)</th>
@@ -222,48 +244,48 @@
     <script>
         $(document).ready(function () {
             $(document).on('click', '.pagination .page-link, #btnLimparFiltros', function (e) {
-            e.preventDefault();
+                e.preventDefault();
 
-            //limpando todos os campos de filtro
-            $('#formFiltro').find('input, select').each(function () {
-                $(this).val('');
+                //limpando todos os campos de filtro
+                $('#formFiltro').find('input, select').each(function () {
+                    $(this).val('');
+                });
+
+                let pagina = $(this).data('pagina');
+
+                carregarEnderecos(pagina);
             });
 
-            let pagina = $(this).data('pagina');
+        }); 
 
-            carregarEnderecos(pagina);
-        });
+        // ✅ Carrega automaticamente a página 1 ao abrir
+        carregarEnderecos(1);
 
-    }); 
-
-    // ✅ Carrega automaticamente a página 1 ao abrir
-    carregarEnderecos(1);
-
-    function carregarEnderecos(pagina){
-        $.ajax({
-            url: '/Contato/ObterContatosPaginados',
-            method: 'GET',
-            data: { paginaAtual: pagina },
-            success: function (response) {
-                $('.table-responsive').css('height','500px');
-                $('#table tbody').html(response.html);
-                $('#table').show();
-                $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
-                $('#mensagem-nenhum-contato').hide();
+        function carregarEnderecos(pagina){
+            $.ajax({
+                url: '/Contato/ObterContatosPaginados',
+                method: 'GET',
+                data: { paginaAtual: pagina },
+                success: function (response) {
+                    $('.table-responsive').css('height','500px');
+                    $('#table tbody').html(response.html);
+                    $('#table').show();
+                    $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
+                    $('#mensagem-nenhum-contato').hide();
                    
-                $('.pagination').show(); // Mostra a paginacao
+                    $('.pagination').show(); // Mostra a paginacao
 
-                    // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
-                    aplicarMascaras();
-                    gerarPaginacao(response.paginaAtual, response.totalPaginas);
+                        // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
+                        aplicarMascaras();
+                        gerarPaginacao(response.paginaAtual, response.totalPaginas);
 
-            },
-            error: function () {
-                alert('Erro ao carregar os dados.');
-            },
+                },
+                error: function () {
+                    alert('Erro ao carregar os dados.');
+                },
                
-        });
-    }
+            });
+        }
 
     </script>
 
@@ -275,14 +297,11 @@
             //usando 'cleanVal' para obter o valor do input sem máscara
             const params = {
                 Nome: $('#Nome').val(),
-                Sobrenome: $('#Sobrenome').val(),
                 Fixo: $('#Fixo').cleanVal(),
                 Celular: $('#Celular').cleanVal(),
                 Comercial: $('#Comercial').cleanVal(),
+                Endereco: $('#Endereco').val(),
                 Email: $('#Email').val(),
-                Rua: $('#Rua').val(),
-                Bairro: $('#Bairro').val(),
-                Cidade: $('#Cidade').val()
             };
 
             //montando a querystring

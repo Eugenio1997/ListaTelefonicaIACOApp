@@ -15,12 +15,6 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         [Display(Name = "Nome")]
         [RegularExpression(@"^(?=.{3,})(?!.*\d)[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", ErrorMessage = "O Nome deve ter no mínimo 3 letras e não pode conter números.")]
         public string Contato_Nome { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "O campo Sobrenome é obrigatório.")]
-        [Display(Name = "Sobrenome")]
-        [RegularExpression(@"^(?=.{3,})(?!.*\d)[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", ErrorMessage = "O Sobrenome deve ter no mínimo 3 letras e não pode conter números.")]
-        public string Contato_Sobrenome { get; set; } = string.Empty;
-
         [Required(ErrorMessage = "O campo Fixo é obrigatório.")]
         [Display(Name = "Telefone Fixo")]
         [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: 99 9999-9999")]

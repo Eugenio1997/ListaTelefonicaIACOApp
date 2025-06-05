@@ -1,5 +1,5 @@
 ﻿@using ListaTelefonicaIACOApp.ViewModels.Contato
-@model ContatoViewModel
+@model ContatoCreateViewModel
 
 @{
     ViewData["Title"] = "Adicionar Contato - IACO";
@@ -26,24 +26,17 @@
         <div class="row g-3 rounded-2 m-0 p-4" style="gap:20px;background-color: #f9f9f9">
             <h4>Dados Pessoais</h4>
             <div class="row">
-                <div class="form-group col-md-4 min-height-90px-input">
+                <div class="form-group col-md-6 min-height-90px-input">
                     <label asp-for="Nome"></label>
-                    <input id="Nome" asp-for="Nome" class="form-control" placeholder="Ex: Ana" />
+                    <input id="Nome" asp-for="Nome" class="form-control" placeholder="Ex: Ana Pereira dos Santos" />
                     <span asp-validation-for="Nome" class="text-danger fs-12px"></span>
-                </div>
-                <div class="form-group col-md-4 min-height-90px-input">
-                    <label asp-for="Sobrenome"></label>
-                    <input id="Sobrenome" asp-for="Sobrenome" class="form-control " placeholder="Ex: Clara" />
-                    <span asp-validation-for="Sobrenome" class="text-danger fs-12px"></span>
                 </div>
                 <div class="form-group col-md-4 min-height-90px-input">
                     <label asp-for="Fixo"></label>
                     <input id="Fixo" asp-for="Fixo" class="form-control telefone-fixo" placeholder="Ex: 11 2345-6789" />
                     <span asp-validation-for="Fixo" class="text-danger fs-12px"></span>
                 </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-6 min-height-90px-input">
+                <div class="form-group col-md-4 min-height-90px-input">
                     <label asp-for="Celular"></label>
                     <input id="Celular" asp-for="Celular" class="form-control telefone-celular" placeholder="Ex: 11 998877665" />
                     <span asp-validation-for="Celular" class="text-danger fs-12px"></span>
@@ -54,43 +47,22 @@
                     <span asp-validation-for="Comercial" class="text-danger fs-12px"></span>
                 </div>
                 <div class="form-group col-md-6 min-height-90px-input">
+                    <i style="width:10px" class="bi bi-exclamation-circle p-0" data-bs-toggle='tooltip' data-bs-placement='top' title='Insira o endereço dessa maneira: Rua - Número da Rua - Bairro - Cidade.'></i>
+                    <label asp-for="Endereco"></label>
+                    <input type="text" id="Endereco" asp-for="Endereco" class="form-control" placeholder="Ex: Rua José de Alencar - 90 - Antares - Costa Rica" />
+                    <span asp-validation-for="Endereco" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-6 min-height-90px-input">
                     <label asp-for="Email"></label>
                     <input id="Email" asp-for="Email" class="form-control" placeholder="Ex: Ana.clara@iaco.com" />
                     <span asp-validation-for="Email" class="text-danger fs-12px"></span>
                 </div>
             </div>
-            
-
-            <div class="form-group col-md-6 min-height-90px-input m-0">
-                <label asp-for="EnderecoId" class="form-label"></label>
-
-                <select asp-for="EnderecoId" asp-items="Model.Enderecos" class="form-select">
-                    <option value="">Selecione um endereço</option>
-                </select>
-
-                <span asp-validation-for="EnderecoId" class="text-danger fs-12px"></span>
-            </div>
-
-            <div style="height:fit-content" class="row align-items-center ps-4">
-                 
-                <div class="d-flex w-100 justify-content-start p-0">
-                    <i style="width:10px" class="bi bi-exclamation-circle p-0" data-bs-toggle='tooltip' data-bs-placement='top' title='Caso o seu endereço não exista, crie ele apertando no botao.'></i>
-                </div>
-                @{
-                    /*
-
-                    <a asp-controller="Endereco" asp-action="Create" class="btn btn-outline-secondary col-auto text-black d-flex align-items-center" style="min-width: 180px; height:50px">
-                    Cadastrar Endereço
-                    </a>
-                     
-                     */
-                }
-               
-            </div>
+           
         </div>
         
         <div style="height:50px" class="row d-flex justify-content-end col-auto w-100">
-            <button type="button" id="btnCadastrarContato" class="btn btn-primary h-100 col-auto" style="min-width: 180px">Cadastrar Contato</button>
+            <button type="button" id="btnCadastrarContato" class="btn btn-primary col-auto h-75">Cadastrar Contato</button>
         </div>
        
     </form>
@@ -123,7 +95,7 @@
 
                 if (!formClone.valid()) return;
 
-                 formClone..find('input').each(function () {
+                 formClone.find('input').each(function () {
                     // 'this' refers to the current input element
                     $(this).val($(this).val().trim());
 
@@ -132,7 +104,7 @@
                 formClone.find('#Fixo').val($('#Fixo').cleanVal());
                 formClone.find('#Celular').val($('#Celular').cleanVal());
                 formClone.find('#Comercial').val($('#Comercial').cleanVal());
-                formClone.find('select[name="EnderecoId"]').val($('#EnderecoId').val());
+                formClone.find('#Endereco').val($('#Endereco').val());
 
 
                 const formData = new FormData(formClone[0]);
@@ -180,10 +152,6 @@
 
                 });
             });
-        });
-         // ✅ Corrige o comportamento do erro que não some ao selecionar
-        $('#EnderecoId').on('change', function () {
-            $(this).valid();
         });
     </script>
 }
