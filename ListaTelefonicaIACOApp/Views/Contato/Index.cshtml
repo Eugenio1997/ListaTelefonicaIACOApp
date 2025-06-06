@@ -247,7 +247,7 @@
                 e.preventDefault();
 
                 //limpando todos os campos de filtro
-                $('#formFiltro').find('input, select').each(function () {
+                $('#formFiltro').find('input').each(function () {
                     $(this).val('');
                 });
 
@@ -303,6 +303,14 @@
                 Endereco: $('#Endereco').val(),
                 Email: $('#Email').val(),
             };
+
+           // Verifica se todos os campos estão vazios
+            const todosCamposVazios = Object.values(params).every(value => value === "");
+
+            if (todosCamposVazios) {
+                // Ignora a requisição AJAX
+                return;
+            }
 
             //montando a querystring
             const queryString = Object.keys(params)
