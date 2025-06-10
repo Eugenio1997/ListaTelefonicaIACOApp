@@ -108,8 +108,11 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterContatosFiltrados(FiltroContatoViewModel filtros)
+        public async Task<IActionResult> ObterContatosFiltrados(FiltroContatoViewModel filtros, int registrosPorPagina = 10, int paginaAtual = 1)
         {
+
+            offset = (paginaAtual - 1) * registrosPorPagina;
+
             string queryBase = @"
                     SELECT 
                         c.ID              AS Id,
@@ -120,7 +123,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                         c.ENDERECO        AS Endereco,
                         c.EMAIL           AS Email,
                         TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
-                        TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs,
+                        TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
                     FROM LISTA_CONTATOS c
                     WHERE 1=1
                 ";
@@ -159,6 +162,9 @@ namespace ListaTelefonicaIACOApp.Controllers
                 conn.Open();
 
 
+                var totalRegistros = (await conn.QueryAsync<Contato>(queryBase)).ToList().Count();
+                totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
+
                 var sb = new StringBuilder();
                 var contatos = (await conn.QueryAsync<Contato>(queryBase)).ToList();
 
@@ -187,7 +193,9 @@ namespace ListaTelefonicaIACOApp.Controllers
                 return Json(new
                 {
                     html = sb.ToString(), // Pode ser vazio
-                    encontrou = contatos.Any()
+                    encontrou = contatos.Any(),
+                    paginaAtual,
+                    totalPaginas
                 });
             }
         }
