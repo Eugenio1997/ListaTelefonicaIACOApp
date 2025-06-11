@@ -52,39 +52,7 @@
                         <label asp-for="Contato_Email" class="">Email</label>
                         <input asp-for="Contato_Email" type="email" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">        
                     </div>
-                    @{
-                        /*
-                    <div class="col-md-4 campos-filtros">
-                        <label asp-for="Contato_Nome" class="">Nome</label>
-                        <input asp-for="Contato_Nome" type="text" class="form-control" id="Nome" placeholder="Ex: Ana">
-                    </div>
-
-                    <div class="col-md-4 campos-filtros">
-                        <label asp-for="Contato_Fixo" class="">Fixo</label>
-                        <input asp-for="Contato_Fixo" type="tel" class="form-control telefone-fixo" id="Fixo" placeholder="Ex: 11 2345-6789  ">
-                    </div>
-
-                    <div class="col-md-4 campos-filtros">
-                        <label asp-for="Contato_Celular" class="">Celular</label>
-                        <input asp-for="Contato_Celular" type="tel" class="form-control telefone-celular" id="Celular" placeholder="Ex: 11 998877665">  
-                    </div>
-                    <div class="col-md-4 campos-filtros">
-                        <label asp-for="Contato_Comercial" class="">Comercial</label>
-                        <input asp-for="Contato_Comercial" type="tel" class="form-control telefone-comercial" id="Comercial" placeholder="Ex: 61 3030-4040">
-                    </div>   
-                        <div class="col-md-4 campos-filtros">
-                        <label asp-for="Contato_Endereco" class="">Endereco</label>
-                        <input asp-for="Contato_Endereco" type="text" class="form-control" id="Endereco" placeholder="Ex: Rua José de Alencar - 90 - Antares - Costa Rica">
-                    </div> 
-                        <div class="col-md-12 campos-filtros">
-                        <label asp-for="Contato_Email" class="">Email</label>
-                        <input asp-for="Contato_Email" type="email" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">        
-                    </div>
-                    */
-                    }
-                   
-                  
-                   
+                
                     <div style="height:50px" class="d-flex w-100 justify-content-end gap-4 align-items-center col-auto">
                         <button
                                 id="btnLimparFiltros"
@@ -110,7 +78,9 @@
         </form>
     </div>
     
-
+    <div id="mensagem-nenhum-contato" class="text-center d-none">
+        <p class="fw-bold fs-4 m-0">Nenhum contato foi encontrado.</p>
+    </div>
    
     @if (Model != null && Model.Contatos.Any())
     {
@@ -119,7 +89,7 @@
                 <span class="visually-hidden">Carregando...</span>
             </div>
         </div>
-        <div style="height:500px; min-width:500px" class="table-responsive">
+        <div id="table-responsive" style="min-height:500px; min-width:500px" class="table-responsive d-flex">
             <table id="table" class="table table-hover table-borderless m-0 h-75 tabela-contatos">
                 
                 <thead class="table-light position-sticky top-0" style="min-height:60px">
@@ -176,10 +146,9 @@
                         </tr>
                     }
                 </tbody>
+
+               
             </table>
-            <div id="mensagem-nenhum-contato" class="text-center py-4 d-none">
-                <p class="fw-bold fs-4">Nenhum contato foi encontrado.</p>
-            </div>
         </div>
         
 
@@ -267,7 +236,8 @@
                 method: 'GET',
                 data: { paginaAtual: pagina },
                 success: function (response) {
-                    $('.table-responsive').css('height','500px');
+                    $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
+                    $('#table-responsive').get(0).style.setProperty('max-height', '500px', 'important');
                     $('#table tbody').html(response.html);
                     $('#table').show();
                     $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
@@ -328,12 +298,14 @@
                 success: function (response) {
                     if (!response.encontrou) {
                         $('#table').hide();
-                        $('.table-responsive').css('height','100px')
+                        $('#table-responsive').get(0).style.setProperty('min-height', '100px', 'important');
                         $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
                         $('.pagination').hide(); // Oculta a paginação
                     } else {
                         $('#mensagem-nenhum-contato').hide();
-                        $('.table-responsive').css('height','500px')
+                        //$('.table-responsive').css('height','500px')
+                        $('#table-responsive').get(0).style.setProperty('min-height', '100px', 'important');
+                        $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
                         $('#table tbody').html(response.html);
                         $('#table').show();
                         $('.pagination').show(); // Mostra a paginação novamente se necessário
