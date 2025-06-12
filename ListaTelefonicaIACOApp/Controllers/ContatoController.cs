@@ -13,6 +13,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 
 namespace ListaTelefonicaIACOApp.Controllers
@@ -92,8 +93,9 @@ namespace ListaTelefonicaIACOApp.Controllers
                         $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
                     sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
                         $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Delete/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
+                    sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
+                         $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
+                         $"<i class='bi bi-trash text-dark'></i></a></td>");
                     sb.Append("</tr>");
 
                 }
@@ -180,12 +182,13 @@ namespace ListaTelefonicaIACOApp.Controllers
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
 
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                    sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
                         $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                    sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
                         $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Delete/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Deletar'><i class='bi bi-trash text-dark'></i></a></td>");
+                    sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
+                        $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
+                        $"<i class='bi bi-trash text-dark'></i></a></td>");
                     sb.Append("</tr>");
                 }
 
@@ -248,11 +251,17 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
         // GET: ContatoController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
-        }
+            var query = @$"SELECT * FROM LISTA_CONTATOS WHERE ID = {id}";
+            using (var conn = _context.CreateConnection())
+            {
+                conn.Open();
+                var model = await conn.QuerySingleAsync<ContatoDetailsViewModel>(query);
 
+                return View(model);
+            }
+        }
         // GET: ContatoController/Create
         public IActionResult Create()
         {
@@ -312,22 +321,6 @@ namespace ListaTelefonicaIACOApp.Controllers
             return Ok(new { sucesso = true });
         }
 
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> FiltrarPorContatos(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
         // GET: ContatoController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
@@ -358,15 +351,19 @@ namespace ListaTelefonicaIACOApp.Controllers
         // POST: ContatoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> DeleteContato(int id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var query = $@"DELETE FROM LISTA_CONTATOS WHERE ID = {id}";
+                using var conn = _context.CreateConnection();
+                conn.Open();
+                await conn.ExecuteAsync(query);
+                return Ok(new { sucesso = true });
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest(new { sucesso = false, mensagem = ex.Message });
             }
         }
     }

@@ -1,54 +1,82 @@
-﻿@model ListaTelefonicaIACOApp.Models.Contato
+﻿@using ListaTelefonicaIACOApp.ViewModels.Contato
+@model ContatoDetailsViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Contato - IACO";
 }
 
-<h1>Details</h1>
+<header style="height: 50px" class="d-flex w-100 justify-content-start">
 
-<div>
-    <h4>Colaborador</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Fixo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Fixo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Celular)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Celular)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Comercial)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Comercial)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-    </dl>
+    <div class="d-flex justify-content-start align-items-center h-100 w-100">
+        <a style="background-color: #f9f9f9;  border-radius: 5px; width: 60px; padding: 10px" class="d-flex h-100 justify-content-center align-items-center" asp-action="Index">
+            <i style="font-size:30px" class="bi bi-arrow-left  text-dark"></i>
+        </a>
+    </div>
+</header>
+
+<div style="padding:10px; gap:30px " class="d-flex flex-column">
+    <h2>Detalhes do Contato</h2>
+
+    <form id="formCadastrarContato" class="row" method="get" asp-action="Index" asp-controller="Contato" style="gap:30px">
+
+        @* ---------- Dados Pessoais ---------- *@
+        <div class="row g-3 rounded-2 m-0 p-4" style="gap:20px;background-color: #f9f9f9">
+            <h4>Dados Pessoais</h4>
+            <div class="row">
+                <div class="form-group col-md-6 min-height-90px-input">
+                    <label asp-for="Nome"></label>
+                    <input readonly id="Nome" asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-4 min-height-90px-input">
+                    <label asp-for="Fixo"></label>
+                    <input readonly id="Fixo" asp-for="Fixo" class="form-control telefone-fixo"/>
+                    <span asp-validation-for="Fixo" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-4 min-height-90px-input">
+                    <label asp-for="Celular"></label>
+                    <input readonly id="Celular" asp-for="Celular" class="form-control telefone-celular" />
+                    <span asp-validation-for="Celular" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-6 min-height-90px-input">
+                    <label asp-for="Comercial"></label>
+                    <input readonly id="Comercial" asp-for="Comercial" class="form-control telefone-comercial"/>
+                    <span asp-validation-for="Comercial" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-6 min-height-90px-input">
+                    <label asp-for="Endereco"></label>
+                    <input readonly type="text" id="Endereco" asp-for="Endereco" class="form-control"/>
+                    <span asp-validation-for="Endereco" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-6 min-height-90px-input">
+                    <label asp-for="Email"></label>
+                    <input readonly id="Email" asp-for="Email" class="form-control"/>
+                    <span asp-validation-for="Email" class="text-danger fs-12px"></span>
+                </div>
+            </div>
+
+        </div>
+
+    </form>
 </div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+
+
+
+    <script>
+        $(document).ready(function () {
+
+            aplicarMascaras();
+        });
+    </script>
+}
+
+

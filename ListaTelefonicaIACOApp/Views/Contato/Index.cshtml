@@ -6,11 +6,33 @@
     ViewData["Title"] = "Agenda Telefônica - IACO";
 }
 
+<div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">Confirmar Exclusão</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja excluir o contato <strong id="nomeContatoModal"></strong>?
+      </div>
+      <div class="modal-footer">
+       <form id="formExcluirContato" method="post" asp-action="DeleteContato" asp-controller="Contato">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="idContatoExcluir" name="id" />
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-danger" id="btnConfirmarExclusao">Excluir</button>
+       </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <body>
    
     <div style="background-color: #f9f9f9; padding:20px; min-width:300px" class="p-4 rounded-3">
-        <form id="formFiltro" asp-action="FiltrarPorColaboradores" method="post" class="d-flex row g-3 p-3 flex-column justify-content-center">
+        <form id="formFiltro" class="d-flex row g-3 p-3 flex-column justify-content-center">
             <div class="d-flex flex-column w-100 col-auto m-0" style="padding:10px; gap:30px">
                 <div class="row justify-content-between border-1 border-bottom">
                     <h1 class="col-auto m-0 align-self-center">
@@ -57,7 +79,7 @@
                         <button
                                 id="btnLimparFiltros"
                                 style=""
-                                type="submit"
+                                type="button"
                                 class="btn btn-outline-secondary col-auto h-75">Limpar Filtros
                         </button>
 
@@ -103,9 +125,6 @@
                         <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_CriadoAs)</th>
                         <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_EditadoAs)</th>
 
-
-
-              
                         <th style="min-width:50px; min-height:60px"></th>
                         <th style="min-width:50px; min-height:60px"></th>
                         <th style="min-width:50px; min-height:60px"></th>
@@ -115,7 +134,7 @@
                 <tbody>
                     @foreach (var item in Model.Contatos)
                     {
-                        <tr style="height:60px">
+                        <tr id="linha-contato-@item.Contato_Id" style="height:60px">
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
 
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">
@@ -128,7 +147,7 @@
                              <input type="text" value="@item.Contato_Comercial" class="form-control telefone-comercial input-sem-borda" readonly />
                             </td>
                           
-                           
+                            <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Endereco)</td>
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Email)</td>
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_CriadoAs)</td>
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_EditadoAs)</td>
@@ -141,8 +160,16 @@
                                 <a asp-action="Details" asp-route-id="@item.Contato_Id"><i class="bi bi-eye text-dark"></i></a>
                             </td>
                             <td style="width:50px; height:60px" class="text-nowrap">
-                                <a asp-action="Delete" asp-route-id="@item.Contato_Id"><i class="bi bi-trash text-dark"></i></a>
+                                <a href="#" 
+                                   class="btn-abrir-modal-exclusao"
+                                   data-id="@item.Contato_Id"
+                                   data-nome="@item.Contato_Nome"
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#modalConfirmarExclusao">
+                                   <i class="bi bi-trash text-dark"></i>
+                                </a>
                             </td>
+
                         </tr>
                     }
                 </tbody>
@@ -210,6 +237,49 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
+
+       <script>
+        $(document).ready(function () {
+            let id;
+            let nome;
+
+            $(document).on('click', '.btn-abrir-modal-exclusao', function () {
+                id = $(this).data('id');
+                nome = $(this).data('nome');
+
+                $('#idContatoExcluir').val(id);
+                $('#nomeContatoModal').text(nome);
+            });
+
+            $('#formExcluirContato').on('submit', function (e) {
+                e.preventDefault();
+
+                const form = $(this);
+                const data = form.serialize();
+                const idContatoExcluir = $('#idContatoExcluir').val();
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: data,
+                    success: function (response) {
+                        if (response.sucesso) {
+                            $('#modalConfirmarExclusao').modal('hide');
+                            $('#linha-contato-' + idContatoExcluir).remove();
+                        } else {
+                            alert(response?.mensagem ?? 'Erro ao excluir o contato.');
+                        }
+                    },
+                    error: function (xhr) {
+                        const response = xhr.responseJSON;
+                        alert(response?.mensagem ?? 'Erro ao excluir o contato.');
+                    }
+                });
+            });
+        });
+    </script>
+
+
     <script>
         $(document).ready(function () {
             $(document).on('click', '.pagination .page-link, #btnLimparFiltros', function (e) {
@@ -222,15 +292,15 @@
 
                 let pagina = $(this).data('pagina');
 
-                carregarEnderecos(pagina);
+                carregarContatos(pagina);
             });
 
         }); 
 
         // ✅ Carrega automaticamente a página 1 ao abrir
-        carregarEnderecos(1);
+        carregarContatos(1);
 
-        function carregarEnderecos(pagina){
+        function carregarContatos(pagina){
             $.ajax({
                 url: '/Contato/ObterContatosPaginados',
                 method: 'GET',

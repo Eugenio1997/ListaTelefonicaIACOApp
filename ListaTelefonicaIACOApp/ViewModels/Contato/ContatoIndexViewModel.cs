@@ -36,7 +36,7 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         public string Contato_Email { get; set; } = string.Empty;
         [Display(Name = "Endereço")]
         [RegularExpression(@"^([A-Za-zÀ-ÿ\s]+)\s*-\s*(\d+)\s*-\s*([A-Za-zÀ-ÿ\s]+)\s*-\s*([A-Za-zÀ-ÿ\s]+)$", ErrorMessage = "Formato esperado: Nome da Rua - Número - Bairro - Cidade")]
-        public string Contato_Endereco { get; set; }
+        public string Contato_Endereco { get; set; } = string.Empty;
         public List<ContatoIndexViewModel> Contatos { get; set; } = new();
         [Display(Name = "Criado Em")]
         public string Contato_CriadoAs { get; set; } = string.Empty;

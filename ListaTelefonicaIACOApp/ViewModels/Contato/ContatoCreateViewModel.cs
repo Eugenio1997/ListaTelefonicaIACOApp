@@ -25,9 +25,7 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         public string Email { get; set; } = string.Empty;
         [Display(Name = "Endereco")]
         [Required(ErrorMessage = "O campo Endereco é obrigatório.")]
-        public int? Endereco { get; set; } // propriedade que recebera o valor selecionado do dropdown no POST
-
-        public List<SelectListItem> Enderecos { get; set; } = new();
+        public string Endereco { get; set; } = string.Empty;
 
     }
 }
