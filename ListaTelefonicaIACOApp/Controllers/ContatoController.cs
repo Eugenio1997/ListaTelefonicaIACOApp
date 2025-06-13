@@ -366,5 +366,75 @@ namespace ListaTelefonicaIACOApp.Controllers
                 return BadRequest(new { sucesso = false, mensagem = ex.Message });
             }
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ObterTabela(int totalPaginas, int paginaAtual = 1, int registrosPorPagina = 10)
+        {
+            offset = (paginaAtual - 1) * registrosPorPagina;
+            string ordenacao = "NOME"; // default order by NOME
+            string query = @$"SELECT 
+                                c.ID AS Id,
+                                c.NOME AS Nome,
+                                c.FIXO AS Fixo,
+                                c.CELULAR AS Celular,
+                                c.COMERCIAL AS Comercial,
+                                c.ENDERECO AS Endereco,
+                                c.EMAIL AS Email,
+                                TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
+                                TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
+                            FROM LISTA_CONTATOS c
+                            ORDER BY {ordenacao}
+                            OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
+
+
+            using (var conn = _context.CreateConnection())
+            {
+                conn.Open();
+
+
+
+                var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_CONTATOS");
+                totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
+
+
+
+
+                StringBuilder sb = new StringBuilder();
+                var contatos = (await conn.QueryAsync<Contato>(query)).ToList();
+
+
+                foreach (var c in contatos)
+                {
+                    sb.Append($"<tr style='height:60px'>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Fixo}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Celular}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Comercial}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
+                    ;
+                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                        $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
+                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                        $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
+                    sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
+                         $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
+                         $"<i class='bi bi-trash text-dark'></i></a></td>");
+                    sb.Append("</tr>");
+
+                }
+
+                return Json(new
+                {
+                    html = sb.ToString(),
+                    paginaAtual,
+                    totalPaginas,
+                    sucesso = true
+                });
+            }
+        }
     }
 }

@@ -134,7 +134,7 @@
                 <tbody>
                     @foreach (var item in Model.Contatos)
                     {
-                        <tr id="linha-contato-@item.Contato_Id" style="height:60px">
+                        <tr style="height:60px">
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
 
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">
@@ -237,9 +237,66 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-
        <script>
+            
+
+       </script>
+
+
+    <script>
         $(document).ready(function () {
+
+
+            function carregarContatos(pagina){
+                $.ajax({
+                    url: '/Contato/ObterContatosPaginados',
+                    method: 'GET',
+                    data: { paginaAtual: pagina },
+                    success: function (response) {
+                        $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
+                        $('#table-responsive').get(0).style.setProperty('max-height', '500px', 'important');
+                        $('#table tbody').html(response.html);
+                        $('#table').show();
+                        $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
+                        $('#mensagem-nenhum-contato').hide();
+                   
+                        $('.pagination').show(); // Mostra a paginacao
+
+                            // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
+                            aplicarMascaras();
+                            gerarPaginacao(response.paginaAtual, response.totalPaginas);
+
+                    },
+                    error: function () {
+                        alert('Erro ao carregar os dados.');
+                    },
+               
+                });
+            }
+
+            function carregarTabela(paginaAtual, totalPaginas) {
+
+                $.ajax({
+                    url: '/Contato/ObterTabela',
+                    type: 'GET',
+                    data: {
+                        paginaAtual: paginaAtual,
+                        totalPaginas: totalPaginas
+                    },
+                    success: function (response) {
+                         if (response.sucesso) {
+                            $('#table tbody').html(response.html);
+                            gerarPaginacao(response.paginaAtual, response.totalPaginas)
+                            
+                         }
+                    },
+                    error: function () {
+                        alert('Erro ao carregar os dados da tabela.');
+                    }
+                });
+            }
+
+
             let id;
             let nome;
 
@@ -265,7 +322,7 @@
                     success: function (response) {
                         if (response.sucesso) {
                             $('#modalConfirmarExclusao').modal('hide');
-                            $('#linha-contato-' + idContatoExcluir).remove();
+                                carregarTabela(response.paginaAtual, response.totalPaginas);
                         } else {
                             alert(response?.mensagem ?? 'Erro ao excluir o contato.');
                         }
@@ -276,12 +333,8 @@
                     }
                 });
             });
-        });
-    </script>
 
 
-    <script>
-        $(document).ready(function () {
             $(document).on('click', '.pagination .page-link, #btnLimparFiltros', function (e) {
                 e.preventDefault();
 
@@ -300,37 +353,7 @@
         // ✅ Carrega automaticamente a página 1 ao abrir
         carregarContatos(1);
 
-        function carregarContatos(pagina){
-            $.ajax({
-                url: '/Contato/ObterContatosPaginados',
-                method: 'GET',
-                data: { paginaAtual: pagina },
-                success: function (response) {
-                    $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
-                    $('#table-responsive').get(0).style.setProperty('max-height', '500px', 'important');
-                    $('#table tbody').html(response.html);
-                    $('#table').show();
-                    $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
-                    $('#mensagem-nenhum-contato').hide();
-                   
-                    $('.pagination').show(); // Mostra a paginacao
-
-                        // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
-                        aplicarMascaras();
-                        gerarPaginacao(response.paginaAtual, response.totalPaginas);
-
-                },
-                error: function () {
-                    alert('Erro ao carregar os dados.');
-                },
-               
-            });
-        }
-
-    </script>
-
-   <script>
-    $(document).ready(function () {
+        
         $('#btnFiltrar').on('click', function (e) {
             e.preventDefault(); // impede envio padrão do formulário
 
@@ -395,7 +418,11 @@
                 }
             });
         });
-    });
-</script>
+
+
+
+    </script>
+
+  
 
 }
