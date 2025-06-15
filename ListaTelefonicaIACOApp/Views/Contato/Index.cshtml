@@ -99,6 +99,8 @@
             </div>
         </form>
     </div>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
     
     <div id="mensagem-nenhum-contato" class="text-center d-none">
         <p class="fw-bold fs-4 m-0">Nenhum contato foi encontrado.</p>
@@ -286,12 +288,29 @@
                     success: function (response) {
                          if (response.sucesso) {
                             $('#table tbody').html(response.html);
-                            gerarPaginacao(response.paginaAtual, response.totalPaginas)
-                            
+                            gerarPaginacao(response.paginaAtual, response.totalPaginas);
+                            mostrarToast("Sucesso", "Contato deletado com sucesso!", "success");
                          }
                     },
-                    error: function () {
-                        alert('Erro ao carregar os dados da tabela.');
+                    error: function (xhr) {
+                        if (xhr.status === 400) {
+                            let erros = xhr.responseJSON;
+                            let mensagens = '';
+
+                            // Itera sobre cada campo com erro
+                            for (const campo in erros) {
+                                const mensagensCampo = erros[campo];
+                                mensagensCampo.forEach(mensagem => {
+                                    mensagens += `• ${mensagem}<br>`;
+                                });
+                            }
+
+                            mostrarToast("Erros de Validação", mensagens, "danger");
+
+                        }else {
+                            mostrarToast("Erro", "Erro inesperado ao cadastrar contato.", "danger");
+                        }
+
                     }
                 });
             }
