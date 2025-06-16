@@ -1,58 +1,147 @@
-﻿@model ListaTelefonicaIACOApp.Models.Contato
+﻿@model ListaTelefonicaIACOApp.ViewModels.Contato.ContatoEditViewModel;
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Contato - IACO";
 }
 
-<h1>Edit</h1>
+<header style="height: 50px" class="d-flex w-100 justify-content-start">
 
-<h4>Colaborador</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Fixo" class="control-label"></label>
-                <input asp-for="Fixo" class="form-control" />
-                <span asp-validation-for="Fixo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Celular" class="control-label"></label>
-                <input asp-for="Celular" class="form-control" />
-                <span asp-validation-for="Celular" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Comercial" class="control-label"></label>
-                <input asp-for="Comercial" class="form-control" />
-                <span asp-validation-for="Comercial" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="d-flex justify-content-start align-items-center h-100 w-100">
+        <a style="background-color: #f9f9f9;  border-radius: 5px; width: 60px; padding: 10px" class="d-flex h-100 justify-content-center align-items-center" asp-action="Index">
+            <i style="font-size:30px" class="bi bi-arrow-left  text-dark"></i>
+        </a>
     </div>
+</header>
+
+<div style="padding:10px; gap:30px " class="d-flex flex-column">
+    <h2>Editar Contato</h2>
+
+    <form id="formEditarContato" class="row" method="post" asp-action="Edit" asp-controller="Contato" style="gap:30px">
+
+        @* ---------- Dados Pessoais ---------- *@
+        <div class="row g-3 rounded-2 m-0 p-4" style="gap:20px;background-color: #f9f9f9">
+            <h4>Dados Pessoais</h4>
+            <div class="row">
+                <div class="form-group col-md-6 min-height-90px-input">
+                    <label asp-for="Nome"></label>
+                    <input  id="Nome" asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-4 min-height-90px-input">
+                    <label asp-for="Fixo"></label>
+                    <input  id="Fixo" asp-for="Fixo" class="form-control telefone-fixo" />
+                    <span asp-validation-for="Fixo" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-4 min-height-90px-input">
+                    <label asp-for="Celular"></label>
+                    <input  id="Celular" asp-for="Celular" class="form-control telefone-celular" />
+                    <span asp-validation-for="Celular" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-6 min-height-90px-input">
+                    <label asp-for="Comercial"></label>
+                    <input  id="Comercial" asp-for="Comercial" class="form-control telefone-comercial" />
+                    <span asp-validation-for="Comercial" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-6 min-height-90px-input">
+                    <i style="width:10px" class="bi bi-exclamation-circle p-0" data-bs-toggle='tooltip' data-bs-placement='top' title='Insira o endereço dessa maneira: Rua - Número da Rua - Bairro - Cidade.'></i>
+                    <label asp-for="Endereco"></label>
+                    <input  type="text" id="Endereco" asp-for="Endereco" class="form-control" />
+                    <span asp-validation-for="Endereco" class="text-danger fs-12px"></span>
+                </div>
+                <div class="form-group col-md-4 min-height-90px-input">
+                    <label asp-for="Email"></label>
+                    <input  id="Email" asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger fs-12px"></span>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="height:50px" class="row d-flex justify-content-end col-auto w-100">
+            <button type="button" id="btnEditarContato" class="btn btn-primary col-auto h-75">Editar Contato</button>
+        </div>
+
+    </form>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+
+
+
+    <script>
+        $(document).ready(function () {
+
+            aplicarMascaras();
+
+            $('#btnEditarContato').on('click', function (e) {
+                e.preventDefault();
+
+                let formClone = $('#formEditarContato').clone(true, true);
+
+                if (!formClone.valid()) return;
+
+                formClone.find('input').each(function () {
+                    // 'this' refers to the current input element
+                    $(this).val($(this).val().trim());
+
+                });
+
+                formClone.find('#Fixo').val($('#Fixo').cleanVal());
+                formClone.find('#Celular').val($('#Celular').cleanVal());
+                formClone.find('#Comercial').val($('#Comercial').cleanVal());
+
+                const formData = new FormData(formClone[0]);
+
+                $.ajax({
+                    url: formClone.attr('action'),
+                    type: formClone.attr('method'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.sucesso) {
+                            mostrarToast("Sucesso", "Contato editado com sucesso!", "success");
+                            setTimeout(() => {
+                                window.location.href = '/Contato/Index';
+                            }, 2000);
+                        }
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 409) {
+                            const msg = xhr.responseJSON?.mensagem || "Já existe um contato com dados duplicados.";
+                            mostrarToast("Duplicidade", msg, "warning");
+                            //aplicarMascaras();
+
+                        } else if (xhr.status === 400) {
+                            // ✅ Erros de validação retornados do servidor
+                            let erros = xhr.responseJSON;
+                            let mensagens = '';
+
+                            // Itera sobre cada campo com erro
+                            for (const campo in erros) {
+                                const mensagensCampo = erros[campo];
+                                mensagensCampo.forEach(mensagem => {
+                                    mensagens += `• ${mensagem}<br>`;
+                                });
+                            }
+
+                            mostrarToast("Erros de Validação", mensagens, "danger");
+                            //aplicarMascaras();
+
+                        } else {
+                            mostrarToast("Erro", "Erro inesperado ao editar contato.", "danger");
+                        }
+                }
+
+                });
+            });
+        });
+    </script>
 }

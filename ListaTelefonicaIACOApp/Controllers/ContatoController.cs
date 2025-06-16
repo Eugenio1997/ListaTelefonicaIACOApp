@@ -293,15 +293,6 @@ namespace ListaTelefonicaIACOApp.Controllers
                     return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse FIXO." });
             }
 
-            // Verifica CELULAR
-            if (!string.IsNullOrWhiteSpace(model.Celular))
-            {
-                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE CELULAR = '{model.Celular}'";
-                var existeCelular = await conn.QuerySingleAsync<int>(query);
-                if (existeCelular > 0)
-                    return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse CELULAR." });
-            }
-
             // Verifica EMAIL
             if (!string.IsNullOrWhiteSpace(model.Email))
             {
@@ -311,10 +302,11 @@ namespace ListaTelefonicaIACOApp.Controllers
                     return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse EMAIL." });
             }
 
+
             // Insere o novo contato
             string queryInserir = $@"
                 INSERT INTO LISTA_CONTATOS (NOME, FIXO, CELULAR, COMERCIAL, ENDERECO, EMAIL)
-                VALUES ('{model.Nome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', {model.Endereco}, '{model.Email}')";
+                VALUES ('{model.Nome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', '{model.Endereco}', '{model.Email}')";
 
             await conn.ExecuteAsync(queryInserir);
 
@@ -324,22 +316,106 @@ namespace ListaTelefonicaIACOApp.Controllers
         // GET: ContatoController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var query = $@"SELECT * FROM LISTA_CONTATOS WHERE ID = {id}";
+            using var conn = _context.CreateConnection();
+            conn.Open();
+            var model = await conn.QuerySingleAsync<ContatoEditViewModel>(query);
+
+            return View(model);
         }
 
         // POST: ContatoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, Contato model)
         {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            using var conn = _context.CreateConnection();
+            conn.Open();
+
+            // Buscar contato atual
+            var queryBusca = $"SELECT NOME, FIXO, CELULAR, ENDERECO, EMAIL FROM LISTA_CONTATOS WHERE ID = {id}";
+            var contatoAtual = await conn.QuerySingleAsync<ContatoEditViewModel>(queryBusca);
+
+            if (contatoAtual == null)
+                return NotFound();
+
+            // Verificar se valores mudaram
+            bool alterado =
+                !string.Equals(model.Nome?.Trim(), contatoAtual.Nome?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(model.Fixo?.Trim(), contatoAtual.Fixo?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(model.Celular?.Trim(), contatoAtual.Celular?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(model.Endereco?.Trim(), contatoAtual.Endereco?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(model.Email?.Trim(), contatoAtual.Email?.Trim(), StringComparison.OrdinalIgnoreCase);
+
+            if (!alterado)
+                return NoContent();
+
+
+
+            // Verificar duplicidade
+
+            if (!string.IsNullOrWhiteSpace(model.Fixo))
+            {
+                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE FIXO = '{model.Fixo}' AND ID != {id}";
+                var existeFixo = await conn.QuerySingleAsync<int>(query);
+                if (existeFixo > 0)
+                    return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse FIXO." });
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.Email))
+            {
+                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE EMAIL = '{model.Email}' AND ID != {id}";
+                var existeEmail = await conn.QuerySingleAsync<int>(query);
+                if (existeEmail > 0)
+                    return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse EMAIL." });
+            }
+
+
+            var setClausulas = new List<string>();
+
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (!string.IsNullOrWhiteSpace(model.Nome))
+                {
+                    setClausulas.Add(@$"NOME = '{model.Nome}'");
+                }
+
+                if (!string.IsNullOrWhiteSpace(model.Fixo))
+                {
+                    setClausulas.Add(@$"FIXO = '{model.Fixo}'");
+                }
+                if (!string.IsNullOrWhiteSpace(model.Celular))
+                {
+                    setClausulas.Add(@$"CELULAR = '{model.Celular}'");
+                }
+                if (!string.IsNullOrWhiteSpace(model.Endereco))
+                {
+                    setClausulas.Add(@$"Endereco = '{model.Endereco}'");
+                }
+                if (!string.IsNullOrWhiteSpace(model.Email))
+                {
+                    setClausulas.Add(@$"Email = '{model.Email}'");
+                }
+
+                if (setClausulas.Any())
+                {
+                    var query = @$"UPDATE LISTA_CONTATOS SET {string.Join(", ", setClausulas)} WHERE ID = {id}";
+                    await conn.ExecuteAsync(query);
+                    return Ok(new { sucesso = true });
+                }
+
+
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest();
             }
+
+            return NoContent();
         }
 
         // GET: ContatoController/Delete/5
@@ -358,7 +434,12 @@ namespace ListaTelefonicaIACOApp.Controllers
                 var query = $@"DELETE FROM LISTA_CONTATOS WHERE ID = {id}";
                 using var conn = _context.CreateConnection();
                 conn.Open();
-                await conn.ExecuteAsync(query);
+
+                var rows = await conn.ExecuteAsync(query);
+
+                if (rows == 0)
+                    return NotFound(new { sucesso = false, mensagem = "Contato não encontrado." });
+
                 return Ok(new { sucesso = true });
             }
             catch (Exception ex)

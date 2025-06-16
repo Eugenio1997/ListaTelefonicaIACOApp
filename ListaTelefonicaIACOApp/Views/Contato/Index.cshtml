@@ -239,11 +239,6 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-       <script>
-            
-
-       </script>
-
 
     <script>
         $(document).ready(function () {
@@ -367,76 +362,79 @@
                 carregarContatos(pagina);
             });
 
-        }); 
 
-        // ✅ Carrega automaticamente a página 1 ao abrir
-        carregarContatos(1);
+            // ✅ Carrega automaticamente a página 1 ao abrir
+            carregarContatos(1);
 
         
-        $('#btnFiltrar').on('click', function (e) {
-            e.preventDefault(); // impede envio padrão do formulário
+            $('#btnFiltrar').on('click', function (e) {
+                e.preventDefault(); // impede envio padrão do formulário
 
-            //usando 'cleanVal' para obter o valor do input sem máscara
-            const params = {
-                Nome: $('#Nome').val(),
-                Fixo: $('#Fixo').cleanVal(),
-                Celular: $('#Celular').cleanVal(),
-                Comercial: $('#Comercial').cleanVal(),
-                Endereco: $('#Endereco').val(),
-                Email: $('#Email').val(),
-            };
+                //usando 'cleanVal' para obter o valor do input sem máscara
+                const params = {
+                    Nome: $('#Nome').val(),
+                    Fixo: $('#Fixo').cleanVal(),
+                    Celular: $('#Celular').cleanVal(),
+                    Comercial: $('#Comercial').cleanVal(),
+                    Endereco: $('#Endereco').val(),
+                    Email: $('#Email').val(),
+                };
 
-           // Verifica se todos os campos estão vazios
-            const todosCamposVazios = Object.values(params).every(value => value === "");
+               // Verifica se todos os campos estão vazios
+                const todosCamposVazios = Object.values(params).every(value => value === "");
 
-            if (todosCamposVazios) {
-                // Ignora a requisição AJAX
-                return;
-            }
-
-            //montando a querystring
-            const queryString = Object.keys(params)
-                .map(k => `${k}=${encodeURIComponent(params[k])}`)
-                .join('&');
-
-            $.ajax({
-                type: "GET",
-                url: `/Contato/ObterContatosFiltrados?${queryString}`,
-                beforeSend: function () {
-                    $('#spinner-loading').show();         // Mostra o spinner
-                    $('#table').hide();                  // Esconde tabela enquanto carrega
-                    $('#mensagem-nenhum-contato').hide(); // Garante que mensagem esteja oculta durante o carregamento
-                },
-                success: function (response) {
-                    if (!response.encontrou) {
-                        $('#table').hide();
-                        $('#table-responsive').get(0).style.setProperty('min-height', '100px', 'important');
-                        $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
-                        $('.pagination').hide(); // Oculta a paginação
-                    } else {
-                        $('#mensagem-nenhum-contato').hide();
-                        //$('.table-responsive').css('height','500px')
-                        $('#table-responsive').get(0).style.setProperty('min-height', '100px', 'important');
-                        $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
-                        $('#table tbody').html(response.html);
-                        $('#table').show();
-                        $('.pagination').show(); // Mostra a paginação novamente se necessário
-
-
-                        // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
-                       aplicarMascaras();
-                       gerarPaginacao(response.paginaAtual, response.totalPaginas);
-
-                    }
-                },
-                error: function (xhr) {
-                    console.error("Erro:", xhr.responseText);
-                },
-                complete: function () {
-                    $('#spinner-loading').hide(); // Oculta o spinner após conclusão
+                if (todosCamposVazios) {
+                    // Ignora a requisição AJAX
+                    return;
                 }
+
+                //montando a querystring
+                const queryString = Object.keys(params)
+                    .map(k => `${k}=${encodeURIComponent(params[k])}`)
+                    .join('&');
+
+                $.ajax({
+                    type: "GET",
+                    url: `/Contato/ObterContatosFiltrados?${queryString}`,
+                    beforeSend: function () {
+                        $('#spinner-loading').show();         // Mostra o spinner
+                        $('#table').hide();                  // Esconde tabela enquanto carrega
+                        $('#mensagem-nenhum-contato').hide(); // Garante que mensagem esteja oculta durante o carregamento
+                    },
+                    success: function (response) {
+                        if (!response.encontrou) {
+                            $('#table').hide();
+                            $('#table-responsive').get(0).style.setProperty('min-height', '100px', 'important');
+                            $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
+                            $('.pagination').hide(); // Oculta a paginação
+                        } else {
+                            $('#mensagem-nenhum-contato').hide();
+                            //$('.table-responsive').css('height','500px')
+                            $('#table-responsive').get(0).style.setProperty('min-height', '100px', 'important');
+                            $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
+                            $('#table tbody').html(response.html);
+                            $('#table').show();
+                            $('.pagination').show(); // Mostra a paginação novamente se necessário
+
+
+                            // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
+                           aplicarMascaras();
+                           gerarPaginacao(response.paginaAtual, response.totalPaginas);
+
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error("Erro:", xhr.responseText);
+                    },
+                    complete: function () {
+                        $('#spinner-loading').hide(); // Oculta o spinner após conclusão
+                    }
+                });
             });
-        });
+
+    }); 
+
+        
 
 
 

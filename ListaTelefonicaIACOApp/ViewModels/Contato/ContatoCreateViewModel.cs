@@ -20,7 +20,6 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         [Required(ErrorMessage = "O campo Comercial é obrigatório.")]
         [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: 99 99999999")]
         public string Comercial { get; set; } = string.Empty;
-        [Required(ErrorMessage = "O e-mail é obrigatório.")]
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
         public string Email { get; set; } = string.Empty;
         [Display(Name = "Endereco")]
