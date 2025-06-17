@@ -20,9 +20,9 @@ namespace ListaTelefonicaIACOApp.Controllers
 {
     public class ContatoController : Controller
     {
-        private readonly ILogger<ContatoController> _logger;
-        private readonly IConfiguration? _configuration;
-        private readonly ListaTelefonicaDbContext _context;
+        private ILogger<ContatoController> _logger;
+        private IConfiguration? _configuration;
+        private ListaTelefonicaDbContext _context;
         public ContatoIndexViewModel contato = new ContatoIndexViewModel();
         int registrosPorPagina = 10;
         int totalRegistros;
@@ -394,12 +394,14 @@ namespace ListaTelefonicaIACOApp.Controllers
                 }
                 if (!string.IsNullOrWhiteSpace(model.Endereco))
                 {
-                    setClausulas.Add(@$"Endereco = '{model.Endereco}'");
+                    setClausulas.Add(@$"ENDERECO = '{model.Endereco}'");
                 }
                 if (!string.IsNullOrWhiteSpace(model.Email))
                 {
-                    setClausulas.Add(@$"Email = '{model.Email}'");
+                    setClausulas.Add(@$"EMAIL = '{model.Email}'");
                 }
+
+                setClausulas.Add(@$"EDITADO_AS = TO_DATE('{DateTime.Now:yyyy-MM-dd HH:mm:ss}', 'YYYY-MM-DD HH24:MI:SS')");
 
                 if (setClausulas.Any())
                 {

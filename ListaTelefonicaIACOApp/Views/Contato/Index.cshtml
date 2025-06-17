@@ -55,16 +55,16 @@
 
                     <div class="col-md-4 campos-filtros">
                         <label asp-for="Contato_Fixo" class="">Fixo</label>
-                        <input asp-for="Contato_Fixo" type="tel" class="form-control telefone-fixo" id="Fixo" placeholder="Ex: 11 2345-6789  ">
+                        <input asp-for="Contato_Fixo" type="tel" class="form-control filtro-fixo" id="Fixo" placeholder="Ex: 11 2345-6789  ">
                     </div>
 
                     <div class="col-md-4 campos-filtros">
                         <label asp-for="Contato_Celular" class="">Celular</label>
-                        <input asp-for="Contato_Celular" type="tel" class="form-control telefone-celular" id="Celular" placeholder="Ex: 11 998877665">  
+                        <input asp-for="Contato_Celular" type="tel" class="form-control filtro-celular" id="Celular" placeholder="Ex: 11 998877665">  
                     </div>
                     <div class="col-md-4 campos-filtros">
                         <label asp-for="Contato_Comercial" class="">Comercial</label>
-                        <input asp-for="Contato_Comercial" type="tel" class="form-control telefone-comercial" id="Comercial" placeholder="Ex: 61 3030-4040">
+                        <input asp-for="Contato_Comercial" type="tel" class="form-control filtro-comercial" id="Comercial" placeholder="Ex: 61 3030-4040">
                     </div>   
                         <div class="col-md-4 campos-filtros">
                         <label asp-for="Contato_Endereco" class="">Endereco</label>
@@ -140,13 +140,13 @@
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
 
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">
-                             <input type="text" value="@item.Contato_Fixo" class="form-control telefone-fixo input-sem-borda" readonly />
+                             <input type="text" value="@item.Contato_Fixo" class="form-control filtros-fixo input-sem-borda" />
                             </td>
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">
-                             <input type="text" value="@item.Contato_Celular" class="form-control telefone-celular input-sem-borda" readonly />
+                             <input type="text" value="@item.Contato_Celular" class="form-control filtros-celular input-sem-borda" />
                             </td>
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">
-                             <input type="text" value="@item.Contato_Comercial" class="form-control telefone-comercial input-sem-borda" readonly />
+                             <input type="text" value="@item.Contato_Comercial" class="form-control filtros-comercial input-sem-borda" />
                             </td>
                           
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Endereco)</td>
@@ -240,6 +240,7 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
 
+
     <script>
         $(document).ready(function () {
 
@@ -261,6 +262,7 @@
 
                             // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
                             aplicarMascaras();
+                            aplicarReadonly()
                             gerarPaginacao(response.paginaAtual, response.totalPaginas);
 
                     },
@@ -283,6 +285,8 @@
                     success: function (response) {
                          if (response.sucesso) {
                             $('#table tbody').html(response.html);
+                            aplicarMascaras();
+                            aplicarReadonly();
                             gerarPaginacao(response.paginaAtual, response.totalPaginas);
                             mostrarToast("Sucesso", "Contato deletado com sucesso!", "success");
                          }
@@ -419,6 +423,7 @@
 
                             // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
                            aplicarMascaras();
+                           aplicarReadonly();
                            gerarPaginacao(response.paginaAtual, response.totalPaginas);
 
                         }

@@ -8,8 +8,17 @@ function aplicarMascaras() {
     $('.telefone-fixo').mask('(00) 0000-0000');
     $('.telefone-celular').mask('(00) 00000-0000');
     $('.telefone-comercial').mask('(00) 0000-0000');
+
+    $('.filtro-fixo').mask('(00) 0000-0000');
+    $('.filtro-celular').mask('(00) 00000-0000');
+    $('.filtro-comercial').mask('(00) 0000-0000');
+
     $('.CEP').mask('00000-000');
 
+}
+
+function aplicarReadonly() {
+    $('.telefone-fixo, .telefone-celular, .telefone-comercial').attr('readonly', true);
 }
 
 $(document).ready(function () {
@@ -43,11 +52,11 @@ function gerarPaginacao(paginaAtual, totalPaginas) {
 }
 
 
-    function mostrarToast(titulo, mensagem, tipo = 'danger') {
-            const cor = tipo === 'success' ? 'bg-success' : tipo === 'warning' ? 'bg-warning' : 'bg-danger';
-            const icone = tipo === 'success' ? '✔️' : tipo === 'warning' ? '⚠️' : '❌';
+function mostrarToast(titulo, mensagem, tipo = 'danger') {
+    const cor = tipo === 'success' ? 'bg-success' : tipo === 'warning' ? 'bg-warning' : 'bg-danger';
+    const icone = tipo === 'success' ? '✔️' : tipo === 'warning' ? '⚠️' : '❌';
 
-            const toastHtml = `
+    const toastHtml = `
             <div class="toast align-items-center text-white ${cor} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
@@ -59,7 +68,7 @@ function gerarPaginacao(paginaAtual, totalPaginas) {
             </div>
             `;
 
-            const $toast = $(toastHtml).appendTo("#toastContainer");
-            const toast = new bootstrap.Toast($toast[0], {delay: 4000 });
-            toast.show();
-    }
+    const $toast = $(toastHtml).appendTo("#toastContainer");
+    const toast = new bootstrap.Toast($toast[0], { delay: 4000 });
+    toast.show();
+}
