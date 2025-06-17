@@ -9,9 +9,8 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         [Required(ErrorMessage = "O campo Nome é obrigatório.")]
         [RegularExpression(@"^(?=.{3,})(?!.*\d)[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", ErrorMessage = "O Nome deve ter no mínimo 3 letras e não pode conter números.")]
         public string Nome { get; set; } = string.Empty;
-        [Required(ErrorMessage = "O campo Fixo é obrigatório.")]
         [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: 99 9999-9999")]
-        public string Fixo { get; set; } = string.Empty;
+        public string? Fixo { get; set; }
 
         [RegularExpression(@"^\(\d{2}\) \d{5}-\d{4}$", ErrorMessage = "Celular deve estar no formato 99 99999-9999")]
         public string Celular { get; set; } = string.Empty;
