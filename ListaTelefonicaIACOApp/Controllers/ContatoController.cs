@@ -3,17 +3,9 @@ using ListaTelefonicaIACOApp.Infrastructure;
 using ListaTelefonicaIACOApp.Mappers;
 using ListaTelefonicaIACOApp.Models;
 using ListaTelefonicaIACOApp.ViewModels.Contato;
-using ListaTelefonicaIACOApp.ViewModels.Endereco;
 using ListaTelefonicaIACOApp.ViewModels.Filtros;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using NuGet.Protocol.Plugins;
-using Oracle.ManagedDataAccess.Client;
-using System.Data;
-using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 
 namespace ListaTelefonicaIACOApp.Controllers
@@ -25,10 +17,8 @@ namespace ListaTelefonicaIACOApp.Controllers
         private ListaTelefonicaDbContext _context;
         public ContatoIndexViewModel contato = new ContatoIndexViewModel();
         int registrosPorPagina = 10;
-        int totalRegistros;
         int totalPaginas;
         int offset;
-        private IDbConnection _conn;
 
         public ContatoController(ILogger<ContatoController> logger,
                                  IConfiguration configuration,
@@ -192,7 +182,6 @@ namespace ListaTelefonicaIACOApp.Controllers
                     sb.Append("</tr>");
                 }
 
-                //return Content(sb.ToString(), "text/html");
                 return Json(new
                 {
                     html = sb.ToString(), // Pode ser vazio
@@ -414,14 +403,14 @@ namespace ListaTelefonicaIACOApp.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(new { Mensagem = ex.Message });
             }
 
             return NoContent();
         }
 
         // GET: ContatoController/Delete/5
-        public async Task<ActionResult> Delete(int id)
+        public ActionResult Delete(int id)
         {
             return View();
         }
