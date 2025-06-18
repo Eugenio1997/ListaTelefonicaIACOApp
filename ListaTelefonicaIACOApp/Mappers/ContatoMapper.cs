@@ -1,6 +1,5 @@
 ﻿using ListaTelefonicaIACOApp.Models;
 using ListaTelefonicaIACOApp.ViewModels.Contato;
-using ListaTelefonicaIACOApp.ViewModels.Endereco;
 
 namespace ListaTelefonicaIACOApp.Mappers
 {
