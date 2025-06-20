@@ -10,7 +10,7 @@ namespace ListaTelefonicaIACOApp.Infrastructure
 
         public ListaTelefonicaDbContext(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("ListaTelefonicaIACOConnectionString");
+            _connectionString = configuration.GetConnectionString("ListaTelefonicaIACOLocalConnectionString");
         }
 
         public IDbConnection CreateConnection()

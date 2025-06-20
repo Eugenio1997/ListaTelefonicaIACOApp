@@ -1,48 +1,61 @@
-﻿using ListaTelefonicaIACOApp.ViewModels;
+﻿using ListaTelefonicaIACOApp.Services.Ldap;
+using ListaTelefonicaIACOApp.ViewModels;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ListaTelefonicaIACOApp.Controllers
 {
     public class AutenticacaoController : Controller
     {
-        private readonly string _domain = "YOUR_DOMAIN"; // e.g., yourcompany.local
+        private readonly LdapService _ldapService;
 
-        [HttpGet]
-        public IActionResult Login()
+        public AutenticacaoController(LdapService ldapService)
         {
-            return View();
+            _ldapService = ldapService;
         }
 
-        [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+                return BadRequest("Dados inválidos.");
 
-            bool isValid = ValidateUser(model.Nome, model.Senha);
+            bool isValid = await _ldapService.AuthenticateAgainstLdap(model.Nome, model.Senha);
 
-            if (isValid)
+            if (!isValid)
+                return Unauthorized("Usuário ou senha inválidos.");
+
+            // Cria as Claims
+            var claims = new List<Claim>
             {
-                // Authenticate user manually (e.g., using cookie auth)
-                // Redirect to secure area
-                return RedirectToAction("Index", "Home");
-            }
+                new Claim(ClaimTypes.NameIdentifier, model.Nome),
+                new Claim(ClaimTypes.Name, model.Nome)
+            };
 
-            ViewBag.Error = "Invalid username or password.";
-            return View(model);
+            var identity = new ClaimsIdentity(claims, "CookieAuth");
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync("CookieAuth", principal);
+
+            return Ok(new { sucesso = true, mensagem = "Login realizado com sucesso." });
         }
 
-        private bool ValidateUser(string nome, string senha)
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
         {
-            /*
-            using (var context = new PrincipalContext(ContextType.Domain, _domain))
-            {
-                return context.ValidateCredentials(username, password);
-            }
-            */
-            return true;
+            await HttpContext.SignOutAsync("CookieAuth");
+            return Ok(new { sucesso = true, mensagem = "Logout efetuado com sucesso." });
         }
 
+        [HttpGet("autenticado")]
+        public IActionResult Autenticado()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+                return Ok(new { autenticado = true, nome = User.Identity.Name });
+
+            return Unauthorized(new { autenticado = false });
+        }
     }
 }

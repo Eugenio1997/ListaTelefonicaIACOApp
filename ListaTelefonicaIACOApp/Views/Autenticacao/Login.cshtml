@@ -46,6 +46,31 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
+
+        $("#form-login").on("submit", function (e) {
+        e.preventDefault(); // evita envio padrão
+
+        $.ajax({
+            url: "/Autenticacao/login",
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (data) {
+                alert(data.mensagem);
+                window.location.href = "/Home/Index";
+            },
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    alert("Usuário ou senha inválidos.");
+                } else if (xhr.status === 400) {
+                    alert("Dados inválidos.");
+                } else {
+                    alert("Erro inesperado: " + xhr.statusText);
+                }
+            }
+        });
+    });
+
+
 }
 
 
