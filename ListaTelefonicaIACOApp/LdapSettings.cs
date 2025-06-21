@@ -4,11 +4,9 @@
     {
         public string LdapServer { get; set; } = "localhost";
         public int LdapPort { get; set; } = 10389;
-        public string LdapBaseDn { get; set; } = "ou=system"; // raiz do seu LDAP
-
-        public string UserSearchBase { get; set; } = "ou=users,ou=system"; // onde estão os usuários
-
-        public string Username { get; set; } = "uid=admin,ou=system"; // bind administrativo
+        public string LdapBaseDn { get; set; } = "dc=example,dc=com";
+        public string UserSearchBase { get; set; } = "ou=users,ou=system";
+        public string Username { get; set; } = "uid=admin,ou=system";
         public string Password { get; set; } = "secret";
 
         /// <summary>

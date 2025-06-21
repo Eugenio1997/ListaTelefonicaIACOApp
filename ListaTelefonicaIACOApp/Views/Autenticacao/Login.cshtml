@@ -7,7 +7,7 @@
 
 <div class="row justify-content-center"">
     <div style="padding: 40px; background-color: #f9f9f9; min-width: 300px" class="col-md-6">
-        <form class="d-flex flex-column" style="gap:40px" method="post" asp-controller="Autenticacao" asp-action="Login">
+        <form id="form-login" class="d-flex flex-column" style="gap:40px" method="post" asp-controller="Autenticacao" asp-action="Login">
             
             <img class="align-self-center" height="80" width="80" src="~/images/IACO-logo.png" alt="IACO Logo" />
             <h1 class="align-self-center border-bottom-1 m-0">Entrar</h1>
@@ -42,33 +42,41 @@
     </div>
 </div>
 
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
+    <script>
+            $("#form-login").on("submit", function (e) {
+            e.preventDefault(); // evita envio padrão
 
-        $("#form-login").on("submit", function (e) {
-        e.preventDefault(); // evita envio padrão
-
-        $.ajax({
-            url: "/Autenticacao/login",
-            type: "POST",
-            data: $(this).serialize(),
-            success: function (data) {
-                alert(data.mensagem);
-                window.location.href = "/Home/Index";
-            },
-            error: function (xhr) {
-                if (xhr.status === 401) {
-                    alert("Usuário ou senha inválidos.");
-                } else if (xhr.status === 400) {
-                    alert("Dados inválidos.");
-                } else {
-                    alert("Erro inesperado: " + xhr.statusText);
+            $.ajax({
+                url: "/Autenticacao/login",
+                type: "POST",
+                data: $(this).serialize(),
+                success: function (data) {
+                    mostrarToast("Sucesso", "Autenticacao realizada com sucesso!", "success");
+                    setTimeout(() => {
+                                window.location.href = '/Contato/Index';
+                            }, 2000);
+                },
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        mostrarToast("Falha no Login", "Usuário ou senha inválidos.", "danger");
+                    } else if (xhr.status === 400) {
+                        mostrarToast("Erro de Validação", "Por favor, verifique os dados informados.", "warning");
+                    } else {
+                        mostrarToast("Erro Inesperado", "Ocorreu um erro: " + xhr.statusText, "danger");
+                    }
                 }
-            }
+            });
         });
-    });
+    </script>
+        
 
 
 }

@@ -4,6 +4,7 @@ using ListaTelefonicaIACOApp.Mappers;
 using ListaTelefonicaIACOApp.Models;
 using ListaTelefonicaIACOApp.ViewModels.Contato;
 using ListaTelefonicaIACOApp.ViewModels.Filtros;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -30,7 +31,7 @@ namespace ListaTelefonicaIACOApp.Controllers
             _context = context;
         }
 
-
+        [AllowAnonymous]
         public async Task<IActionResult> ObterContatosPaginados(int registrosPorPagina = 10, int paginaAtual = 1)
         {
 
@@ -78,14 +79,29 @@ namespace ListaTelefonicaIACOApp.Controllers
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
-                    ;
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
-                    sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
-                         $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
-                         $"<i class='bi bi-trash text-dark'></i></a></td>");
+
+                    // Mostrar botão Editar e Deletar somente se o usuário tiver um dos papéis
+                    if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                    {
+                        sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                                  $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'>" +
+                                  $"<i class='bi-pencil-square text-dark'></i></a></td>");
+
+                        sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                                  $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'>" +
+                                  $"<i class='bi bi-eye text-dark'></i></a></td>");
+
+                        sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
+                                  $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
+                                  $"<i class='bi bi-trash text-dark'></i></a></td>");
+                    }
+                    else if (!User.IsInRole("admin") && !User.IsInRole("recepcao") && !User.IsInRole("guarita"))
+                    {
+                        // Usuário sem permissão: mostrar apenas botão de detalhes (se quiser)
+                        sb.Append($"<td colspan='3' style='height: 50px' class='text-nowrap'>" +
+                                  $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'>" +
+                                  $"<i class='bi bi-eye text-dark'></i></a></td>");
+                    }
                     sb.Append("</tr>");
 
                 }
@@ -99,6 +115,7 @@ namespace ListaTelefonicaIACOApp.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> ObterContatosFiltrados(FiltroContatoViewModel filtros, int registrosPorPagina = 10, int paginaAtual = 1)
         {
@@ -172,13 +189,28 @@ namespace ListaTelefonicaIACOApp.Controllers
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
 
-                    sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
-                    sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
-                    sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
-                        $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
-                        $"<i class='bi bi-trash text-dark'></i></a></td>");
+                    // Mostrar botão Editar e Deletar somente se o usuário tiver um dos papéis
+                    if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                    {
+                        sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                                  $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'>" +
+                                  $"<i class='bi-pencil-square text-dark'></i></a></td>");
+
+                        sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                                  $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'>" +
+                                  $"<i class='bi bi-eye text-dark'></i></a></td>");
+
+                        sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
+                                  $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
+                                  $"<i class='bi bi-trash text-dark'></i></a></td>");
+                    }
+                    else if (!User.IsInRole("admin") && !User.IsInRole("recepcao") && !User.IsInRole("guarita"))
+                    {
+                        // Usuário sem permissão: mostrar apenas botão de detalhes (se quiser)
+                        sb.Append($"<td colspan='3' style='height: 50px' class='text-nowrap'>" +
+                                  $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'>" +
+                                  $"<i class='bi bi-eye text-dark'></i></a></td>");
+                    }
                     sb.Append("</tr>");
                 }
 
@@ -194,6 +226,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
         // GET: ContatoController
+        [AllowAnonymous]
         public async Task<IActionResult> Index(int paginaAtual = 1)
         {
 
@@ -240,6 +273,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
         // GET: ContatoController/Details/5
+        [AllowAnonymous]
         public async Task<ActionResult> Details(int id)
         {
             var query = @$"SELECT * FROM LISTA_CONTATOS WHERE ID = {id}";
@@ -251,6 +285,8 @@ namespace ListaTelefonicaIACOApp.Controllers
                 return View(model);
             }
         }
+
+        [Authorize(Roles = "admin,recepcao,guarita")]
         // GET: ContatoController/Create
         public IActionResult Create()
         {
@@ -260,6 +296,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         // POST: ContatoController/Create
+        [Authorize(Roles = "admin,recepcao,guarita")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Contato/Create")]
@@ -303,6 +340,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         // GET: ContatoController/Edit/5
+        [Authorize(Roles = "admin,recepcao,guarita")]
         public async Task<ActionResult> Edit(int id)
         {
             var query = $@"SELECT * FROM LISTA_CONTATOS WHERE ID = {id}";
@@ -314,6 +352,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         // POST: ContatoController/Edit/5
+        [Authorize(Roles = "admin,recepcao,guarita")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, Contato model)
@@ -409,13 +448,9 @@ namespace ListaTelefonicaIACOApp.Controllers
             return NoContent();
         }
 
-        // GET: ContatoController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
 
         // POST: ContatoController/Delete/5
+        [Authorize(Roles = "admin,recepcao,guarita")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteContato(int id)
@@ -487,14 +522,29 @@ namespace ListaTelefonicaIACOApp.Controllers
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
-                    ;
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'><i class='bi-pencil-square text-dark'></i></a></td>");
-                    sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                        $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'><i class='bi bi-eye text-dark'></i></a></td>");
-                    sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
-                         $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
-                         $"<i class='bi bi-trash text-dark'></i></a></td>");
+
+                    // Mostrar botão Editar e Deletar somente se o usuário tiver um dos papéis
+                    if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                    {
+                        sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                                  $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'>" +
+                                  $"<i class='bi-pencil-square text-dark'></i></a></td>");
+
+                        sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
+                                  $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'>" +
+                                  $"<i class='bi bi-eye text-dark'></i></a></td>");
+
+                        sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
+                                  $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
+                                  $"<i class='bi bi-trash text-dark'></i></a></td>");
+                    }
+                    else if (!User.IsInRole("admin") && !User.IsInRole("recepcao") && !User.IsInRole("guarita"))
+                    {
+                        // Usuário sem permissão: mostrar apenas botão de detalhes (se quiser)
+                        sb.Append($"<td colspan='3' style='height: 50px' class='text-nowrap'>" +
+                                  $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'>" +
+                                  $"<i class='bi bi-eye text-dark'></i></a></td>");
+                    }
                     sb.Append("</tr>");
 
                 }

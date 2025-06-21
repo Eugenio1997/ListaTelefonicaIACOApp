@@ -53,17 +53,23 @@
                         </span>
                     </div>
 
-                    @if (!isAuthenticated && !isLoginPage)
+                    
+                    @if (!isLoginPage)
                     {
 
-                        <a style="font-size: 20px; width: 100px; height: 50px; background-color: #f9f9f9" 
-                            class="d-flex justify-content-center align-items-center fw-bold text-black text-decoration-none" 
-                        asp-controller="Autenticacao" asp-action="Login">
-                            Login
-                        </a>
-
+                        <div class="btn-group dropstart">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Ações
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                @if (!isAuthenticated)
+                                {
+                                    <li><a asp-controller="Autenticacao" asp-action="Login" class="dropdown-item">Logar</a></li>
+                                }
+                                <li><a asp-controller="Autenticacao" asp-action="Logout" class="dropdown-item">Deslogar</a></li>
+                          </ul>
+                        </div>
                     }
-                
             </div>
            
            

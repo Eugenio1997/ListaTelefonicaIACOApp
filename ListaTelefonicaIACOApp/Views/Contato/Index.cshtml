@@ -38,14 +38,18 @@
                     <h1 class="col-auto m-0 align-self-center">
                          Filtros
                     </h1>
-                    <div class="col-auto" style="height: 70px; width: 70px; 
+                    @if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                    {
+                        <div class="col-auto" style="height: 70px; width: 70px; 
                             background-color: #f9f9f9;  border-radius: 5px;"
                             data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar Contato"
-                        >
-                        <a  class="d-flex justify-content-center align-items-center" asp-action="Create">
-                            <i style="font-size:40px" class="bi bi-person-plus text-dark icon-add-colaborador"> </i>
-                        </a>
-                    </div>
+                            >
+                            <a  class="d-flex justify-content-center align-items-center" asp-action="Create">
+                                <i style="font-size:40px" class="bi bi-person-plus text-dark icon-add-colaborador"> </i>
+                            </a>
+                        </div>
+                    }
+                    
                 </div>
                 <div style="gap:20px" class="row">
                     <div class="col-md-6 campos-filtros">
@@ -128,8 +132,11 @@
                         <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_EditadoAs)</th>
 
                         <th style="min-width:50px; min-height:60px"></th>
-                        <th style="min-width:50px; min-height:60px"></th>
-                        <th style="min-width:50px; min-height:60px"></th>
+                        @if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                         {
+                            <th style="min-width:50px; min-height:60px"></th>
+                            <th style="min-width:50px; min-height:60px"></th>
+                         }
                     </tr>
                 </thead>
 
@@ -154,23 +161,34 @@
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_CriadoAs)</td>
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_EditadoAs)</td>
 
-                            
-                            <td style="width:50px; height:60px" class="text-nowrap">
-                                <a asp-action="Edit" asp-route-id="@item.Contato_Id"><i class="bi bi-pencil-square text-dark"></i></a>
-                            </td>
-                            <td style="width:50px; height:60px" class="text-nowrap">
-                                <a asp-action="Details" asp-route-id="@item.Contato_Id"><i class="bi bi-eye text-dark"></i></a>
-                            </td>
-                            <td style="width:50px; height:60px" class="text-nowrap">
-                                <a href="#" 
-                                   class="btn-abrir-modal-exclusao"
-                                   data-id="@item.Contato_Id"
-                                   data-nome="@item.Contato_Nome"
-                                   data-bs-toggle="modal"
-                                   data-bs-target="#modalConfirmarExclusao">
-                                   <i class="bi bi-trash text-dark"></i>
-                                </a>
-                            </td>
+                            @if (!User.IsInRole("admin") && !User.IsInRole("recepcao") && !User.IsInRole("guarita"))
+                            {
+                                 <td style="width:50px; height:60px" class="text-nowrap">
+                                    <a asp-action="Details" asp-route-id="@item.Contato_Id"><i class="bi bi-eye text-dark"></i></a>
+                                </td>
+                            }
+
+                            @if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                            {
+
+                                 <td style="width:50px; height:60px" class="text-nowrap">
+                                    <a asp-action="Details" asp-route-id="@item.Contato_Id"><i class="bi bi-eye text-dark"></i></a>
+                                </td>
+                                 <td style="width:50px; height:60px" class="text-nowrap">
+                                    <a asp-action="Edit" asp-route-id="@item.Contato_Id"><i class="bi bi-pencil-square text-dark"></i></a>
+                                </td>
+                                <td style="width:50px; height:60px" class="text-nowrap">
+                                    <a href="#" 
+                                       class="btn-abrir-modal-exclusao"
+                                       data-id="@item.Contato_Id"
+                                       data-nome="@item.Contato_Nome"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#modalConfirmarExclusao">
+                                       <i class="bi bi-trash text-dark"></i>
+                                    </a>
+                                </td>
+                                
+                            }
 
                         </tr>
                     }
