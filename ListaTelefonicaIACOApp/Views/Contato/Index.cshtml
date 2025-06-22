@@ -1,4 +1,5 @@
-﻿@using ListaTelefonicaIACOApp.ViewModels
+﻿@using ListaTelefonicaIACOApp.Constantes
+@using ListaTelefonicaIACOApp.ViewModels
 @using ListaTelefonicaIACOApp.ViewModels.Contato
 @model ContatoIndexViewModel
 
@@ -38,7 +39,7 @@
                     <h1 class="col-auto m-0 align-self-center">
                          Filtros
                     </h1>
-                    @if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                    @if(User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Recepcao) || User.IsInRole(Roles.Guarita))
                     {
                         <div class="col-auto" style="height: 70px; width: 70px; 
                             background-color: #f9f9f9;  border-radius: 5px;"
@@ -132,7 +133,7 @@
                         <th style="font-size:16px; min-width:180px; min-height:60px" class="text-nowrap">@Html.DisplayNameFor(model => model.Contato_EditadoAs)</th>
 
                         <th style="min-width:50px; min-height:60px"></th>
-                        @if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                        @if(User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Recepcao) || User.IsInRole(Roles.Guarita))
                          {
                             <th style="min-width:50px; min-height:60px"></th>
                             <th style="min-width:50px; min-height:60px"></th>

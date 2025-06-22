@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using ListaTelefonicaIACOApp.Constantes;
 using ListaTelefonicaIACOApp.Infrastructure;
 using ListaTelefonicaIACOApp.Models;
 using ListaTelefonicaIACOApp.ViewModels;
@@ -27,36 +28,50 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("Login")]
+        [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("Dados inválidos.");
+
+            var query = $"SELECT * FROM USUARIOS WHERE NOME = '{model.Nome}'";
+            using var conn = _context.CreateConnection();
+
+            conn.Open();
+
+            // Consulta usando interpolação de strings (não seguro para produção)
+
+            var usuarioDB = await conn.QuerySingleAsync<Usuario>(query);
 
 
-            // Cria as Claims
-            var claims = new List<Claim>
+            if (usuarioDB != null && (usuarioDB?.Nome != model.Nome || usuarioDB.Senha != model.Senha))
             {
-                new Claim(ClaimTypes.NameIdentifier, model.Nome),
-                new Claim(ClaimTypes.Name, model.Nome)
-            };
+                return Unauthorized(new { mensagem = "Usuário ou senha inválidos." });
+            }
 
-            var identity = new ClaimsIdentity(claims, "CookieAuth");
+            // Cria os claims de identidade
+            var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, usuarioDB.Nome),
+            new Claim(ClaimTypes.Role, usuarioDB.Role ?? "Usuario")
+        };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync("CookieAuth", principal);
+            // Cria o cookie de autenticação
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            return Ok(new { sucesso = true, mensagem = "Login realizado com sucesso." });
+            // Retorna sucesso para AJAX
+            return Ok(new { mensagem = "Login realizado com sucesso" });
         }
 
-        [HttpPost("logout")]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync("CookieAuth");
-            return Ok(new { sucesso = true, mensagem = "Logout efetuado com sucesso." });
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Contato");
         }
 
-        [Authorize(Roles = "admin,recepcao,guarita")]
+        [Authorize(Roles = $"{Roles.Administrador},{Roles.Recepcao},{Roles.Guarita}")]
         [HttpGet("autenticado")]
         public IActionResult Autenticado()
         {
@@ -65,28 +80,6 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             return Unauthorized(new { autenticado = false });
         }
-
-        public async Task<Usuario> ObterUsuarioPorNomeESenhaAsync(LoginViewModel usuario)
-        {
-
-            var query = $@"
-                SELECT ID, NOME, PERFIL
-                FROM USUARIOS
-                WHERE NOME = '{usuario.Nome}' AND SENHA = '{usuario.Senha}'";
-
-            using (var conn = _context.CreateConnection())
-            {
-                conn.Open();
-
-                return await conn.QueryFirstOrDefaultAsync<Usuario>(query);
-
-
-            }
-
-
-
-        }
-
 
     }
 }

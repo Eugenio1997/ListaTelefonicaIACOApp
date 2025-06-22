@@ -13,12 +13,12 @@
             <h1 class="align-self-center border-bottom-1 m-0">Entrar</h1>
             
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="form-group min-height-90px-input">
                 <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" placeholder="Ex: ana.clara" />
+                <input asp-for="Nome" class="form-control" />
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group min-height-90px-input">
                 <label asp-for="Senha" class="control-label"></label>
                 <input asp-for="Senha" class="form-control" />
                 <span asp-validation-for="Senha" class="text-danger"></span>
@@ -53,6 +53,14 @@
     <script>
             $("#form-login").on("submit", function (e) {
             e.preventDefault(); // evita envio padrão
+
+             if (!$("#form-login").valid()) return;
+
+            $("#form-login").find('input').each(function () {
+                // 'this' refers to the current input element
+                $(this).val($(this).val().trim());
+
+            });
 
             $.ajax({
                 url: "/Autenticacao/login",

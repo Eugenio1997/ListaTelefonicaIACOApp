@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using ListaTelefonicaIACOApp.Constantes;
 using ListaTelefonicaIACOApp.Infrastructure;
 using ListaTelefonicaIACOApp.Mappers;
 using ListaTelefonicaIACOApp.Models;
@@ -81,7 +82,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
 
                     // Mostrar botão Editar e Deletar somente se o usuário tiver um dos papéis
-                    if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                    if (User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Recepcao) || User.IsInRole(Roles.Guarita))
                     {
                         sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
                                   $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'>" +
@@ -190,7 +191,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
 
                     // Mostrar botão Editar e Deletar somente se o usuário tiver um dos papéis
-                    if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                    if (User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Recepcao) || User.IsInRole(Roles.Guarita))
                     {
                         sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
                                   $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'>" +
@@ -204,7 +205,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                                   $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
                                   $"<i class='bi bi-trash text-dark'></i></a></td>");
                     }
-                    else if (!User.IsInRole("admin") && !User.IsInRole("recepcao") && !User.IsInRole("guarita"))
+                    else if (!User.IsInRole(Roles.Administrador) && !User.IsInRole(Roles.Recepcao) && !User.IsInRole(Roles.Guarita))
                     {
                         // Usuário sem permissão: mostrar apenas botão de detalhes (se quiser)
                         sb.Append($"<td colspan='3' style='height: 50px' class='text-nowrap'>" +
@@ -286,7 +287,7 @@ namespace ListaTelefonicaIACOApp.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,recepcao,guarita")]
+        [Authorize(Roles = $"{Roles.Administrador},{Roles.Recepcao},{Roles.Guarita}")]
         // GET: ContatoController/Create
         public IActionResult Create()
         {
@@ -296,7 +297,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         // POST: ContatoController/Create
-        [Authorize(Roles = "admin,recepcao,guarita")]
+        [Authorize(Roles = $"{Roles.Administrador},{Roles.Recepcao},{Roles.Guarita}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Contato/Create")]
@@ -340,7 +341,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         // GET: ContatoController/Edit/5
-        [Authorize(Roles = "admin,recepcao,guarita")]
+        [Authorize(Roles = $"{Roles.Administrador},{Roles.Recepcao},{Roles.Guarita}")]
         public async Task<ActionResult> Edit(int id)
         {
             var query = $@"SELECT * FROM LISTA_CONTATOS WHERE ID = {id}";
@@ -352,7 +353,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         // POST: ContatoController/Edit/5
-        [Authorize(Roles = "admin,recepcao,guarita")]
+        [Authorize(Roles = $"{Roles.Administrador},{Roles.Recepcao},{Roles.Guarita}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, Contato model)
@@ -450,7 +451,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
         // POST: ContatoController/Delete/5
-        [Authorize(Roles = "admin,recepcao,guarita")]
+        [Authorize(Roles = $"{Roles.Administrador},{Roles.Recepcao},{Roles.Guarita}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteContato(int id)
@@ -524,7 +525,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
 
                     // Mostrar botão Editar e Deletar somente se o usuário tiver um dos papéis
-                    if (User.IsInRole("admin") || User.IsInRole("recepcao") || User.IsInRole("guarita"))
+                    if (User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Recepcao) || User.IsInRole(Roles.Guarita))
                     {
                         sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
                                   $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'>" +
@@ -538,7 +539,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                                   $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
                                   $"<i class='bi bi-trash text-dark'></i></a></td>");
                     }
-                    else if (!User.IsInRole("admin") && !User.IsInRole("recepcao") && !User.IsInRole("guarita"))
+                    else if (!User.IsInRole(Roles.Administrador) && !User.IsInRole(Roles.Recepcao) && !User.IsInRole(Roles.Guarita))
                     {
                         // Usuário sem permissão: mostrar apenas botão de detalhes (se quiser)
                         sb.Append($"<td colspan='3' style='height: 50px' class='text-nowrap'>" +

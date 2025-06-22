@@ -1,6 +1,7 @@
 using ListaTelefonicaIACOApp;
 using ListaTelefonicaIACOApp.Infrastructure;
 using ListaTelefonicaIACOApp.Infrastructure.Seeding;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Oracle.ManagedDataAccess.Client;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,14 +15,14 @@ builder.Services.AddScoped(sp =>
     return new ListaTelefonicaDbContext(configuration);
 });
 
-builder.Services.AddAuthentication("CookieAuth")
-    .AddCookie("CookieAuth", options =>
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
     {
         options.LoginPath = "/Autenticacao/Login";     // Rota de login
         options.LogoutPath = "/Autenticacao/Logout";   // Rota de logout
-        options.AccessDeniedPath = "/Autenticacao/AcessoNegado";
-        //options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Sessão de 30 minutos
-        options.SlidingExpiration = true;
+        options.AccessDeniedPath = "/Autenticacao/AcessoNegado"; //Caminho para acesso negado
+        options.Cookie.Name = "MeuCookieDeAutenticacao"; // Nome do cookie
+
     });
 
 builder.Services.AddAuthorization();
