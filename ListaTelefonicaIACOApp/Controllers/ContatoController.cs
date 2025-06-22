@@ -3,10 +3,14 @@ using ListaTelefonicaIACOApp.Constantes;
 using ListaTelefonicaIACOApp.Infrastructure;
 using ListaTelefonicaIACOApp.Mappers;
 using ListaTelefonicaIACOApp.Models;
+using ListaTelefonicaIACOApp.ViewModels;
 using ListaTelefonicaIACOApp.ViewModels.Contato;
 using ListaTelefonicaIACOApp.ViewModels.Filtros;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Data;
+using System.Reflection;
 using System.Text;
 
 
@@ -311,34 +315,100 @@ namespace ListaTelefonicaIACOApp.Controllers
             using var conn = _context.CreateConnection();
             conn.Open();
 
-            // Verifica FIXO
-            if (!string.IsNullOrWhiteSpace(model.Fixo))
+
+            var claimValor = User.FindFirst("UserId")?.Value;
+            var ip = HttpContext.Connection.RemoteIpAddress;
+            string ipFormatado = ip?.IsIPv4MappedToIPv6 == true
+                    ? ip.MapToIPv4().ToString()
+                    : ip?.ToString();
+
+
+            var log = new LogsAcoesUsuario
             {
-                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE FIXO = '{model.Fixo}'";
-                var existeFixo = await conn.QuerySingleAsync<int>(query);
-                if (existeFixo > 0)
-                    return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse FIXO." });
+                UsuarioId = Convert.ToInt32(claimValor),
+                Acao = AcoesContato.CRIAR,
+                DataHoraAcao = DateTime.Now,
+                EnderecoIp = ipFormatado,
+                UserAgent = Request.Headers["User-Agent"].ToString(),
+                DetalhesRegistroAfetado = JsonConvert.SerializeObject(model),
+                MensagemErro = null
+            };
+
+            try
+            {
+                // Verifica FIXO
+                if (!string.IsNullOrWhiteSpace(model.Fixo))
+                {
+                    var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE FIXO = '{model.Fixo}'";
+                    var existeFixo = await conn.QuerySingleAsync<int>(query);
+                    if (existeFixo > 0)
+                        return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse FIXO." });
+                }
+
+                // Verifica EMAIL
+                if (!string.IsNullOrWhiteSpace(model.Email))
+                {
+                    var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE EMAIL = '{model.Email}'";
+                    var existeEmail = await conn.QuerySingleAsync<int>(query);
+                    if (existeEmail > 0)
+                        return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse EMAIL." });
+                }
+
+
+                // Insere o novo contato
+                string queryInserir = $@"
+                    INSERT INTO LISTA_CONTATOS (NOME, FIXO, CELULAR, COMERCIAL, ENDERECO, EMAIL)
+                    VALUES ('{model.Nome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', '{model.Endereco}', '{model.Email}')";
+
+                await conn.ExecuteAsync(queryInserir);
+
+                log.Sucesso = ResultadoAcao.Sucesso;
+                await GravarLog(log, conn);
+
+
+
+                return Ok(new { sucesso = true });
+            }
+            catch (Exception ex)
+            {
+                log.Sucesso = ResultadoAcao.Falha;
+                log.MensagemErro = ex.Message;
+                await GravarLog(log, conn);
+                return StatusCode(500, new { sucesso = false, mensagem = "Erro interno ao criar o contato." });
             }
 
-            // Verifica EMAIL
-            if (!string.IsNullOrWhiteSpace(model.Email))
-            {
-                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE EMAIL = '{model.Email}'";
-                var existeEmail = await conn.QuerySingleAsync<int>(query);
-                if (existeEmail > 0)
-                    return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse EMAIL." });
-            }
 
-
-            // Insere o novo contato
-            string queryInserir = $@"
-                INSERT INTO LISTA_CONTATOS (NOME, FIXO, CELULAR, COMERCIAL, ENDERECO, EMAIL)
-                VALUES ('{model.Nome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', '{model.Endereco}', '{model.Email}')";
-
-            await conn.ExecuteAsync(queryInserir);
-
-            return Ok(new { sucesso = true });
         }
+
+
+
+        private async Task GravarLog(LogsAcoesUsuario log, IDbConnection conn)
+        {
+            string insertLog = @$"
+                INSERT INTO LogsAcoesUsuario (
+                    UsuarioId,
+                    Acao,
+                    DataHoraAcao,
+                    EnderecoIp,
+                    UserAgent,
+                    DetalhesRegistroAfetado,
+                    Sucesso,
+                    MensagemErro
+                ) VALUES (
+                    '{log.UsuarioId}',
+                    '{log.Acao}',
+                    TO_TIMESTAMP('{log.DataHoraAcao:yyyy-MM-dd HH:mm:ss}', 'YYYY-MM-DD HH24:MI:SS'),
+                    '{log.EnderecoIp}',
+                    '{log.UserAgent}',
+                    '{log.DetalhesRegistroAfetado.Replace("'", "''")}',
+                    '{(int)log.Sucesso}',
+                    {(log.MensagemErro != null ? $"'{log.MensagemErro.Replace("'", "''")}'" : "NULL")}
+                )";
+
+            await conn.ExecuteAsync(insertLog);
+        }
+
+
 
         // GET: ContatoController/Edit/5
         [Authorize(Roles = $"{Roles.Administrador},{Roles.Recepcao},{Roles.Guarita}")]
@@ -356,7 +426,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         [Authorize(Roles = $"{Roles.Administrador},{Roles.Recepcao},{Roles.Guarita}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, Contato model)
+        public async Task<ActionResult> Edit(int id, Contato contatoAtualizado)
         {
 
             if (!ModelState.IsValid)
@@ -367,18 +437,41 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             // Buscar contato atual
             var queryBusca = $"SELECT NOME, FIXO, CELULAR, ENDERECO, EMAIL FROM LISTA_CONTATOS WHERE ID = {id}";
+
             var contatoAtual = await conn.QuerySingleAsync<ContatoEditViewModel>(queryBusca);
+            var claimValor = User.FindFirst("UserId")?.Value;
+            var ip = HttpContext.Connection.RemoteIpAddress;
+            string ipFormatado = ip?.IsIPv4MappedToIPv6 == true
+                    ? ip.MapToIPv4().ToString()
+                    : ip?.ToString();
+
+            var log = new LogsAcoesUsuario
+            {
+                UsuarioId = Convert.ToInt32(claimValor),
+                Acao = AcoesContato.EDITAR, // Supondo que você tenha essa constante
+                DataHoraAcao = DateTime.Now,
+                EnderecoIp = ipFormatado,
+                UserAgent = Request.Headers["User-Agent"].ToString(),
+                DetalhesRegistroAfetado = JsonConvert.SerializeObject(new
+                {
+                    Antes = contatoAtual,
+                    Depois = contatoAtualizado
+                }),
+                Sucesso = ResultadoAcao.Sucesso,
+                MensagemErro = null
+            };
+
 
             if (contatoAtual == null)
                 return NotFound();
 
             // Verificar se valores mudaram
             bool alterado =
-                !string.Equals(model.Nome?.Trim(), contatoAtual.Nome?.Trim(), StringComparison.OrdinalIgnoreCase) ||
-                !string.Equals(model.Fixo?.Trim(), contatoAtual.Fixo?.Trim(), StringComparison.OrdinalIgnoreCase) ||
-                !string.Equals(model.Celular?.Trim(), contatoAtual.Celular?.Trim(), StringComparison.OrdinalIgnoreCase) ||
-                !string.Equals(model.Endereco?.Trim(), contatoAtual.Endereco?.Trim(), StringComparison.OrdinalIgnoreCase) ||
-                !string.Equals(model.Email?.Trim(), contatoAtual.Email?.Trim(), StringComparison.OrdinalIgnoreCase);
+                !string.Equals(contatoAtualizado.Nome?.Trim(), contatoAtual.Nome?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(contatoAtualizado.Fixo?.Trim(), contatoAtual.Fixo?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(contatoAtualizado.Celular?.Trim(), contatoAtual.Celular?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(contatoAtualizado.Endereco?.Trim(), contatoAtual.Endereco?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(contatoAtualizado.Email?.Trim(), contatoAtual.Email?.Trim(), StringComparison.OrdinalIgnoreCase);
 
             if (!alterado)
                 return NoContent();
@@ -387,17 +480,17 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             // Verificar duplicidade
 
-            if (!string.IsNullOrWhiteSpace(model.Fixo))
+            if (!string.IsNullOrWhiteSpace(contatoAtualizado.Fixo))
             {
-                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE FIXO = '{model.Fixo}' AND ID != {id}";
+                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE FIXO = '{contatoAtualizado.Fixo}' AND ID != {id}";
                 var existeFixo = await conn.QuerySingleAsync<int>(query);
                 if (existeFixo > 0)
                     return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse FIXO." });
             }
 
-            if (!string.IsNullOrWhiteSpace(model.Email))
+            if (!string.IsNullOrWhiteSpace(contatoAtualizado.Email))
             {
-                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE EMAIL = '{model.Email}' AND ID != {id}";
+                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE EMAIL = '{contatoAtualizado.Email}' AND ID != {id}";
                 var existeEmail = await conn.QuerySingleAsync<int>(query);
                 if (existeEmail > 0)
                     return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse EMAIL." });
@@ -408,26 +501,26 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(model.Nome))
+                if (!string.IsNullOrWhiteSpace(contatoAtualizado.Nome))
                 {
-                    setClausulas.Add(@$"NOME = '{model.Nome}'");
+                    setClausulas.Add(@$"NOME = '{contatoAtualizado.Nome}'");
                 }
 
-                if (!string.IsNullOrWhiteSpace(model.Fixo))
+                if (!string.IsNullOrWhiteSpace(contatoAtualizado.Fixo))
                 {
-                    setClausulas.Add(@$"FIXO = '{model.Fixo}'");
+                    setClausulas.Add(@$"FIXO = '{contatoAtualizado.Fixo}'");
                 }
-                if (!string.IsNullOrWhiteSpace(model.Celular))
+                if (!string.IsNullOrWhiteSpace(contatoAtualizado.Celular))
                 {
-                    setClausulas.Add(@$"CELULAR = '{model.Celular}'");
+                    setClausulas.Add(@$"CELULAR = '{contatoAtualizado.Celular}'");
                 }
-                if (!string.IsNullOrWhiteSpace(model.Endereco))
+                if (!string.IsNullOrWhiteSpace(contatoAtualizado.Endereco))
                 {
-                    setClausulas.Add(@$"ENDERECO = '{model.Endereco}'");
+                    setClausulas.Add(@$"ENDERECO = '{contatoAtualizado.Endereco}'");
                 }
-                if (!string.IsNullOrWhiteSpace(model.Email))
+                if (!string.IsNullOrWhiteSpace(contatoAtualizado.Email))
                 {
-                    setClausulas.Add(@$"EMAIL = '{model.Email}'");
+                    setClausulas.Add(@$"EMAIL = '{contatoAtualizado.Email}'");
                 }
 
                 setClausulas.Add(@$"EDITADO_AS = TO_DATE('{DateTime.Now:yyyy-MM-dd HH:mm:ss}', 'YYYY-MM-DD HH24:MI:SS')");
@@ -436,6 +529,8 @@ namespace ListaTelefonicaIACOApp.Controllers
                 {
                     var query = @$"UPDATE LISTA_CONTATOS SET {string.Join(", ", setClausulas)} WHERE ID = {id}";
                     await conn.ExecuteAsync(query);
+                    log.Sucesso = ResultadoAcao.Sucesso;
+                    await GravarLog(log, conn);
                     return Ok(new { sucesso = true });
                 }
 
@@ -443,6 +538,9 @@ namespace ListaTelefonicaIACOApp.Controllers
             }
             catch (Exception ex)
             {
+                log.Sucesso = ResultadoAcao.Falha;
+                log.MensagemErro = ex.Message;
+                await GravarLog(log, conn);
                 return BadRequest(new { Mensagem = ex.Message });
             }
 
@@ -456,21 +554,55 @@ namespace ListaTelefonicaIACOApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteContato(int id)
         {
+
+            // Buscar contato a ser deletado
+            var queryBuscaContatoPorId = $"SELECT * FROM LISTA_CONTATOS WHERE ID = {id}";
+
+            // Deletar contato por Id
+            var queryDeletaContatoPorId = $@"DELETE FROM LISTA_CONTATOS WHERE ID = {id}";
+
+            var claimValor = User.FindFirst("UserId")?.Value;
+            var ip = HttpContext.Connection.RemoteIpAddress;
+            string ipFormatado = ip?.IsIPv4MappedToIPv6 == true
+                    ? ip.MapToIPv4().ToString()
+                    : ip?.ToString();
+
+
+            var log = new LogsAcoesUsuario
+            {
+                UsuarioId = Convert.ToInt32(claimValor),
+                Acao = AcoesContato.DELETAR,
+                DataHoraAcao = DateTime.Now,
+                EnderecoIp = ipFormatado,
+                UserAgent = Request.Headers["User-Agent"].ToString(),
+                MensagemErro = null
+            };
+
+            using var conn = _context.CreateConnection();
+            conn.Open();
+
             try
             {
-                var query = $@"DELETE FROM LISTA_CONTATOS WHERE ID = {id}";
-                using var conn = _context.CreateConnection();
-                conn.Open();
 
-                var rows = await conn.ExecuteAsync(query);
+
+                var contatoAserDeletado = await conn.QuerySingleAsync<ContatoEditViewModel>(queryBuscaContatoPorId);
+
+                log.DetalhesRegistroAfetado = JsonConvert.SerializeObject(contatoAserDeletado);
+
+                var rows = await conn.ExecuteAsync(queryDeletaContatoPorId);
 
                 if (rows == 0)
                     return NotFound(new { sucesso = false, mensagem = "Contato não encontrado." });
 
+                log.Sucesso = ResultadoAcao.Sucesso;
+                await GravarLog(log, conn);
                 return Ok(new { sucesso = true });
             }
             catch (Exception ex)
             {
+                log.Sucesso = ResultadoAcao.Falha;
+                log.MensagemErro = ex.Message;
+                await GravarLog(log, conn);
                 return BadRequest(new { sucesso = false, mensagem = ex.Message });
             }
         }

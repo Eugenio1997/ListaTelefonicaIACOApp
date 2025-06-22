@@ -9,7 +9,7 @@
     <div style="padding: 40px; background-color: #f9f9f9; min-width: 300px" class="col-md-6">
         <form id="form-login" class="d-flex flex-column" style="gap:40px" method="post" asp-controller="Autenticacao" asp-action="Login">
             
-            <img class="align-self-center" height="80" width="80" src="~/images/IACO-logo.png" alt="IACO Logo" />
+            <img class="align-self-center" height="100" width="150" src="~/images/IACO-logo.png" alt="IACO Logo" />
             <h1 class="align-self-center border-bottom-1 m-0">Entrar</h1>
             
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -70,7 +70,7 @@
                     mostrarToast("Sucesso", "Autenticacao realizada com sucesso!", "success");
                     setTimeout(() => {
                                 window.location.href = '/Contato/Index';
-                            }, 2000);
+                            }, 1000);
                 },
                 error: function (xhr) {
                     if (xhr.status === 401) {

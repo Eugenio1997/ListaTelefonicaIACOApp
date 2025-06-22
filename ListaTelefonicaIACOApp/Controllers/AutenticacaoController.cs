@@ -39,20 +39,21 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             // Consulta usando interpolação de strings (não seguro para produção)
 
-            var usuarioDB = await conn.QuerySingleAsync<Usuario>(query);
+            var usuarioDB = await conn.QueryFirstOrDefaultAsync<Usuario>(query);
 
 
-            if (usuarioDB != null && (usuarioDB?.Nome != model.Nome || usuarioDB.Senha != model.Senha))
+            if (usuarioDB != null && (usuarioDB.Senha != model.Senha))
             {
                 return Unauthorized(new { mensagem = "Usuário ou senha inválidos." });
             }
 
             // Cria os claims de identidade
             var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, usuarioDB.Nome),
-            new Claim(ClaimTypes.Role, usuarioDB.Role ?? "Usuario")
-        };
+            {
+                new Claim(ClaimTypes.Name, usuarioDB.Nome),
+                new Claim("UserId", usuarioDB.Id.ToString()),
+                new Claim(ClaimTypes.Role, usuarioDB.Role ?? "Usuario")
+            };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
