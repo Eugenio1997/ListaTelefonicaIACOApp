@@ -4,14 +4,15 @@
     ViewData["Title"] = "Login - Lista Telefônica IACO";
 }
 
+<!-- Fundo com imagem desfocada -->
+<div class="bgTelaLoginIACOUsina"></div>
 
-<div class="row justify-content-center"">
-    <div style="padding: 40px; background-color: #f9f9f9; min-width: 300px" class="col-md-6">
 <div class="row d-flex justify-content-center ">
     <div class="d-flex justify-content-center">
         
         <form id="form-login" class="d-flex flex-column w-50 align-self-center gap-1" method="post" asp-controller="Autenticacao" asp-action="Login">
 
+            <img class="align-self-center rounded-3" height="150" width="200" src="~/images/IACO-logo.png" alt="IACO Logo" />
             <h1 class="align-self-center border-bottom-1 m-0">Entrar</h1>
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
