@@ -2,10 +2,12 @@
 using ListaTelefonicaIACOApp.Constantes;
 using ListaTelefonicaIACOApp.Infrastructure;
 using ListaTelefonicaIACOApp.Models;
+using ListaTelefonicaIACOApp.Services;
 using ListaTelefonicaIACOApp.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -15,9 +17,11 @@ namespace ListaTelefonicaIACOApp.Controllers
     {
 
         private ListaTelefonicaDbContext _context;
-        public AutenticacaoController(ListaTelefonicaDbContext context)
+        private readonly IHashService _hashService;
+        public AutenticacaoController(ListaTelefonicaDbContext context, IHashService hashService)
         {
             _context = context;
+            _hashService = hashService;
         }
 
         [AllowAnonymous]
@@ -32,6 +36,13 @@ namespace ListaTelefonicaIACOApp.Controllers
         public async Task<IActionResult> Login(LoginViewModel model)
         {
 
+            var usuario = new Usuario
+            {
+                Nome = model.Nome,
+                Role = model.Role,
+                Senha = model.Senha
+            };
+
             var query = $"SELECT * FROM USUARIOS WHERE NOME = '{model.Nome}'";
             using var conn = _context.CreateConnection();
 
@@ -41,8 +52,9 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             var usuarioDB = await conn.QueryFirstOrDefaultAsync<Usuario>(query);
 
+            var senhaHash = _hashService.HashPassword(usuario, model.Senha);
 
-            if (usuarioDB != null && (usuarioDB.Senha != model.Senha))
+            if (usuarioDB != null && (_hashService.VerifyPassword(usuario, senhaHash, usuarioDB.Senha)))
             {
                 return Unauthorized(new { mensagem = "Usuário ou senha inválidos." });
             }
