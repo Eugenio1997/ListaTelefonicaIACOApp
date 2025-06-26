@@ -7,43 +7,44 @@
 <!-- Fundo com imagem desfocada -->
 <div class="bgTelaLoginIACOUsina"></div>
 
-<div class="row d-flex justify-content-center ">
-    <div class="d-flex justify-content-center">
-        
-        <form id="form-login" class="d-flex flex-column w-50 align-self-center gap-3" method="post" asp-controller="Autenticacao" asp-action="Login">
+<div class="row d-flex justify-content-center">
+    <div class="card col-6 p-0">
+        <div class="card-body">
+            <form id="form-login" class="d-flex flex-column align-self-center gap-1" method="post" asp-controller="Autenticacao" asp-action="Login">
 
-            <img class="align-self-center rounded-3" height="150" width="200" src="~/images/IACO-logo.png" alt="IACO Logo" />
+                <img class="align-self-center rounded-3" min-height="100" height="150" width="200" min-width="150" src="~/images/IACO-logo.png" alt="IACO Logo" />
+                <h1 class="align-self-center border-bottom-1 m-0">Entrar</h1>
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group min-height-90px-input">
-                <label style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3)" asp-for="Nome" class="control-label fw-bold"></label>
-                <input style="height: 48px" asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-            <div class="form-group min-height-90px-input">
-                <label style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3)" asp-for="Senha" class="control-label fw-bold"></label>
-                <input style="height: 48px" asp-for="Senha" class="form-control" />
-                <span asp-validation-for="Senha" class="text-danger"></span>
-            </div>
-            <div class="d-flex flex-column gap-4">
-                <div style="height: 48px" class="w-100 form-group d-flex justify-content-end">
-                    <input class="w-100 btn btn-primary h-100" type="submit" value="Enviar" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group min-height-90px-input">
+                    <label asp-for="Nome" class="control-label"></label>
+                    <input style="height: 48px" asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
                 </div>
-                <div style="height: 48px">
-                    <a class="col-auto d-flex h-100 justify-content-center align-items-center gap-3 btn btn-outline-secondary" asp-controller="Contato" asp-action="Index">
-                        <i style="font-size:30px" class="bi bi-arrow-left  text-white"></i>
-                        <span class="text-white">
-                            Voltar para listagem
-                        </span>
-                    </a>
+                <div class="form-group min-height-90px-input">
+                    <label asp-for="Senha" class="control-label"></label>
+                    <input style="height: 48px" asp-for="Senha" class="form-control" />
+                    <span asp-validation-for="Senha" class="text-danger"></span>
                 </div>
-            </div>
+                <div class="d-flex flex-column gap-4">
+                    <div style="height: 48px" class="w-100 form-group d-flex justify-content-end">
+                        <input class="w-100 btn btn-primary h-100" type="submit" value="Enviar" />
+                    </div>
+                    <div style="height: 48px">
+                        <a class="col-auto d-flex h-100 justify-content-center align-items-center gap-3 btn btn-outline-secondary" asp-controller="Contato" asp-action="Index">
+                            <i style="font-size:30px" class="bi bi-arrow-left  text-black"></i>
+                            <span class="text-black">
+                                Voltar para listagem
+                            </span>
+                        </a>
+                    </div>
+                </div>
 
-        </form>
-
-       
+            </form>
+        </div>
     </div>
 </div>
+
 
 <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
 
