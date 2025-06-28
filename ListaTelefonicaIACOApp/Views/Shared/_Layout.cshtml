@@ -61,17 +61,17 @@
                             <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                 Ações
                             </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <ul class="dropdown-menu p-0" aria-labelledby="dropdownMenuButton">
                                 @if (!isAuthenticated)
                                 {
-                                    <li>
-                                        <a asp-controller="Autenticacao" asp-action="Login" class="dropdown-item">Logar</a>
+                                    <li style="height:40px">
+                                        <a asp-controller="Autenticacao" asp-action="Login" class="dropdown-item d-flex h-100 align-items-center justify-content-center">Logar</a>
                                     </li>
                                 }
                                 else if (isAuthenticated)
                                 {
-                                    <li>
-                                        <button id="btnLogout" class="dropdown-item" type="button">Deslogar</button>
+                                    <li style="height:40px">
+                                        <button id="btnLogout" class="dropdown-item d-flex h-100 align-items-center justify-content-center" type="button">Deslogar</button>
                                     </li>
                                 }
 
