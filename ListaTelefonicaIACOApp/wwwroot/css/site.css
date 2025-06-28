@@ -109,6 +109,10 @@ body {
     min-height: 90px;
 }
 
+.min-height-70px-login-input {
+    min-height: 70px;
+}
+
 
 .bgTelaLoginIACOUsina {
     background-image: url('/images/Iaco-usina-login.jpg');

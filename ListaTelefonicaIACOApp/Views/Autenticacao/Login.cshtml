@@ -8,40 +8,60 @@
 <div class="bgTelaLoginIACOUsina"></div>
 
 <div class="row d-flex justify-content-center">
-    <div class="card col-6 p-0">
-        <div class="card-body">
-            <form id="form-login" class="d-flex flex-column align-self-center gap-1" method="post" asp-controller="Autenticacao" asp-action="Login">
+    <div class="card col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+        <img class="align-self-center rounded-3" height="150" width="150" src="~/images/IACO-logo.png" alt="IACO Logo" />
+        <form style="padding-bottom:30px" id="form-login" class="card-body d-flex flex-column align-self-center gap-1 pt-0" method="post" asp-controller="Autenticacao" asp-action="Login">
 
-                <img class="align-self-center rounded-3" min-height="100" height="150" width="200" min-width="150" src="~/images/IACO-logo.png" alt="IACO Logo" />
-                <h1 class="align-self-center border-bottom-1 m-0">Entrar</h1>
+            
+            <h3 class="align-self-center border-bottom-1">Entrar</h3>
 
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group min-height-90px-input">
-                    <label asp-for="Nome" class="control-label"></label>
-                    <input style="height: 48px" asp-for="Nome" class="form-control" />
-                    <span asp-validation-for="Nome" class="text-danger"></span>
-                </div>
-                <div class="form-group min-height-90px-input">
-                    <label asp-for="Senha" class="control-label"></label>
-                    <input style="height: 48px" asp-for="Senha" class="form-control" />
-                    <span asp-validation-for="Senha" class="text-danger"></span>
-                </div>
-                <div class="d-flex flex-column gap-4">
-                    <div style="height: 48px" class="w-100 form-group d-flex justify-content-end">
-                        <input class="w-100 btn btn-primary h-100" type="submit" value="Enviar" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="input-group min-height-70px-login-input flex-column">
+                <div class="d-flex">
+                    <div style="height: 48px" class="input-group-prepend">
+                        <span class="input-group-text h-100" id="Nome">
+                            <i class="bi bi-person fs-5"></i>
+                        </span>
                     </div>
-                    <div style="height: 48px">
-                        <a class="col-auto d-flex h-100 justify-content-center align-items-center gap-3 btn btn-outline-secondary" asp-controller="Contato" asp-action="Index">
-                            <i style="font-size:30px" class="bi bi-arrow-left  text-black"></i>
-                            <span class="text-black">
-                                Voltar para listagem
-                            </span>
-                        </a>
-                    </div>
+                    <input asp-for="Nome" type="text" style="height: 48px" class="form-control" placeholder="Nome" aria-label="Nome" aria-describedby="Nome">
                 </div>
+                
+                <span asp-validation-for="Nome" class="text-danger fs-12px"></span>
+            </div>
 
-            </form>
-        </div>
+            <div class="input-group min-height-70px-login-input flex-column">
+                <div class="d-flex">
+                    <div style="height: 48px" class="input-group-prepend">
+                        <span class="input-group-text h-100" id="Senha">
+                            <i class="bi bi-lock fs-5"></i>
+                        </span>
+                    </div>
+                    <input asp-for="Senha" type="password" style="height: 48px" class="form-control" placeholder="Senha" aria-label="Senha" aria-describedby="Senha">
+                </div>
+                <span asp-validation-for="Senha" class="text-danger fs-12px"></span>
+
+            </div>
+
+
+               
+
+
+               
+            <div class="d-flex flex-column gap-4">
+                <div style="height: 48px" class="w-100 form-group d-flex justify-content-end">
+                    <input class="w-100 btn btn-primary h-100" type="submit" value="Enviar" />
+                </div>
+                <div style="height: 48px">
+                    <a class="col-auto d-flex h-100 justify-content-center align-items-center gap-3 btn btn-outline-secondary" asp-controller="Contato" asp-action="Index">
+                        <i style="font-size:30px" class="bi bi-arrow-left  text-black"></i>
+                        <span class="text-black">
+                            Voltar para listagem
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+        </form>
     </div>
 </div>
 

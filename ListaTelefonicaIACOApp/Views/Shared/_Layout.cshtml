@@ -64,11 +64,15 @@
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 @if (!isAuthenticated)
                                 {
-                                    <li><a asp-controller="Autenticacao" asp-action="Login" class="dropdown-item">Logar</a></li>
+                                    <li>
+                                        <a asp-controller="Autenticacao" asp-action="Login" class="dropdown-item">Logar</a>
+                                    </li>
                                 }
                                 else if (isAuthenticated)
                                 {
-                                    <li><a asp-controller="Autenticacao" asp-action="Logout" class="dropdown-item">Deslogar</a></li>
+                                    <li>
+                                        <button id="btnLogout" class="dropdown-item" type="button">Deslogar</button>
+                                    </li>
                                 }
 
                           </ul>
@@ -121,3 +125,21 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+
+
+ <script>
+    $(document).ready(function () {
+        $("#btnLogout").on("click", function (e) {
+            e.preventDefault();
+
+            // Exibe o toast
+            mostrarToast("Saindo...", "Logout realizado com sucesso!", "success");
+
+            // Aguarda 1 segundo, depois redireciona manualmente
+            setTimeout(function () {
+                window.location.href = "/Autenticacao/Logout"; // Aqui chamamos o endpoint do logout
+            }, 1000);
+        });
+    });
+</script>
