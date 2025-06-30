@@ -1,4 +1,5 @@
 using ListaTelefonicaIACOApp;
+using ListaTelefonicaIACOApp.BackgroundServices;
 using ListaTelefonicaIACOApp.Infrastructure;
 using ListaTelefonicaIACOApp.Infrastructure.Seeding;
 using ListaTelefonicaIACOApp.Models;
@@ -17,6 +18,8 @@ builder.Services.AddScoped(sp =>
     var configuration = sp.GetRequiredService<IConfiguration>();
     return new ListaTelefonicaDbContext(configuration);
 });
+
+builder.Services.AddHostedService<LogLimpezaBackgroundService>();
 
 builder.Services.AddScoped<IHashService, HashService>();
 
