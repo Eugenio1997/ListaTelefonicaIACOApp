@@ -20,37 +20,46 @@ namespace ListaTelefonicaIACOApp.BackgroundServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            int count = 0;
+            _logger.LogInformation("Serviço de limpeza de logs iniciado.");
+
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                count++;
-                using var scope = _serviceProvider.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<ListaTelefonicaDbContext>();
-
-                using var conn = dbContext.CreateConnection();
-                conn.Open();
-
-                //Delete todos os logs cuja data tenha ultrapassado 1 mês
-                var query = $@"DELETE FROM LogsAcoesUsuario
-                               WHERE 
-                                    DataHoraAcao < SYSDATE - 30";
                 try
                 {
-                    await conn.ExecuteAsync(query);
+                    _logger.LogInformation($"Serviço de limpeza executado em: {DateTime.Now}");
+
+                    using var scope = _serviceProvider.CreateScope();
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ListaTelefonicaDbContext>();
+
+                    using var conn = dbContext.CreateConnection();
+
+                    if (conn.State != System.Data.ConnectionState.Open)
+                        conn.Open();
+
+
+                    //Delete todos os logs cuja data tenha ultrapassado 1 mês
+                    var query = $@"DELETE FROM LogsAcoesUsuario
+                                   WHERE 
+                                        DataHoraAcao < SYSDATE - 30";
+
+                    var rowsAfetadas = await conn.ExecuteAsync(query);
+                    _logger.LogInformation("Limpeza concluída. {Rows} registros removidos.", rowsAfetadas);
                     await conn.ExecuteAsync("COMMIT");
 
                     _logger.LogInformation("BackgroundService sendo executado !");
-                    _logger.LogInformation($@"{count}");
 
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, ex.Message);
+                    _logger.LogError(ex, "Erro durante a execução da limpeza de logs.");
                 }
 
                 await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
 
             }
+
+            _logger.LogInformation("Serviço de limpeza de logs encerrado.");
 
         }
     }
