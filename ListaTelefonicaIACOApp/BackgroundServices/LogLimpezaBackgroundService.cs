@@ -55,7 +55,7 @@ namespace ListaTelefonicaIACOApp.BackgroundServices
                     _logger.LogError(ex, "Erro durante a execução da limpeza de logs.");
                 }
 
-                await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+                await Task.Delay(TimeSpan.FromDays(30), stoppingToken);
 
             }
 
