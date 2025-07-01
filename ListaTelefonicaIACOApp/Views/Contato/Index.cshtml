@@ -73,11 +73,12 @@
                     </div>   
                         <div class="col-md-4 campos-filtros">
                         <label asp-for="Contato_Endereco" class="">Endereco</label>
+                        <i style="width:10px" class="bi bi-exclamation-circle p-0" data-bs-toggle='tooltip' data-bs-placement='top' title='Ex: Rua - Número da Rua - Bairro - Cidade.'></i>
                         <input asp-for="Contato_Endereco" type="text" class="form-control" id="Endereco" placeholder="Ex: Rua José de Alencar - 90 - Antares - Costa Rica">
                     </div> 
                         <div class="col-md-8 campos-filtros">
                         <label asp-for="Contato_Email" class="">Email</label>
-                        <input asp-for="Contato_Email" type="email" class="form-control" id="Email" placeholder="Ex: colaborador@iaco.com">        
+                        <input asp-for="Contato_Email" type="email" class="form-control" id="Email" placeholder="Ex: Ana.clara@iaco.ind.br">        
                     </div>
                 
                     <div style="height:50px" class="d-flex w-100 justify-content-end gap-4 align-items-center col-auto">
