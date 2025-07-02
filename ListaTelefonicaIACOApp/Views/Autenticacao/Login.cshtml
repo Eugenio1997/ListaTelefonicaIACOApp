@@ -11,7 +11,6 @@
     <div class="card col-10 col-sm-8 col-md-6 col-lg-5 col-xl-4">
         <img class="align-self-center rounded-3" height="150" width="150" src="~/images/IACO-logo.png" alt="IACO Logo" />
         <form style="padding-bottom:30px" id="form-login" class="card-body d-flex flex-column align-self-center gap-1 pt-0" method="post" asp-controller="Autenticacao" asp-action="Login">
-
             
             <h3 class="align-self-center border-bottom-1">Entrar</h3>
 
@@ -19,11 +18,11 @@
             <div class="input-group min-height-70px-login-input flex-column">
                 <div class="d-flex">
                     <div style="height: 48px" class="input-group-prepend">
-                        <span class="input-group-text h-100" id="Nome">
+                        <span style="border-radius: 0.25rem 0 0 0.25rem" class="input-group-text h-100" id="Nome">
                             <i class="bi bi-person fs-5"></i>
                         </span>
                     </div>
-                    <input asp-for="Nome" type="text" style="height: 48px" class="form-control" placeholder="Nome" aria-label="Nome" aria-describedby="Nome">
+                    <input asp-for="Nome" type="text" style="height: 48px; border-radius: 0 0.25rem 0.25rem 0" class="form-control" placeholder="Nome" aria-label="Nome" aria-describedby="Nome">
                 </div>
                 
                 <span asp-validation-for="Nome" class="text-danger fs-12px"></span>
@@ -32,11 +31,11 @@
             <div class="input-group min-height-70px-login-input flex-column">
                 <div class="d-flex">
                     <div style="height: 48px" class="input-group-prepend">
-                        <span class="input-group-text h-100" id="Senha">
+                        <span style="border-radius: 0.25rem 0 0 0.25rem" class="input-group-text h-100" id="Senha">
                             <i class="bi bi-lock fs-5"></i>
                         </span>
                     </div>
-                    <input asp-for="Senha" type="password" style="height: 48px" class="form-control" placeholder="Senha" aria-label="Senha" aria-describedby="Senha">
+                    <input asp-for="Senha" type="password" style="height: 48px; border-radius: 0 0.25rem 0.25rem 0" class="form-control" placeholder="Senha" aria-label="Senha" aria-describedby="Senha">
                 </div>
                 <span asp-validation-for="Senha" class="text-danger fs-12px"></span>
 
