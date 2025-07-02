@@ -19,7 +19,7 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         public string? Comercial { get; set; } = string.Empty;
 
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
-        public string Email { get; set; } = string.Empty;
+        public string? Email { get; set; } = string.Empty;
         [Required(ErrorMessage = "O endereço é Obrigatório.")]
         [Display(Name = "Endereço")]
         public string Endereco { get; set; } = string.Empty;
