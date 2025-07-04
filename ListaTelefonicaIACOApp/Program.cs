@@ -26,9 +26,8 @@ builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Autenticacao/Login";     // Rota de login
-        options.LogoutPath = "/Autenticacao/Logout";   // Rota de logout
-        options.AccessDeniedPath = "/Autenticacao/AcessoNegado"; //Caminho para acesso negado
+        options.LoginPath = "/Login";     // Rota de login
+        options.LogoutPath = "/Logout";   // Rota de logout
         options.Cookie.Name = "MeuCookieDeAutenticacao"; // Nome do cookie
 
     });

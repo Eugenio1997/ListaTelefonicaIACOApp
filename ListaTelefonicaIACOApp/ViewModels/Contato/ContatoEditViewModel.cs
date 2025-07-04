@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace ListaTelefonicaIACOApp.ViewModels.Contato
 {
@@ -14,8 +15,8 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
 
         [RegularExpression(@"^\(\d{2}\) \d{5}-\d{4}$", ErrorMessage = "Celular deve estar no formato 99 99999-9999")]
         public string Celular { get; set; } = string.Empty;
-
-        [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: (99) 9999-9999")]
+        [DisplayName("Ramal")]
+        [RegularExpression(@"^\d{4}$", ErrorMessage = "Formato esperado: 0000")]
         public string? Comercial { get; set; } = string.Empty;
 
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace ListaTelefonicaIACOApp.ViewModels.Contato
@@ -15,7 +16,8 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         public string? Fixo { get; set; }
         [RegularExpression(@"^\(\d{2}\) \d{5}-\d{4}$", ErrorMessage = "Celular deve estar no formato 99 999999999")]
         public string? Celular { get; set; }
-        [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: 99 99999999")]
+        [DisplayName("Ramal")]
+        [RegularExpression(@"^\d{4}$", ErrorMessage = "Formato esperado: 0000")]
         public string? Comercial { get; set; }
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
         public string? Email { get; set; }

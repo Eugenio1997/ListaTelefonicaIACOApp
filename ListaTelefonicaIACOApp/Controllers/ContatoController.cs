@@ -77,9 +77,9 @@ namespace ListaTelefonicaIACOApp.Controllers
                 {
                     sb.Append($"<tr style='height:60px'>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Fixo}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Celular}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Comercial}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo-tabela input-sem-borda' value='{c.Fixo}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular-tabela input-sem-borda' value='{c.Celular}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial-tabela input-sem-borda' value='{c.Comercial}' /></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco}</td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
@@ -186,9 +186,9 @@ namespace ListaTelefonicaIACOApp.Controllers
                 {
                     sb.Append($"<tr style='height:60px'>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Fixo}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Celular}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Comercial}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo-tabela input-sem-borda' value='{c.Fixo}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular-tabela input-sem-borda' value='{c.Celular}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial-tabela input-sem-borda' value='{c.Comercial}' /></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco}</td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
@@ -471,6 +471,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                 !string.Equals(contatoAtualizado.Fixo?.Trim(), contatoAtual.Fixo?.Trim(), StringComparison.OrdinalIgnoreCase) ||
                 !string.Equals(contatoAtualizado.Celular?.Trim(), contatoAtual.Celular?.Trim(), StringComparison.OrdinalIgnoreCase) ||
                 !string.Equals(contatoAtualizado.Endereco?.Trim(), contatoAtual.Endereco?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+               !string.Equals(contatoAtualizado.Comercial?.Trim(), contatoAtual.Comercial?.Trim(), StringComparison.OrdinalIgnoreCase) ||
                 !string.Equals(contatoAtualizado.Email?.Trim(), contatoAtual.Email?.Trim(), StringComparison.OrdinalIgnoreCase);
 
             if (!alterado)
@@ -505,7 +506,10 @@ namespace ListaTelefonicaIACOApp.Controllers
                 {
                     setClausulas.Add(@$"NOME = '{contatoAtualizado.Nome}'");
                 }
-
+                if (!string.IsNullOrWhiteSpace(contatoAtualizado.Comercial))
+                {
+                    setClausulas.Add(@$"COMERCIAL = '{contatoAtualizado.Comercial}'");
+                }
                 if (!string.IsNullOrWhiteSpace(contatoAtualizado.Fixo))
                 {
                     setClausulas.Add(@$"FIXO = '{contatoAtualizado.Fixo}'");
@@ -648,9 +652,9 @@ namespace ListaTelefonicaIACOApp.Controllers
                 {
                     sb.Append($"<tr style='height:60px'>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo input-sem-borda' value='{c.Fixo}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular input-sem-borda' value='{c.Celular}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial input-sem-borda' value='{c.Comercial}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo-tabela input-sem-borda' value='{c.Fixo}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular-tabela input-sem-borda' value='{c.Celular}' /></td>");
+                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial-tabela input-sem-borda' value='{c.Comercial}' /></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco}</td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
                     sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");

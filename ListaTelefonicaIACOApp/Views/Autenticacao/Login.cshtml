@@ -11,7 +11,8 @@
     <div class="card col-10 col-sm-8 col-md-6 col-lg-5 col-xl-4">
         <img class="align-self-center rounded-3" height="150" width="150" src="~/images/IACO-logo.png" alt="IACO Logo" />
         <form style="padding-bottom:30px" id="form-login" class="card-body d-flex flex-column align-self-center gap-1 pt-0" method="post" asp-controller="Autenticacao" asp-action="Login">
-            
+            <input type="hidden" name="returnUrl" value="@Context.Request.Query["ReturnUrl"]" />
+
             <h3 class="align-self-center border-bottom-1">Entrar</h3>
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -84,15 +85,16 @@
                 $(this).val($(this).val().trim());
 
             });
-
+          
             $.ajax({
                 url: "/Autenticacao/login",
                 type: "POST",
                 data: $(this).serialize(),
                 success: function (data) {
-                    mostrarToast("Sucesso", "Autenticacao realizada com sucesso!", "success");
+                    mostrarToast(data.mensageHeader, data.mensagemBody, data.icone);
+                    const redirectTo = data.redirectUrl || "/Contato/Index";
                     setTimeout(() => {
-                                window.location.href = '/Contato/Index';
+                                window.location.href = redirectTo;
                             }, 1000);
                 },
                 error: function (xhr) {

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace ListaTelefonicaIACOApp.ViewModels.Contato
 {
@@ -12,26 +13,23 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         [Display(Name = "Nome")]
         [RegularExpression(@"^(?=.{3,})(?!.*\d)[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", ErrorMessage = "O Nome deve ter no mínimo 3 letras e não pode conter números.")]
         public string Contato_Nome { get; set; } = string.Empty;
-        [Required(ErrorMessage = "O campo Fixo é obrigatório.")]
-        [Display(Name = "Telefone Fixo")]
-        [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: 99 9999-9999")]
+        [Display(Name = "Fixo")]
+        [RegularExpression(@"^\d{2} \d{4}\d{4}$", ErrorMessage = "Formato esperado: 99 99999999")]
         public string Contato_Fixo { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Celular é obrigatório.")]
         [Display(Name = "Celular")]
-        [RegularExpression(@"^\(\d{2}\) \d{5}-\d{4}$", ErrorMessage = "Celular deve estar no formato 99 99999-9999")]
+        [RegularExpression(@"^\d{2} \d{5}\d{4}$", ErrorMessage = "Celular deve estar no formato 99 999999999")]
         public string Contato_Celular { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Comercial é obrigatório.")]
-        [Display(Name = "Telefone Comercial")]
-        [RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: (99) 9999-9999")]
+        [DisplayName("Ramal")]
+        [RegularExpression(@"^\d{4}$", ErrorMessage = "Formato esperado: 0000")]
         public string Contato_Comercial { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O e-mail é Obrigatório.")]
         [Display(Name = "E-mail")]
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
         public string Contato_Email { get; set; } = string.Empty;
         [Display(Name = "Endereço")]
+        [Required(ErrorMessage = "O campo endereco é obrigatório.")]
         [RegularExpression(@"^([A-Za-zÀ-ÿ\s]+)\s*-\s*(\d+)\s*-\s*([A-Za-zÀ-ÿ\s]+)\s*-\s*([A-Za-zÀ-ÿ\s]+)$", ErrorMessage = "Formato esperado: Nome da Rua - Número - Bairro - Cidade")]
         public string Contato_Endereco { get; set; } = string.Empty;
         public List<ContatoIndexViewModel> Contatos { get; set; } = new();

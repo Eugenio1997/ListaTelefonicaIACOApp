@@ -33,7 +33,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
         {
 
             var usuario = new Usuario
@@ -73,8 +73,12 @@ namespace ListaTelefonicaIACOApp.Controllers
             // Cria o cookie de autenticação
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
+            // ✅ Redireciona para o ReturnUrl se for local
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Ok(new { mensageHeader = "Entrando...", mensagemBody = "Login realizado com sucesso", icone = "success", redirectUrl = returnUrl }); ;
+
             // Retorna sucesso para AJAX
-            return Ok(new { mensagem = "Login realizado com sucesso" });
+            return Ok(new { mensageHeader = "Entrando...", mensagemBody = "Login realizado com sucesso", icone = "success" });
         }
 
         [Authorize]
