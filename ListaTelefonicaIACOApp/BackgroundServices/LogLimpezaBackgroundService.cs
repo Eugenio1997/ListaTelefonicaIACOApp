@@ -39,7 +39,7 @@ namespace ListaTelefonicaIACOApp.BackgroundServices
 
 
                     //Delete todos os logs cuja data tenha ultrapassado 1 mês
-                    var query = $@"DELETE FROM LogsAcoesUsuario
+                    var query = $@"DELETE FROM LOGSACOESUSUARIOS
                                    WHERE 
                                         DataHoraAcao < SYSDATE - 30";
 
