@@ -206,10 +206,24 @@
         <nav class="" aria-label="Paginação">
             <ul class="pagination mb-0">
 
+                @if (ViewBag.PaginaAtual > 10)
+                {
+                    <li class="page-item">
+                            <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual - 10)">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                    </li>
+                }
+                else{
+                      <li class="page-item disabled">
+                            <a class="page-link" href="javascript:void(0)">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                    </li>
+                }
 
                 @if (ViewBag.PaginaAtual > 1)
                 {
-
                     <li class="page-item">
                         <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual - 1)">Anterior</a>
                     </li>
@@ -247,7 +261,24 @@
                 }else{
                     <li class="page-item disabled">
                         <a class="page-link" href="javascript:void(0)">Próximo</a>
-                    </li>}
+                    </li>
+                }
+
+                @if (ViewBag.PaginaAtual + 10 <= ViewBag.TotalPaginas)
+                {
+                    <li class="page-item">
+                            <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual - 10)">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                    </li>
+                }
+                else{
+                      <li class="page-item disabled">
+                            <a class="page-link" href="javascript:void(0)">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                    </li>
+                }
 
             </ul>
         </nav>

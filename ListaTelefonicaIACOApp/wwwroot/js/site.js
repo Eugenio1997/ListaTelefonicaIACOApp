@@ -81,18 +81,43 @@ $(function () {
 function gerarPaginacao(paginaAtual, totalPaginas) {
     let paginacaoHtml = '';
 
+    // << Pular 10 páginas para trás
+    if (paginaAtual > 10) {
+        paginacaoHtml += `<li class="page-item">
+            <a class="page-link" href="javascript:void(0)" data-pagina="${paginaAtual - 10}">&laquo;</a>
+        </li>`;
+    } else {
+        paginacaoHtml += `<li class="page-item disabled">
+            <a class="page-link" href="javascript:void(0)">&laquo;</a>
+        </li>`;
+    }
+
+    // < Página anterior
     paginacaoHtml += paginaAtual > 1
         ? `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-pagina="${paginaAtual - 1}">Anterior</a></li>`
         : `<li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Anterior</a></li>`;
 
+    // Página atual / total
     paginacaoHtml += `
-                <li class="page-item disabled"><a class="page-link" href="#">${paginaAtual}</a></li>
-                <li class="page-item disabled"><a class="page-link" href="#">de</a></li>
-                <li class="page-item disabled"><a class="page-link" href="#">${totalPaginas}</a></li>`;
+        <li class="page-item disabled"><a class="page-link" href="#">${paginaAtual}</a></li>
+        <li class="page-item disabled"><a class="page-link" href="#">de</a></li>
+        <li class="page-item disabled"><a class="page-link" href="#">${totalPaginas}</a></li>`;
 
+    // > Próxima página
     paginacaoHtml += paginaAtual < totalPaginas
         ? `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-pagina="${paginaAtual + 1}">Próximo</a></li>`
         : `<li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Próximo</a></li>`;
+
+    // >> Pular 10 páginas para frente
+    if (paginaAtual + 10 <= totalPaginas) {
+        paginacaoHtml += `<li class="page-item">
+            <a class="page-link" href="javascript:void(0)" data-pagina="${paginaAtual + 10}">&raquo;</a>
+        </li>`;
+    } else {
+        paginacaoHtml += `<li class="page-item disabled">
+            <a class="page-link" href="javascript:void(0)">&raquo;</a>
+        </li>`;
+    }
 
     $('.pagination').html(paginacaoHtml);
 }
