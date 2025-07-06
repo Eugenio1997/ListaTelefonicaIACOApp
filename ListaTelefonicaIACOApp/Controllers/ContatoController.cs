@@ -52,7 +52,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                                 c.EMAIL AS Email,
                                 TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
                                 TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
-                            FROM LISTA_CONTATOS c
+                            FROM LISTA_FONES c
                             ORDER BY {ordenacao}
                             OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
 
@@ -63,7 +63,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
 
-                var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_CONTATOS");
+                var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_FONES");
                 totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
 
@@ -129,16 +129,16 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             string queryBase = @"
                     SELECT 
-                        c.ID              AS Id,
-                        c.NOME            AS Nome,
-                        c.FIXO            AS Fixo,
-                        c.CELULAR         AS Celular,
-                        c.COMERCIAL       AS Comercial,
-                        c.ENDERECO        AS Endereco,
-                        c.EMAIL           AS Email,
-                        TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
-                        TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
-                    FROM LISTA_CONTATOS c
+                        f.ID              AS Id,
+                        f.NOME            AS Nome,
+                        f.FIXO            AS Fixo,
+                        f.CELULAR         AS Celular,
+                        f.COMERCIAL       AS Comercial,
+                        f.ENDERECO        AS Endereco,
+                        f.EMAIL           AS Email,
+                        TO_CHAR(f.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
+                        TO_CHAR(f.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
+                    FROM LISTA_FONES f
                     WHERE 1=1
                 ";
 
@@ -146,30 +146,30 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             if (!string.IsNullOrWhiteSpace(filtros.Nome))
             {
-                queryBase += $@" AND LOWER(TRIM(c.NOME)) LIKE LOWER('%{filtros.Nome.Trim()}%')";
+                queryBase += $@" AND LOWER(TRIM(f.NOME)) LIKE LOWER('%{filtros.Nome.Trim()}%')";
             }
             if (!string.IsNullOrWhiteSpace(filtros.Fixo))
             {
-                queryBase += $@" AND LOWER(TRIM(c.FIXO)) LIKE LOWER('%{filtros.Fixo.Trim()}%')";
+                queryBase += $@" AND LOWER(TRIM(f.FIXO)) LIKE LOWER('%{filtros.Fixo.Trim()}%')";
             }
             if (!string.IsNullOrWhiteSpace(filtros.Celular))
             {
-                queryBase += $@" AND LOWER(TRIM(c.CELULAR)) LIKE LOWER('%{filtros.Celular.Trim()}%')";
+                queryBase += $@" AND LOWER(TRIM(f.CELULAR)) LIKE LOWER('%{filtros.Celular.Trim()}%')";
             }
             if (!string.IsNullOrWhiteSpace(filtros.Comercial))
             {
-                queryBase += $@" AND LOWER(TRIM(c.COMERCIAL)) LIKE LOWER('%{filtros.Comercial.Trim()}%')";
+                queryBase += $@" AND LOWER(TRIM(f.COMERCIAL)) LIKE LOWER('%{filtros.Comercial.Trim()}%')";
             }
             if (!string.IsNullOrWhiteSpace(filtros.Endereco))
             {
-                queryBase += $@" AND LOWER(TRIM(c.ENDERECO)) LIKE LOWER('%{filtros.Endereco.Trim()}%')";
+                queryBase += $@" AND LOWER(TRIM(f.ENDERECO)) LIKE LOWER('%{filtros.Endereco.Trim()}%')";
             }
             if (!string.IsNullOrWhiteSpace(filtros.Email))
             {
-                queryBase += $@" AND LOWER(TRIM(c.EMAIL)) LIKE LOWER('%{filtros.Email.Trim()}%')";
+                queryBase += $@" AND LOWER(TRIM(f.EMAIL)) LIKE LOWER('%{filtros.Email.Trim()}%')";
             }
 
-            queryBase += " ORDER BY c.NOME";
+            queryBase += " ORDER BY f.NOME";
 
             using (var conn = _context.CreateConnection())
             {
@@ -239,23 +239,23 @@ namespace ListaTelefonicaIACOApp.Controllers
             {
                 conn.Open();
 
-                var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_CONTATOS");
+                var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_FONES");
                 totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
                 offset = (paginaAtual - 1) * registrosPorPagina;
                 string ordenacao = "NOME"; // default order by NOME
                 string query = @$"
                             SELECT 
-                                c.ID AS Id,
-                                c.NOME AS Nome,
-                                c.FIXO AS Fixo,
-                                c.CELULAR AS Celular,
-                                c.COMERCIAL AS Comercial,
-                                c.ENDERECO AS Endereco,
-                                c.EMAIL AS Email,
-                                TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
-                                TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs                             
-                            FROM LISTA_CONTATOS c
+                                f.ID AS Id,
+                                f.NOME AS Nome,
+                                f.FIXO AS Fixo,
+                                f.CELULAR AS Celular,
+                                f.COMERCIAL AS Comercial,
+                                f.ENDERECO AS Endereco,
+                                f.EMAIL AS Email,
+                                TO_CHAR(f.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
+                                TO_CHAR(f.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs                             
+                            FROM LISTA_FONES f
                             ORDER BY {ordenacao}
                             OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
 
@@ -281,11 +281,11 @@ namespace ListaTelefonicaIACOApp.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Details(int id)
         {
-            var query = @$"SELECT * FROM LISTA_CONTATOS WHERE ID = {id}";
+            var query = @$"SELECT * FROM LISTA_FONES WHERE ID = {id}";
             using (var conn = _context.CreateConnection())
             {
                 conn.Open();
-                var model = await conn.QuerySingleAsync<ContatoDetailsViewModel>(query);
+                var model = await conn.QueryFirstOrDefaultAsync<ContatoDetailsViewModel>(query);
 
                 return View(model);
             }
@@ -339,7 +339,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                 // Verifica FIXO
                 if (!string.IsNullOrWhiteSpace(model.Fixo))
                 {
-                    var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE FIXO = '{model.Fixo}'";
+                    var query = $"SELECT COUNT(*) FROM LISTA_FONES WHERE FIXO = '{model.Fixo}'";
                     var existeFixo = await conn.QuerySingleAsync<int>(query);
                     if (existeFixo > 0)
                         return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse FIXO." });
@@ -348,7 +348,7 @@ namespace ListaTelefonicaIACOApp.Controllers
                 // Verifica EMAIL
                 if (!string.IsNullOrWhiteSpace(model.Email))
                 {
-                    var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE EMAIL = '{model.Email}'";
+                    var query = $"SELECT COUNT(*) FROM LISTA_FONES WHERE EMAIL = '{model.Email}'";
                     var existeEmail = await conn.QuerySingleAsync<int>(query);
                     if (existeEmail > 0)
                         return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse EMAIL." });
@@ -357,7 +357,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
                 // Insere o novo contato
                 string queryInserir = $@"
-                    INSERT INTO LISTA_CONTATOS (NOME, FIXO, CELULAR, COMERCIAL, ENDERECO, EMAIL)
+                    INSERT INTO LISTA_FONES (NOME, FIXO, CELULAR, COMERCIAL, ENDERECO, EMAIL)
                     VALUES ('{model.Nome}', '{model.Fixo}', '{model.Celular}', '{model.Comercial}', '{model.Endereco}', '{model.Email}')";
 
                 await conn.ExecuteAsync(queryInserir);
@@ -385,7 +385,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         private async Task GravarLog(LogsAcoesUsuario log, IDbConnection conn)
         {
             string insertLog = @$"
-                INSERT INTO LogsAcoesUsuario (
+                INSERT INTO LOGSACOESUSUARIOS (
                     UsuarioId,
                     Acao,
                     DataHoraAcao,
@@ -414,7 +414,7 @@ namespace ListaTelefonicaIACOApp.Controllers
         [Authorize(Roles = $"{Roles.Administrador},{Roles.Recepcao},{Roles.Guarita}")]
         public async Task<ActionResult> Edit(int id)
         {
-            var query = $@"SELECT * FROM LISTA_CONTATOS WHERE ID = {id}";
+            var query = $@"SELECT * FROM LISTA_FONES WHERE ID = {id}";
             using var conn = _context.CreateConnection();
             conn.Open();
             var model = await conn.QuerySingleAsync<ContatoEditViewModel>(query);
@@ -436,7 +436,7 @@ namespace ListaTelefonicaIACOApp.Controllers
             conn.Open();
 
             // Buscar contato atual
-            var queryBusca = $"SELECT NOME, FIXO, CELULAR, ENDERECO, EMAIL FROM LISTA_CONTATOS WHERE ID = {id}";
+            var queryBusca = $"SELECT NOME, FIXO, CELULAR, ENDERECO, EMAIL FROM LISTA_FONES WHERE ID = {id}";
 
             var contatoAtual = await conn.QuerySingleAsync<ContatoEditViewModel>(queryBusca);
             var claimValor = User.FindFirst("UserId")?.Value;
@@ -483,7 +483,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             if (!string.IsNullOrWhiteSpace(contatoAtualizado.Fixo))
             {
-                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE FIXO = '{contatoAtualizado.Fixo}' AND ID != {id}";
+                var query = $"SELECT COUNT(*) FROM LISTA_FONES WHERE FIXO = '{contatoAtualizado.Fixo}' AND ID != {id}";
                 var existeFixo = await conn.QuerySingleAsync<int>(query);
                 if (existeFixo > 0)
                     return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse FIXO." });
@@ -491,7 +491,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
             if (!string.IsNullOrWhiteSpace(contatoAtualizado.Email))
             {
-                var query = $"SELECT COUNT(*) FROM LISTA_CONTATOS WHERE EMAIL = '{contatoAtualizado.Email}' AND ID != {id}";
+                var query = $"SELECT COUNT(*) FROM LISTA_FONES WHERE EMAIL = '{contatoAtualizado.Email}' AND ID != {id}";
                 var existeEmail = await conn.QuerySingleAsync<int>(query);
                 if (existeEmail > 0)
                     return Conflict(new { sucesso = false, mensagem = "Já existe um contato com esse EMAIL." });
@@ -531,7 +531,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
                 if (setClausulas.Any())
                 {
-                    var query = @$"UPDATE LISTA_CONTATOS SET {string.Join(", ", setClausulas)} WHERE ID = {id}";
+                    var query = @$"UPDATE LISTA_FONES SET {string.Join(", ", setClausulas)} WHERE ID = {id}";
                     await conn.ExecuteAsync(query);
                     log.Sucesso = ResultadoAcao.Sucesso;
                     await GravarLog(log, conn);
@@ -560,10 +560,10 @@ namespace ListaTelefonicaIACOApp.Controllers
         {
 
             // Buscar contato a ser deletado
-            var queryBuscaContatoPorId = $"SELECT * FROM LISTA_CONTATOS WHERE ID = {id}";
+            var queryBuscaContatoPorId = $"SELECT * FROM LISTA_FONES WHERE ID = {id}";
 
             // Deletar contato por Id
-            var queryDeletaContatoPorId = $@"DELETE FROM LISTA_CONTATOS WHERE ID = {id}";
+            var queryDeletaContatoPorId = $@"DELETE FROM LISTA_FONES WHERE ID = {id}";
 
             var claimValor = User.FindFirst("UserId")?.Value;
             var ip = HttpContext.Connection.RemoteIpAddress;
@@ -589,7 +589,7 @@ namespace ListaTelefonicaIACOApp.Controllers
             {
 
 
-                var contatoAserDeletado = await conn.QuerySingleAsync<ContatoEditViewModel>(queryBuscaContatoPorId);
+                var contatoAserDeletado = await conn.QueryFirstOrDefaultAsync<ContatoEditViewModel>(queryBuscaContatoPorId);
 
                 log.DetalhesRegistroAfetado = JsonConvert.SerializeObject(contatoAserDeletado);
 
@@ -618,16 +618,16 @@ namespace ListaTelefonicaIACOApp.Controllers
             offset = (paginaAtual - 1) * registrosPorPagina;
             string ordenacao = "NOME"; // default order by NOME
             string query = @$"SELECT 
-                                c.ID AS Id,
-                                c.NOME AS Nome,
-                                c.FIXO AS Fixo,
-                                c.CELULAR AS Celular,
-                                c.COMERCIAL AS Comercial,
-                                c.ENDERECO AS Endereco,
-                                c.EMAIL AS Email,
-                                TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
-                                TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
-                            FROM LISTA_CONTATOS c
+                                f.ID AS Id,
+                                f.NOME AS Nome,
+                                f.FIXO AS Fixo,
+                                f.CELULAR AS Celular,
+                                f.COMERCIAL AS Comercial,
+                                f.ENDERECO AS Endereco,
+                                f.EMAIL AS Email,
+                                TO_CHAR(f.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
+                                TO_CHAR(f.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
+                            FROM LISTA_FONES f
                             ORDER BY {ordenacao}
                             OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
 
@@ -638,7 +638,7 @@ namespace ListaTelefonicaIACOApp.Controllers
 
 
 
-                var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_CONTATOS");
+                var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_FONES");
                 totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
 
 
