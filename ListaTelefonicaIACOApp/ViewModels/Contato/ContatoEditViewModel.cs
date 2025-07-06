@@ -14,13 +14,13 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         public string? Fixo { get; set; }
 
         [RegularExpression(@"^\(\d{2}\) \d{5}-\d{4}$", ErrorMessage = "Celular deve estar no formato 99 99999-9999")]
-        public string Celular { get; set; } = string.Empty;
+        public string? Celular { get; set; }
         [DisplayName("Ramal")]
         [RegularExpression(@"^\d{4}$", ErrorMessage = "Formato esperado: 0000")]
-        public string? Comercial { get; set; } = string.Empty;
+        public string? Comercial { get; set; }
 
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
-        public string? Email { get; set; } = string.Empty;
+        public string? Email { get; set; }
         [Required(ErrorMessage = "O endereço é Obrigatório.")]
         [Display(Name = "Endereço")]
         public string Endereco { get; set; } = string.Empty;
