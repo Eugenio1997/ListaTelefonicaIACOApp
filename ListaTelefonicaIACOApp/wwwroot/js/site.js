@@ -94,8 +94,8 @@ function gerarPaginacao(paginaAtual, totalPaginas) {
 
     // < Página anterior
     paginacaoHtml += paginaAtual > 1
-        ? `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-pagina="${paginaAtual - 1}">Anterior</a></li>`
-        : `<li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Anterior</a></li>`;
+        ? `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-pagina="${paginaAtual - 1}"><span aria-hidden="true">&lsaquo;</span></a></li>`
+        : `<li class="page-item disabled"><a class="page-link" href="javascript:void(0)"><span aria-hidden="true">&lsaquo;</span></a></li>`;
 
     // Página atual / total
     paginacaoHtml += `
@@ -105,8 +105,8 @@ function gerarPaginacao(paginaAtual, totalPaginas) {
 
     // > Próxima página
     paginacaoHtml += paginaAtual < totalPaginas
-        ? `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-pagina="${paginaAtual + 1}">Próximo</a></li>`
-        : `<li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Próximo</a></li>`;
+        ? `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-pagina="${paginaAtual + 1}"><span aria-hidden="true" >&rsaquo;</span ></a></li>`
+        : `<li class="page-item disabled"><a class="page-link" href="javascript:void(0)"><span aria-hidden="true" >&rsaquo;</span ></a></li>`;
 
     // >> Pular 10 páginas para frente
     if (paginaAtual + 10 <= totalPaginas) {
@@ -143,3 +143,4 @@ function mostrarToast(titulo, mensagem, tipo = 'danger') {
     const toast = new bootstrap.Toast($toast[0], { delay: 4000 });
     toast.show();
 }
+

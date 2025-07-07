@@ -225,12 +225,16 @@
                 @if (ViewBag.PaginaAtual > 1)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual - 1)">Anterior</a>
+                        <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual - 1)">
+                            <span aria-hidden="true">&lsaquo;</span>
+                        </a>
                     </li>
 
                 }else{
                       <li class="page-item disabled">
-                        <a class="page-link" href="javascript:void(0)">Anterior</a>
+                            <a class="page-link" href="javascript:void(0)">
+                                <span aria-hidden="true">&lsaquo;</span>
+                            </a>
                        </li>
                 }
 
@@ -255,12 +259,12 @@
 
 
                     <li class="page-item">
-                        <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual + 1)">Próximo</a>
+                        <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual + 1)"><span aria-hidden="true" >&rsaquo;</span ></a>
                     </li>
 
                 }else{
                     <li class="page-item disabled">
-                        <a class="page-link" href="javascript:void(0)">Próximo</a>
+                        <a class="page-link" href="javascript:void(0)"><span aria-hidden="true" >&rsaquo;</span ></a>
                     </li>
                 }
 
@@ -268,14 +272,14 @@
                 {
                     <li class="page-item">
                             <a class="page-link" href="javascript:void(0)" data-pagina="@(ViewBag.PaginaAtual - 10)">
-                                <span aria-hidden="true">&laquo;</span>
+                                <span aria-hidden="true">&raquo;</span>
                             </a>
                     </li>
                 }
                 else{
                       <li class="page-item disabled">
                             <a class="page-link" href="javascript:void(0)">
-                                <span aria-hidden="true">&laquo;</span>
+                                <span aria-hidden="true">&raquo;</span>
                             </a>
                     </li>
                 }
@@ -295,12 +299,21 @@
     <script>
         $(document).ready(function () {
 
+            let totalRegistrosFiltrados;
+            let contatosFiltrados;
+
+            let filtrosAtivos = {}; // variável para guardar os filtros aplicados
+
 
             function carregarContatos(pagina){
                 $.ajax({
                     url: '/Contato/ObterContatosPaginados',
                     method: 'GET',
-                    data: { paginaAtual: pagina },
+                    data: { 
+                        paginaAtual: pagina, 
+                        totalRegistrosFiltrados: totalRegistrosFiltrados,
+                        contatosFiltrados:  contatosFiltrados
+                    },
                     success: function (response) {
                         $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
                         $('#table-responsive').get(0).style.setProperty('max-height', '500px', 'important');
@@ -366,6 +379,8 @@
             }
 
 
+
+            // ATRIBUINDO ID e NOME do CONTATO ao MODAL - INICIO
             let id;
             let nome;
 
@@ -376,7 +391,10 @@
                 $('#idContatoExcluir').val(id);
                 $('#nomeContatoModal').text(nome);
             });
+            // ATRIBUINDO ID e NOME do CONTATO ao MODAL - FIM
 
+
+            //REALIZANDO A DELECAO DO CONTATO -- INICIO
             $('#formExcluirContato').on('submit', function (e) {
                 e.preventDefault();
 
@@ -404,7 +422,23 @@
             });
 
 
-            $(document).on('click', '.pagination .page-link, #btnLimparFiltros', function (e) {
+            //PRECISO APLICAR A PAGINACAO NA HIPOTESE DE UM RESULTADO DE BUSCA FILTRADO
+            $(document).on('click', '.pagination .page-link', function (e) {
+                e.preventDefault();
+
+                let pagina = $(this).data('pagina');
+
+                carregarContatos(pagina);
+            });
+            //REALIZANDO A DELECAO DO CONTATO -- FIM
+
+
+            // ✅ Carrega automaticamente a página 1 ao abrir
+            carregarContatos(1);
+
+
+            // LIMPAR FILTROS -- INICIO
+            $(document).on('click', '#btnLimparFiltros', function (e) {
                 e.preventDefault();
 
                 //limpando todos os campos de filtro
@@ -412,15 +446,15 @@
                     $(this).val('');
                 });
 
-                let pagina = $(this).data('pagina');
 
-                carregarContatos(pagina);
             });
+            // LIMPAR FILTROS -- FIM
 
 
-            // ✅ Carrega automaticamente a página 1 ao abrir
-            carregarContatos(1);
 
+
+
+            // FILTRAR CONTATOS -- INICIO
         
             $('#btnFiltrar').on('click', function (e) {
                 e.preventDefault(); // impede envio padrão do formulário
@@ -442,6 +476,8 @@
                     // Ignora a requisição AJAX
                     return;
                 }
+
+                filtrosAtivos = params; // <- armazena filtros aplicados
 
                 //montando a querystring
                 const queryString = Object.keys(params)
@@ -476,6 +512,8 @@
                            aplicarMascaras();
                            aplicarReadonly();
                            gerarPaginacao(response.paginaAtual, response.totalPaginas);
+                           totalRegistrosFiltrados = response.totalRegistros;
+                           contatosFiltrados = response.contatosFiltrados;
 
                         }
                     },
@@ -487,6 +525,8 @@
                     }
                 });
             });
+
+           // FILTRAR CONTATOS -- FIM
 
     }); 
 
