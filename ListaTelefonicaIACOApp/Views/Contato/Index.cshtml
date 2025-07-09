@@ -110,6 +110,7 @@
     
     <div id="mensagem-nenhum-contato" class="text-center d-none">
         <p class="fw-bold fs-4 m-0">Nenhum contato foi encontrado.</p>
+        <p class="m-0">Verifique os filtros aplicados ou clique em <strong>Limpar Filtros</strong> para listar todos os contatos.</p>    
     </div>
    
     @if (Model != null && Model.Contatos.Any())
@@ -202,8 +203,8 @@
         
 
     }
-    <div style="height: 60px; min-width: 300px;" class="d-flex col-auto justify-content-end align-items-center">
-        <nav class="" aria-label="Paginação">
+    <div id="grandfather-pagination" style="height: 60px; min-width: 300px;" class="d-flex col-auto justify-content-end align-items-center">
+        <nav aria-label="Paginação">
             <ul class="pagination mb-0">
 
                 @if (ViewBag.PaginaAtual > 10)
@@ -297,45 +298,11 @@
 
 
     <script>
+
+        let params = {}
+        let queryString;
+
         $(document).ready(function () {
-
-            let totalRegistrosFiltrados;
-            let contatosFiltrados;
-
-            let filtrosAtivos = {}; // variável para guardar os filtros aplicados
-
-
-            function carregarContatos(pagina){
-                $.ajax({
-                    url: '/Contato/ObterContatosPaginados',
-                    method: 'GET',
-                    data: { 
-                        paginaAtual: pagina, 
-                        totalRegistrosFiltrados: totalRegistrosFiltrados,
-                        contatosFiltrados:  contatosFiltrados
-                    },
-                    success: function (response) {
-                        $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
-                        $('#table-responsive').get(0).style.setProperty('max-height', '500px', 'important');
-                        $('#table tbody').html(response.html);
-                        $('#table').show();
-                        $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
-                        $('#mensagem-nenhum-contato').hide();
-                   
-                        $('.pagination').show(); // Mostra a paginacao
-
-                            // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
-                            aplicarMascaras();
-                            aplicarReadonly()
-                            gerarPaginacao(response.paginaAtual, response.totalPaginas);
-
-                    },
-                    error: function () {
-                        alert('Erro ao carregar os dados.');
-                    },
-               
-                });
-            }
 
             function carregarTabela(paginaAtual, totalPaginas) {
 
@@ -421,37 +388,55 @@
                 });
             });
 
-
-            //PRECISO APLICAR A PAGINACAO NA HIPOTESE DE UM RESULTADO DE BUSCA FILTRADO
-            $(document).on('click', '.pagination .page-link', function (e) {
-                e.preventDefault();
-
-                let pagina = $(this).data('pagina');
-
-                carregarContatos(pagina);
-            });
             //REALIZANDO A DELECAO DO CONTATO -- FIM
 
 
             // ✅ Carrega automaticamente a página 1 ao abrir
-            carregarContatos(1);
+            carregarContatosPaginados(1);
 
 
-            // LIMPAR FILTROS -- INICIO
-            $(document).on('click', '#btnLimparFiltros', function (e) {
-                e.preventDefault();
+            function carregarContatosPaginados(pagina = 1, queryString = "" ){
+                $.ajax({
+                    type: "GET",
+                    url: `/Contato/ObterContatosPaginados?paginaAtual=${pagina}&${queryString}`,
+                    beforeSend: function () {
+                        $('#spinner-loading').show();         // Mostra o spinner
+                        $('#table').hide();                  // Esconde tabela enquanto carrega
+                        $('#mensagem-nenhum-contato').hide(); // Garante que mensagem esteja oculta durante o carregamento
+                    },
+                    success: function (response) {
+                        if (!response.encontrou) {
+                            $('#table').hide();
+                            $('#table-responsive')[0].style.setProperty('display', 'none', 'important');
+                            $('#grandfather-pagination')[0].style.setProperty('display', 'none', 'important');
+                            $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
+                            $('.pagination').hide(); // Oculta a paginação
+                        } else {
+                            $('#mensagem-nenhum-contato').hide();
+                            $('#table-responsive')[0].style.setProperty('display', 'block', 'important');
+                            $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
+                            $('#table-responsive').get(0).style.setProperty('max-height', '500px', 'important');
+                            $('#table tbody').html(response.html);
+                            $('#table').show();
+                            $('.pagination').show(); // Mostra a paginação novamente se necessário
 
-                //limpando todos os campos de filtro
-                $('#formFiltro').find('input').each(function () {
-                    $(this).val('');
+
+                            // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
+                           aplicarMascaras();
+                           aplicarReadonly();
+                           gerarPaginacao(response.paginaAtual, response.totalPaginas);
+
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error("Erro:", xhr.responseText);
+                    },
+                    complete: function () {
+                        $('#spinner-loading').hide(); // Oculta o spinner após conclusão
+                    }
+               
                 });
-
-
-            });
-            // LIMPAR FILTROS -- FIM
-
-
-
+            }
 
 
             // FILTRAR CONTATOS -- INICIO
@@ -460,7 +445,7 @@
                 e.preventDefault(); // impede envio padrão do formulário
 
                 //usando 'cleanVal' para obter o valor do input sem máscara
-                const params = {
+                params = {
                     Nome: $('#Nome').val(),
                     Fixo: $('#Fixo').cleanVal(),
                     Celular: $('#Celular').cleanVal(),
@@ -477,57 +462,47 @@
                     return;
                 }
 
-                filtrosAtivos = params; // <- armazena filtros aplicados
 
                 //montando a querystring
-                const queryString = Object.keys(params)
+                queryString = Object.keys(params)
                     .map(k => `${k}=${encodeURIComponent(params[k])}`)
                     .join('&');
 
-                $.ajax({
-                    type: "GET",
-                    url: `/Contato/ObterContatosFiltrados?${queryString}`,
-                    beforeSend: function () {
-                        $('#spinner-loading').show();         // Mostra o spinner
-                        $('#table').hide();                  // Esconde tabela enquanto carrega
-                        $('#mensagem-nenhum-contato').hide(); // Garante que mensagem esteja oculta durante o carregamento
-                    },
-                    success: function (response) {
-                        if (!response.encontrou) {
-                            $('#table').hide();
-                            $('#table-responsive').get(0).style.setProperty('min-height', '100px', 'important');
-                            $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
-                            $('.pagination').hide(); // Oculta a paginação
-                        } else {
-                            $('#mensagem-nenhum-contato').hide();
-                            //$('.table-responsive').css('height','500px')
-                            $('#table-responsive').get(0).style.setProperty('min-height', '100px', 'important');
-                            $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
-                            $('#table tbody').html(response.html);
-                            $('#table').show();
-                            $('.pagination').show(); // Mostra a paginação novamente se necessário
 
+                let pagina = 1; // Sempre começa na página 1 ao aplicar novos filtros
 
-                            // AQUI: Reaplicando máscaras após o novo conteúdo ser injetado
-                           aplicarMascaras();
-                           aplicarReadonly();
-                           gerarPaginacao(response.paginaAtual, response.totalPaginas);
-                           totalRegistrosFiltrados = response.totalRegistros;
-                           contatosFiltrados = response.contatosFiltrados;
-
-                        }
-                    },
-                    error: function (xhr) {
-                        console.error("Erro:", xhr.responseText);
-                    },
-                    complete: function () {
-                        $('#spinner-loading').hide(); // Oculta o spinner após conclusão
-                    }
-                });
+                carregarContatosPaginados(pagina, queryString);
+                
             });
 
            // FILTRAR CONTATOS -- FIM
 
+
+            //PRECISO APLICAR A PAGINACAO NA HIPOTESE DE UM RESULTADO DE BUSCA FILTRADO
+            $(document).on('click', '.pagination .page-link', function (e) {
+                e.preventDefault();
+
+                let pagina = $(this).data('pagina');
+
+                carregarContatosPaginados(pagina, queryString || "");
+            });
+
+
+            // LIMPAR FILTROS -- INICIO
+            $(document).on('click', '#btnLimparFiltros', function (e) {
+                e.preventDefault();
+
+                //limpando todos os campos de filtro
+                $('#formFiltro').find('input').each(function () {
+                    $(this).val('');
+                });
+
+                //carregando a primeira pagina
+                carregarContatosPaginados(1);
+
+                queryString = '';
+            });
+            // LIMPAR FILTROS -- FIM
     }); 
 
         

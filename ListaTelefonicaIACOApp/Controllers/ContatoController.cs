@@ -10,8 +10,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace ListaTelefonicaIACOApp.Controllers
@@ -37,24 +39,23 @@ namespace ListaTelefonicaIACOApp.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> ObterContatosPaginados(int registrosPorPagina = 10, int paginaAtual = 1)
+        public async Task<IActionResult> ObterContatosPaginados(FiltroContatoViewModel filtros, int registrosPorPagina = 10, int paginaAtual = 1)
         {
 
             offset = (paginaAtual - 1) * registrosPorPagina;
             string ordenacao = "NOME"; // default order by NOME
-            string query = @$"SELECT 
-                                c.ID AS Id,
-                                c.NOME AS Nome,
-                                c.FIXO AS Fixo,
-                                c.CELULAR AS Celular,
-                                c.COMERCIAL AS Comercial,
-                                c.ENDERECO AS Endereco,
-                                c.EMAIL AS Email,
-                                TO_CHAR(c.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
-                                TO_CHAR(c.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
-                            FROM LISTA_FONES c
-                            ORDER BY {ordenacao}
-                            OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
+            string queryBase = @$"SELECT 
+                                f.ID AS Id,
+                                f.NOME AS Nome,
+                                f.FIXO AS Fixo,
+                                f.CELULAR AS Celular,
+                                f.COMERCIAL AS Comercial,
+                                f.ENDERECO AS Endereco,
+                                f.EMAIL AS Email,
+                                TO_CHAR(f.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
+                                TO_CHAR(f.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
+                            FROM LISTA_FONES f
+                            WHERE 1 = 1";
 
 
             using (var conn = _context.CreateConnection())
@@ -62,15 +63,34 @@ namespace ListaTelefonicaIACOApp.Controllers
                 conn.Open();
 
 
-
-                var totalRegistros = await conn.QuerySingleAsync<int>("SELECT COUNT(*) FROM LISTA_FONES");
-                totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
-
-
-
-
                 StringBuilder sb = new StringBuilder();
-                var contatos = (await conn.QueryAsync<Contato>(query)).ToList();
+
+                string queryBaseComFiltrosAplicados = GerarQueryComFiltrosSemPaginacao(queryBase, offset, filtros, registrosPorPagina, paginaAtual);
+                string queryContagem = queryBaseComFiltrosAplicados
+                        .Replace(
+                            @$"SELECT 
+                                f.ID AS Id,
+                                f.NOME AS Nome,
+                                f.FIXO AS Fixo,
+                                f.CELULAR AS Celular,
+                                f.COMERCIAL AS Comercial,
+                                f.ENDERECO AS Endereco,
+                                f.EMAIL AS Email,
+                                TO_CHAR(f.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
+                                TO_CHAR(f.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs",
+                            "SELECT COUNT(*)"
+                        );
+
+
+                //Realizar a contagem de registros baseado no conjunto filtrado//
+                int totalRegistrosFiltrados = await conn.QuerySingleAsync<int>(queryContagem);
+                totalPaginas = (int)Math.Ceiling((double)totalRegistrosFiltrados / registrosPorPagina);
+
+                queryBaseComFiltrosAplicados += $@"ORDER BY f.NOME
+                            OFFSET {offset} ROWS FETCH NEXT {registrosPorPagina} ROWS ONLY";
+
+
+                var contatos = (await conn.QueryAsync<Contato>(queryBaseComFiltrosAplicados)).ToList();
 
 
                 foreach (var c in contatos)
@@ -113,34 +133,18 @@ namespace ListaTelefonicaIACOApp.Controllers
 
                 return Json(new
                 {
-                    html = sb.ToString(),
+                    html = sb.ToString(), // Pode ser vazio
+                    encontrou = contatos.Any(),
                     paginaAtual,
                     totalPaginas
                 });
+
             }
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> ObterContatosFiltrados(FiltroContatoViewModel filtros, int registrosPorPagina = 10, int paginaAtual = 1)
+
+        public string GerarQueryComFiltrosSemPaginacao(string queryBase, int offset, FiltroContatoViewModel filtros, int registrosPorPagina = 10, int paginaAtual = 1)
         {
-
-            offset = (paginaAtual - 1) * registrosPorPagina;
-
-            string queryBase = @"
-                    SELECT 
-                        f.ID              AS Id,
-                        f.NOME            AS Nome,
-                        f.FIXO            AS Fixo,
-                        f.CELULAR         AS Celular,
-                        f.COMERCIAL       AS Comercial,
-                        f.ENDERECO        AS Endereco,
-                        f.EMAIL           AS Email,
-                        TO_CHAR(f.CRIADO_AS, 'DD/MM/YYYY HH24:MI:SS')  AS CriadoAs,
-                        TO_CHAR(f.EDITADO_AS, 'DD/MM/YYYY HH24:MI:SS') AS EditadoAs
-                    FROM LISTA_FONES f
-                    WHERE 1=1
-                ";
 
 
 
@@ -169,65 +173,12 @@ namespace ListaTelefonicaIACOApp.Controllers
                 queryBase += $@" AND LOWER(TRIM(f.EMAIL)) LIKE LOWER('%{filtros.Email.Trim()}%')";
             }
 
-            queryBase += " ORDER BY f.NOME";
 
-            using (var conn = _context.CreateConnection())
-            {
-                conn.Open();
+            return queryBase; ;
 
-
-                var totalRegistros = (await conn.QueryAsync<Contato>(queryBase)).ToList().Count();
-                totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
-
-                var sb = new StringBuilder();
-                var contatos = (await conn.QueryAsync<Contato>(queryBase)).ToList();
-
-                foreach (var c in contatos)
-                {
-                    sb.Append($"<tr style='height:60px'>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Nome}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-fixo-tabela input-sem-borda' value='{c.Fixo}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-celular-tabela input-sem-borda' value='{c.Celular}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><input type='text' class='form-control telefone-comercial-tabela input-sem-borda' value='{c.Comercial}' /></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.Endereco}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'><a href='mailto:{c.Email}'>{c.Email}</a></td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.CriadoAs}</td>");
-                    sb.Append($"<td style='min-width:180px; min-height:60px' class='text-nowrap'>{c.EditadoAs}</td>");
-
-                    // Mostrar botão Editar e Deletar somente se o usuário tiver um dos papéis
-                    if (User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Recepcao) || User.IsInRole(Roles.Guarita))
-                    {
-                        sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                                  $"<a href='/Contato/Edit/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Editar'>" +
-                                  $"<i class='bi-pencil-square text-dark'></i></a></td>");
-
-                        sb.Append($"<td style='height: 50px' class='text-nowrap'>" +
-                                  $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'>" +
-                                  $"<i class='bi bi-eye text-dark'></i></a></td>");
-
-                        sb.Append($"<td style='width:50px; height:60px' class='text-nowrap'>" +
-                                  $"<a href='#' class='btn-abrir-modal-exclusao' data-id='{c.Id}' data-nome='{System.Net.WebUtility.HtmlEncode(c.Nome)}' data-bs-toggle='modal' data-bs-target='#modalConfirmarExclusao' title='Deletar'>" +
-                                  $"<i class='bi bi-trash text-dark'></i></a></td>");
-                    }
-                    else if (!User.IsInRole(Roles.Administrador) && !User.IsInRole(Roles.Recepcao) && !User.IsInRole(Roles.Guarita))
-                    {
-                        // Usuário sem permissão: mostrar apenas botão de detalhes (se quiser)
-                        sb.Append($"<td colspan='3' style='height: 50px' class='text-nowrap'>" +
-                                  $"<a href='/Contato/Details/{c.Id}' data-bs-toggle='tooltip' data-bs-placement='top' title='Ver Detalhes'>" +
-                                  $"<i class='bi bi-eye text-dark'></i></a></td>");
-                    }
-                    sb.Append("</tr>");
-                }
-
-                return Json(new
-                {
-                    html = sb.ToString(), // Pode ser vazio
-                    encontrou = contatos.Any(),
-                    paginaAtual,
-                    totalPaginas
-                });
-            }
         }
+
+
 
 
         // GET: ContatoController
