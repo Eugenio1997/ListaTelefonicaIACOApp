@@ -10,13 +10,13 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         [Required(ErrorMessage = "O campo Nome é obrigatório.")]
         [RegularExpression(@"^(?=.{3,})(?!.*\d)[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", ErrorMessage = "O Nome deve ter no mínimo 3 letras e não pode conter números.")]
         public string Nome { get; set; }
-        //[RegularExpression(@"^\(\d{2}\) \d{4}-\d{4}$", ErrorMessage = "Formato esperado: 99 9999-9999")]
+        [RegularExpression(@"^\d{2} \d{8}$", ErrorMessage = "Fixo deve estar no formato 99 99999999")]
         public string? Fixo { get; set; }
 
-        //[RegularExpression(@"^\(\d{2}\) \d{5}-\d{4}$", ErrorMessage = "Celular deve estar no formato 99 99999-9999")]
+        [RegularExpression(@"^\d{2} \d{9}$", ErrorMessage = "Celular deve estar no formato 99 999999999")]
         public string? Celular { get; set; }
         [DisplayName("Ramal")]
-        //[RegularExpression(@"^\d{4}$", ErrorMessage = "Formato esperado: 0000")]
+        [RegularExpression(@"^\d{4}$", ErrorMessage = "Formato esperado: 0000")]
         public string? Comercial { get; set; }
 
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
