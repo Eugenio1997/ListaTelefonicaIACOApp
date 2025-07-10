@@ -73,7 +73,6 @@
                     </div>   
                         <div class="col-md-4 campos-filtros">
                         <label asp-for="Contato_Endereco" class="">Endereco</label>
-                        <i style="width:10px" class="bi bi-exclamation-circle p-0" data-bs-toggle='tooltip' data-bs-placement='top' title='Ex: Rua - Número da Rua - Bairro - Cidade.'></i>
                         <input asp-for="Contato_Endereco" type="text" class="form-control" id="Endereco" placeholder="Ex: Rua José de Alencar - 90 - Antares - Costa Rica">
                     </div> 
                         <div class="col-md-8 campos-filtros">
@@ -90,7 +89,6 @@
                         </button>
 
                         <button
-                            
                                 id="btnFiltrar"
                                 style=""
                                 type="submit"
@@ -452,7 +450,7 @@
                     Nome: $('#Nome').val(),
                     Fixo: $('#Fixo').cleanVal(),
                     Celular: $('#Celular').cleanVal(),
-                    Comercial: $('#Comercial').cleanVal(),
+                    Comercial: $('#Comercial').val(),
                     Endereco: $('#Endereco').val(),
                     Email: $('#Email').val(),
                 };
