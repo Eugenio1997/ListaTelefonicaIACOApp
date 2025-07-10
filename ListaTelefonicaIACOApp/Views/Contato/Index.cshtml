@@ -121,7 +121,7 @@
             </div>
         </div>
         <div id="table-responsive" style="min-height:500px; min-width:300px" class="table-responsive d-flex">
-            <table id="table" class="table table-hover table-borderless m-0 h-75 tabela-contatos">
+            <table id="table" class="table table-striped table-hover table-borderless m-0 h-75 tabela-contatos">
                 
                 <thead class="table-light position-sticky top-0" style="min-height:60px">
                     <tr>
@@ -150,13 +150,13 @@
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Nome)</td>
 
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">
-                             <input type="text" value="@item.Contato_Fixo" class="form-control filtros-fixo input-sem-borda" />
+                             <input type="text" value="@item.Contato_Fixo" class="form-control input-sem-borda" />
                             </td>
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">
-                             <input type="text" value="@item.Contato_Celular" class="form-control filtros-celular input-sem-borda" />
+                             <input type="text" value="@item.Contato_Celular" class="form-control input-sem-borda" />
                             </td>
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">
-                             <input type="text" value="@item.Contato_Comercial" class="form-control filtros-comercial input-sem-borda" />
+                             <input type="text" value="@item.Contato_Comercial" class="form-control input-sem-borda" />
                             </td>
                           
                             <td class="text-nowrap" style="min-width:180px; min-height:60px">@Html.DisplayFor(modelItem => item.Contato_Endereco)</td>
@@ -408,7 +408,7 @@
                         if (!response.encontrou) {
                             $('#table').hide();
                             $('#table-responsive')[0].style.setProperty('display', 'none', 'important');
-                            $('#grandfather-pagination')[0].style.setProperty('display', 'none', 'important');
+                            //$('#grandfather-pagination')[0].style.setProperty('display', 'none', 'important');
                             $('#mensagem-nenhum-contato')[0].style.setProperty('display', 'block', 'important');
                             $('.pagination').hide(); // Oculta a paginação
                         } else {
@@ -416,6 +416,9 @@
                             $('#table-responsive')[0].style.setProperty('display', 'block', 'important');
                             $('#table-responsive').get(0).style.setProperty('min-height', '500px', 'important');
                             $('#table-responsive').get(0).style.setProperty('max-height', '500px', 'important');
+                            //$('#grandfather-pagination')[0].style.setProperty('display', 'block', 'important');
+                            $('.pagination')[0].style.setProperty('justify-content', 'flex-end', 'important');
+
                             $('#table tbody').html(response.html);
                             $('#table').show();
                             $('.pagination').show(); // Mostra a paginação novamente se necessário

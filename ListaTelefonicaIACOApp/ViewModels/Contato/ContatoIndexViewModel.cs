@@ -14,15 +14,15 @@ namespace ListaTelefonicaIACOApp.ViewModels.Contato
         [RegularExpression(@"^(?=.{3,})(?!.*\d)[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", ErrorMessage = "O Nome deve ter no mínimo 3 letras e não pode conter números.")]
         public string Contato_Nome { get; set; } = string.Empty;
         [Display(Name = "Fixo")]
-        [RegularExpression(@"^\d{2} \d{4}\d{4}$", ErrorMessage = "Formato esperado: 99 99999999")]
+        //[RegularExpression(@"^\d{2} \d{4}\d{4}$", ErrorMessage = "Formato esperado: 99 99999999")]
         public string Contato_Fixo { get; set; } = string.Empty;
 
         [Display(Name = "Celular")]
-        [RegularExpression(@"^\d{2} \d{5}\d{4}$", ErrorMessage = "Celular deve estar no formato 99 999999999")]
+        //[RegularExpression(@"^\d{2} \d{5}\d{4}$", ErrorMessage = "Celular deve estar no formato 99 999999999")]
         public string Contato_Celular { get; set; } = string.Empty;
 
         [DisplayName("Ramal")]
-        [RegularExpression(@"^\d{4}$", ErrorMessage = "Formato esperado: 0000")]
+        //[RegularExpression(@"^\d{4}$", ErrorMessage = "Formato esperado: 0000")]
         public string Contato_Comercial { get; set; } = string.Empty;
 
         [Display(Name = "E-mail")]

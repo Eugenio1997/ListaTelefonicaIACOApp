@@ -23,19 +23,6 @@ function aplicarMascaras() {
         selectOnFocus: true,
     });
 
-    //sendo aplicados na tabela
-    $('.telefone-fixo-tabela').mask('(00) 0000-0000', {
-        clearIfNotMatch: true,
-        selectOnFocus: true,
-    });
-    $('.telefone-comercial-tabela').mask('0000', {
-        clearIfNotMatch: true,
-        selectOnFocus: true,
-    });
-    $('.telefone-celular-tabela').mask('(00) 00000-0000', {
-        clearIfNotMatch: true,
-        selectOnFocus: true,
-    });
 
     //sendo aplicados nos campos de filtro
     $('.filtro-fixo').mask('(00) 0000-0000', {
@@ -48,11 +35,7 @@ function aplicarMascaras() {
         clearIfNotMatch: true,
         selectOnFocus: true,
     });
-    $('.filtro-comercial').mask('0000', {
-        placeholder: '0000',
-        clearIfNotMatch: true,
-        selectOnFocus: true,
-    });
+
 
     $('.CEP').mask('00000-000', {
         placeholder: '00000-000',
