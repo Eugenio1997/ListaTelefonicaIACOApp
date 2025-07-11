@@ -28,6 +28,40 @@ function aplicarReadonly() {
     $('.telefone-fixo, .telefone-celular, .telefone-comercial').attr('readonly', true);
 }
 
+function restaurarFiltros() {
+    const nome = sessionStorage.getItem("filtroNome");
+    const fixo = sessionStorage.getItem("filtroFixo");
+    const celular = sessionStorage.getItem("filtroCelular");
+    const ramal = sessionStorage.getItem("filtroComercial");
+    const endereco = sessionStorage.getItem("filtroEndereco");
+    const email = sessionStorage.getItem("filtroEmail");
+
+    if (nome) $("#filtroNome").val(nome);
+    if (fixo) $("#filtroFixo").val(fixo);
+    if (celular) $("#filtroCelular").val(celular);
+    if (ramal) $("#filtroComercial").val(ramal);
+    if (endereco) $("#filtroEndereco").val(endereco);
+    if (email) $("#filtroEmail").val(email);
+
+    if (nome || fixo || celular || ramal || endereco || email) {
+        params = {
+            Nome: nome ?? "",
+            Fixo: fixo ?? "",
+            Celular: celular ?? "",
+            Comercial: ramal ?? "",
+            Endereco: endereco ?? "",
+            Email: email ?? ""
+        };
+
+        queryString = Object.keys(params)
+            .map(k => `${k}=${encodeURIComponent(params[k])}`)
+            .join('&');
+
+        return queryString;
+    }
+
+    return ''; // Garante retorno válido
+}
 $(document).ready(function () {
     aplicarMascaras();
 });

@@ -50,34 +50,34 @@
                             </a>
                         </div>
                     }
-                    
+
                 </div>
                 <div style="gap:20px" class="row">
                     <div class="col-md-6 campos-filtros">
                         <label asp-for="Contato_Nome" class="">Nome</label>
-                        <input asp-for="Contato_Nome" type="text" class="form-control" id="Nome" placeholder="Ex: Ana Pereira dos Santos">
+                        <input asp-for="Contato_Nome" type="text" class="form-control" id="filtroNome" placeholder="Ex: Ana Pereira dos Santos">
                     </div>
 
                     <div class="col-md-4 campos-filtros">
                         <label asp-for="Contato_Fixo" class="">Fixo</label>
-                        <input asp-for="Contato_Fixo" type="tel" class="form-control" id="Fixo" placeholder="Ex: 11 2345-6789  ">
+                        <input asp-for="Contato_Fixo" type="tel" class="form-control" id="filtroFixo" placeholder="Ex: 11 2345-6789  ">
                     </div>
 
                     <div class="col-md-4 campos-filtros">
                         <label asp-for="Contato_Celular" class="">Celular</label>
-                        <input asp-for="Contato_Celular" type="tel" class="form-control" id="Celular" placeholder="Ex: 11 998877665">  
+                        <input asp-for="Contato_Celular" type="tel" class="form-control" id="filtroCelular" placeholder="Ex: 11 998877665">  
                     </div>
                     <div class="col-md-4 campos-filtros">
                         <label asp-for="Contato_Comercial" class="">Ramal</label>
-                        <input asp-for="Contato_Comercial" type="tel" class="form-control" id="Comercial" placeholder="0000">
+                        <input asp-for="Contato_Comercial" type="tel" class="form-control" id="filtroComercial" placeholder="0000">
                     </div>   
                         <div class="col-md-4 campos-filtros">
                         <label asp-for="Contato_Endereco" class="">Endereco</label>
-                        <input asp-for="Contato_Endereco" type="text" class="form-control" id="Endereco" placeholder="Ex: Rua José de Alencar - 90 - Antares - Costa Rica">
+                        <input asp-for="Contato_Endereco" type="text" class="form-control" id="filtroEndereco" placeholder="Ex: Rua José de Alencar - 90 - Antares - Costa Rica">
                     </div> 
                         <div class="col-md-8 campos-filtros">
                         <label asp-for="Contato_Email" class="">Email</label>
-                        <input asp-for="Contato_Email" type="email" class="form-control" id="Email" placeholder="Ex: Ana.clara@iaco.ind.br">        
+                        <input asp-for="Contato_Email" type="email" class="form-control" id="filtroEmail" placeholder="Ex: Ana.clara@iaco.ind.br">        
                     </div>
                 
                     <div style="height:50px" class="d-flex w-100 justify-content-end gap-4 align-items-center col-auto">
@@ -390,8 +390,8 @@
 
 
             // ✅ Carrega automaticamente a página 1 ao abrir
-            carregarContatosPaginados(1);
-
+            queryString = restaurarFiltros();
+            carregarContatosPaginados(1, queryString);
 
             function carregarContatosPaginados(pagina = 1, queryString = "" ){
                 $.ajax({
@@ -445,14 +445,32 @@
             $('#btnFiltrar').on('click', function (e) {
                 e.preventDefault(); // impede envio padrão do formulário
 
+
+                // Recuperando os valores dos campos de filtro
+                const nome = $("#filtroNome").val();
+                const fixo = $("#filtroFixo").val();
+                const celular = $("#filtroCelular").val();
+                const ramal = $("#filtroComercial").val();
+                const endereco = $("#filtroEndereco").val();
+                const email = $("#filtroEmail").val();
+
+                //Armazenando em Session Storage
+                sessionStorage.setItem("filtroNome", nome);
+                sessionStorage.setItem("filtroFixo", fixo);
+                sessionStorage.setItem("filtroCelular", celular);
+                sessionStorage.setItem("filtroComercial", ramal);
+                sessionStorage.setItem("filtroEndereco", endereco);
+                sessionStorage.setItem("filtroEmail", email);
+
+
                 //usando 'cleanVal' para obter o valor do input sem máscara
                 params = {
-                    Nome: $('#Nome').val(),
-                    Fixo: $('#Fixo').val(),
-                    Celular: $('#Celular').val(),
-                    Comercial: $('#Comercial').val(),
-                    Endereco: $('#Endereco').val(),
-                    Email: $('#Email').val(),
+                    Nome: $('#filtroNome').val(),
+                    Fixo: $('#filtroFixo').val(),
+                    Celular: $('#filtroCelular').val(),
+                    Comercial: $('#filtroComercial').val(),
+                    Endereco: $('#filtroEndereco').val(),
+                    Email: $('#filtroEmail').val(),
                 };
 
                // Verifica se todos os campos estão vazios
@@ -498,6 +516,14 @@
                     $(this).val('');
                 });
 
+                //Removendo os valores de Session Storage 
+                sessionStorage.removeItem("filtroNome");
+                sessionStorage.removeItem("filtroFixo");
+                sessionStorage.removeItem("filtroCelular");
+                sessionStorage.removeItem("filtroComercial");
+                sessionStorage.removeItem("filtroEndereco");
+                sessionStorage.removeItem("filtroEmail");
+
                 //carregando a primeira pagina
                 carregarContatosPaginados(1);
 
@@ -507,7 +533,6 @@
     }); 
 
         
-
 
 
     </script>
